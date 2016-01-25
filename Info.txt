@@ -7,6 +7,6 @@ git add README.md
 git commit -m "first commit"
 git remote add origin git@github.com:James-Ortiz/Software-Engineering.git
 git push -u origin master
-
+//Not SE
 =======
 >>>>>>> 22aba6d4207444992c94b9c1bf03349883cc0fd8
