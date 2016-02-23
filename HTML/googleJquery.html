@@ -1,0 +1,16 @@
+<!Doctype html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script>
+
+$( document ).ready(function() {
+    $( "a" ).click(function( event ) {
+        alert( "The link will no longer take you to jquery.com" );
+        event.preventDefault();
+    });
+});
+
+</script>
+</head>
+</html>
