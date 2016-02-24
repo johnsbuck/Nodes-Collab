@@ -82,10 +82,10 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li><a href="main.html">Home <span class="sr-only">(current)</span></a></li>
+            <li><a href="#">Home <span class="sr-only">(current)</span></a></li>
             <li><a href="QandA.html" class="QA" onclick="QA()">Q and A</a></li>
             <li><a href="ProjectCollab.html">Project Collab</a></li>
-            <li><a href="FreelanceEx.html">Freelance Work</a></li>
+            <li><a href="FreeLanceEx.html" class="Freelance" onclick="FreeLance()">Freelance Work</a></li>
           </ul>
           <ul class="nav nav-sidebar">
             <li><a href="TextEditor.html"  >Text Editor</a></li>
@@ -93,63 +93,65 @@
             <li><a href="Messages.html">Messaging</a></li>
           </ul>
           <ul class="nav nav-sidebar">
-            <li  class="active"><a href="#.html">Search</a></li>
-            <li><a href="Settings.html">Settings</a></li>
+            <li><a href="SearchEx.html">Search</a></li>
+            <li  class="active"><a href="Settings.html">Settings</a></li>
             <li><a href="ProfileEx.html">Profile</a></li>
           </ul>
         </div>
       </div>
     </div>
 
-    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <div class="main col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
+
+        <nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Settings</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">General <span class="sr-only">(current)</span></a></li>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Blocked</a></li>
+      </ul>
+      
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
 
 
-
-      <body>
-
-
-
-
-
-
-          <h2>Enter a Search</h2>
-          <div class = "row">
-          <div class = "col-lg-6">
-            <input type="text" class="form-control" placeholder="Search...">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></button>
-            <ul class="SearchPage dropdown-menu" style = "width: 200px">
-              <li>
-                <div class="form-group" >
-          <label for="filter">Search in:</label>
-                                    <select class="form-control">
-                                        <option value="0" selected>All</option>
-                                        <option value="1">Projects</option>
-                                        <option value="2">Freelance Work</option>
-                                        <option value="3">Q&A</option>
-                                        <option value="4">People</option>
-                                    </select>
-                                  </div>
-                                  </li> <label></label>
-                                  <li>
-          <label for="contain">Contains the words</label>
-                                    <input class="form-control" type="text" /></li> <label></label>
-                                    <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-            </ul>
-          </div>
-          </div>
-
-
-            <p>Search Results:</p>
 
 
 
     </div>
+
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="../JS/FreeLance.js"></script>
+    <script>
+      $(document).ready(function() {
+        $('.QA').click(function() {
+          $('div.main').empty();
+        });
+        $('.Freelance').click(function() {
+          FreeLance($('div.main'));
+        });
+      });
+    </script>
     <script>window.jQuery || document.write('<script src="../Bootstrap/assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script src="../Bootstrap/dist/js/bootstrap.min.js"></script>
+
     <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
     <script src="../../assets/js/vendor/holder.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
