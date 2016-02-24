@@ -113,3 +113,10 @@ body {
   left:15px !important;
   width: 350px !important;
 }
+
+.messaging {
+  position: absolute !important;
+  width: 960px !important;
+  margin-left: 975px !important;
+  line-height:normal !important;
+}
