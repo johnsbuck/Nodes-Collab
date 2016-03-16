@@ -1,77 +1,81 @@
-// A very basic web server in node.js
-// Stolen from: Node.js for Front-End Developers by Garann Means (p. 9-10)
-
-var port = 8000;
-var serverUrl = '127.0.0.1';
-
-var http = require('http');
-var path = require('path');
+var express = require('express');
+var bodyParser = require('body-parser');
+var app = express();
 var fs = require('fs');
 
-console.log('Starting web server at ' + serverUrl + ':' + port);
+// Defaults
+var port = 8000;
+var host = '127.0.0.1';
 
-http.createServer( function(req, res) {
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
 
-	var now = new Date();
+// Required to use files in public
+app.use('/', express.static(__dirname + '/public'))
 
-	if(req.url == '/') {
-		var filename = 'cover.html'
-	} else {
-		var filename = req.url || 'cover.html';
+app.get('/', function(req, res) {
+	var path = __dirname + 'public' + req.path;
+
+	console.log(path);
+
+	try {
+		fs.accessSync(path, fs.F_OK);
+		res.status(200).sendFile(path);
+		logInfo('GET', 200, path);
+	} catch(e) {
+		res.sendStatus(404);
+		logInfo('GET', 404, path);
 	}
-	var ext = path.extname(filename);
-	var localPath = __dirname + '/public';
-	var validExtensions = {
-		'.html' : 'text/html',
-		'.js': 'application/javascript',
-		'.css': 'text/css',
-		'.txt': 'text/plain',
-		'.jpg': 'image/jpeg',
-		'.gif': 'image/gif',
-		'.png': 'image/png',
-		'.woff2': 'font/woff2'
-	};
-	var isValidExt = validExtensions[ext];
+});
 
-	if (isValidExt) {
+// Routes the pages (should use auth token to stop from sending main.html)
+app.get('/*.html', function(req, res) {
+	var path = __dirname + '/public/' + req.path;
 
-		if(filename.indexOf('.html') != -1) {
-			filename = '/HTML/' + filename;
-		}
+	console.log(path);
 
-		localPath += filename;
-		fs.access(localPath, fs.F_OK, function(err) {
-			if(!err) {
-				console.log('Serving file: ' + localPath);
-				getFile(localPath, res, ext);
-			} else {
-				console.log('File not found: ' + localPath);
-				res.writeHead(404);
-				res.end();
-			}
-		});
-
-	} else {
-		console.log('Invalid file extension detected: ' + ext)
-	}
-
-}).listen(port, serverUrl);
-
-function getFile(localPath, res, mimeType) {
-	fs.readFile(localPath, function(err, contents) {
-		if(!err) {
-			res.setHeader('Content-Length', contents.length);
-			res.setHeader('Content-Type', mimeType);
-			res.statusCode = 200;
-			res.end(contents);
+	try {
+		fs.accessSync(path, fs.F_OK);
+		if (req.path == '/Signin.html' || req.path == '/NewUser.html') {
+			res.status(200).sendFile(path);
+			logInfo('GET', 200, path);
 		} else {
-			res.writeHead(500);
-			res.end();
+			res.sendStatus(403);
+			logInfo('GET', 403, path);
 		}
-	});
+	} catch(e) {
+		res.sendStatus(404);
+		logInfo('GET', 404, path);
+	}
+});
+
+/* Get user information from database
+ */
+app.get('/login', function(req, res) {
+	console.log(req.body);
+	logInfo('GET', '200', '/login');
+});
+
+/* Register user into database.
+ * Return 400 if user already exists.
+ * Return 201 when created.
+ */
+app.post('/register', function(req, res) {
+	console.log(req.body);
+	logInfo('POST', '200', '/register');
+});
+
+/* Return true if the user does exist.
+ * False otherwise.
+ */
+app.get('/exists/user', function(req, res) {
+});
+
+function logInfo(method, status, path) {
+	console.log(method + ' method with ' + status + ' status. Path: ' + path);
 }
 
-function createDatabase()
-{
-
-}
+// Starts server
+var server = app.listen(port, function () {
+  console.log("Example app listening at http://%s:%s", host, port)
+});
