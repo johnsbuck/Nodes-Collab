@@ -10,42 +10,28 @@ var host = '127.0.0.1';
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-// Required to use files in public
-app.use('/', express.static(__dirname + '/public'))
-
-app.get('/', function(req, res) {
-	var path = __dirname + 'public' + req.path;
+// Default (should be updated for user files)
+app.use('/', function(req, res) {
+	var path = __dirname + '/public' + req.path;
 
 	console.log(path);
 
 	try {
 		fs.accessSync(path, fs.F_OK);
-		res.status(200).sendFile(path);
-		logInfo('GET', 200, path);
-	} catch(e) {
-		res.sendStatus(404);
-		logInfo('GET', 404, path);
-	}
-});
 
-// Routes the pages (should use auth token to stop from sending main.html)
-app.get('/*.html', function(req, res) {
-	var path = __dirname + '/public/' + req.path;
-
-	console.log(path);
-
-	try {
-		fs.accessSync(path, fs.F_OK);
 		if (req.path == '/Signin.html' || req.path == '/NewUser.html') {
 			res.status(200).sendFile(path);
-			logInfo('GET', 200, path);
-		} else {
+			logInfo('USE', 200, path);
+		} else if (req.path.indexOf('.html') > -1) {
 			res.sendStatus(403);
-			logInfo('GET', 403, path);
+			logInfo('USE', 403, path);
+		} else {
+			res.status(200).sendFile(path);
+			logInfo('USE', 200, path);
 		}
 	} catch(e) {
 		res.sendStatus(404);
-		logInfo('GET', 404, path);
+		logInfo('USE', 404, path);
 	}
 });
 
@@ -66,9 +52,82 @@ app.post('/register', function(req, res) {
 });
 
 /* Return true if the user does exist.
- * False otherwise.
+ * False otherwise. (Used for registering new users.)
  */
 app.get('/exists/user', function(req, res) {
+});
+
+/* Return true if the email is in use.
+ * False otherwise. (Used for registering new users.)
+ */
+app.get('/exists/email', function(req, res) {
+});
+
+/* Returns a user with a 200 status code.
+ * If no user exists, returns a 204 status code.
+ */
+app.get('/get/user', function(req, res) {
+});
+
+/* Deletes a user from the database.
+ */
+app.get('/delete/user', function(req, res) {
+});
+
+/* Returns the post of the given post id and a 200 status code.
+ * If no post exists, return a 204 status code.
+ */
+app.get('/get/post', function(req, res) {
+});
+
+/* Posts a given post onto the database.
+ */
+app.post('/post/post', function(req, res) {
+});
+
+/* Deletes a given post onto the database.
+ */
+app.post('/delete/post', function(req, res) {
+});
+
+/* Gets a specified comment.
+ */
+app.post('/get/comment', function(req, res) {
+});
+
+/* Posts a comment connected to given post id.
+ */
+app.post('/post/comment', function(req, res) {
+});
+
+/* Deletes a comment connected to given post id.
+ */
+app.delete('/delete/comment', function(req, res) {
+});
+
+/* Gets a specified group.
+ */
+app.get('/get/group', function(req, res) {
+});
+
+/* Posts a new group onto the database.
+ */
+app.post('/post/group', function(req, res) {
+});
+
+/* Deletes a group from the database.
+ */
+app.delete('/delete/group', function(req, res) {
+});
+
+/* Add new member to group.
+ */
+app.post('/group/add/member', function(req, res){
+});
+
+/* Removes user from group
+ */
+app.delete('/group/remove/member', function(req, res) {
 });
 
 function logInfo(method, status, path) {
