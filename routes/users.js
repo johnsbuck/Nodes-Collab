@@ -8,7 +8,7 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
 /* GET user */
 router.get('/get', function(req, res, next) {
   pg.connect(connectionString, function(err, client, done) {
-    client.query('SELECT first_name, last_name, username, email ' +
+    client.query('SELECT first_name, last_name, username, email, gender, birthdate ' +
       'FROM users WHERE username = \'' + req.body.username + '\';',
       function(err, result) {
         done();
