@@ -9,20 +9,20 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
  * If no post exists, return a 204 status code.
  */
 app.get('/', function(req, res) {
-	client.query('SELECT * FROM user_group_perm WHERE id=' + req.body.id + ';');
+	client.query('SELECT * FROM COMMENTS WHERE id=' + req.body.id + ';');
 	return query;
 });
 
 /* Posts a given post onto the database.
  */
 app.post('/', function(req, res) {
-	client.query('INSERT INTO user_group_perm VALUES (' + req.body + ');');
+	client.query('INSERT INTO COMMENTS VALUES (' + req.body + ');');
 });
 
 /* Deletes a given post onto the database.
  */
 app.delete('/', function(req, res) {
-	client.query('DELETE FROM user_group_perm WHERE id=' + req.body.id +';');
+	client.query('DELETE FROM COMMENTS WHERE id=' + req.body.id +';');
 });
 
 module.exports = router;
