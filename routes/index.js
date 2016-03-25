@@ -24,7 +24,6 @@ router.post('/login', function(req, res, next) {
          done();
 
          if(passHash.verify(req.body.pass, hashpass)) {
-           console.log("test");
            res.status(202).sendFile(path.join(__dirname, '../public','main.html'));
          } else {
            res.status(401).sendFile(path.join(__dirname, '../public', 'Signin.html'));
