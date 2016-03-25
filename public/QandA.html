@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>NodesConnect Settings</title>
+    <title>NodesConnect Q and A</title>
 
     <!-- Bootstrap core CSS -->
     <link href="../Bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -43,7 +43,7 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             <li><a href="main.html">Dashboard</a></li>
-            <li><a href="#">Settings</a></li>
+            <li><a href="SettingsEx.html">Settings</a></li>
             <li><a href="ProfileEx.html">Profile</a></li>
             <li><a href="Help.html">Help</a></li>
           </ul>
@@ -83,7 +83,7 @@
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
             <li><a href="main.html">Home <span class="sr-only">(current)</span></a></li>
-            <li><a href="QandA.html" class="QA" onclick="QA()">Q and A</a></li>
+            <li class="active"><a href="#" class="QA" onclick="QA()">Q and A</a></li>
             <li><a href="ProjectCollab.html">Project Collab</a></li>
             <li><a href="FreelanceEx.html" class="Freelance" onclick="FreeLance()">Freelance Work</a></li>
           </ul>
@@ -94,50 +94,66 @@
           </ul>
           <ul class="nav nav-sidebar">
             <li><a href="SearchEx.html">Search</a></li>
-            <li  class="active"><a href="#">Settings</a></li>
+            <li><a href="SettingsEx.html">Settings</a></li>
             <li><a href="ProfileEx.html">Profile</a></li>
           </ul>
         </div>
       </div>
     </div>
 
-    <div class="main col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
-        <nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#">Settings</a>
+
+
+      <body>
+
+    <div class="blog-masthead">
+      <div class="container">
+        <nav class="blog-nav">
+          <a class="blog-nav-item" href="#">Filter</a>
+          <a class="blog-nav-item" href="#">Post</a>
+        </nav>
+      </div>
     </div>
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="#">General <span class="sr-only">(current)</span></a></li>
-        <li><a href="#">Privacy</a></li>
-        <li><a href="#">Blocked</a></li>
-      </ul>
+    <div class="container">
 
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
-</nav>
+      <div class="blog-header">
+        <h1 class="blog-title">Question and Answers</h1>
+        <p class="lead blog-description">Ask Questions, Answer Questions.</p>
+      </div>
 
+      <div class="row">
+
+        <div class="col-sm-8 blog-main">
+
+            <!--DELETE upon connecting with actual posts. -->
+              <ul>
+               <li>FILL ME</li>
+                <li>FILL ME</li>
+                <li>FILL ME</li>
+              </ul>
+          
+
+            <nav>
+            <ul class="pager">
+              <li><a href="#">Previous</a></li>
+              <li><a href="#">Next</a></li>
+            </ul>
+          </nav>
+
+        </div><!-- /.blog-main -->
+
+      </div><!-- /.row -->
+
+    </div><!-- /.container -->
 
     <footer class="blog-footer">
-      <h6>Settings page built for NodesConnect</h6>
+      <h6>Q And A page built for NodesConnect</h6>
       <p>
         <a href="#">Back to top</a>
       </p>
     </footer>
-
-
-    </div>
 
     <div class="messaging container" id="messaging" style="display:none;">
         <div class="row">
@@ -238,11 +254,15 @@
         </div>
     </div>
 
+
+
+
+
+    </div>
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="../JS/FreeLance.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script>
       $(document).ready(function() {
         $('.Messanger').click(function() {
@@ -261,7 +281,6 @@
     </script>
     <script>window.jQuery || document.write('<script src="../Bootstrap/assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script src="../Bootstrap/dist/js/bootstrap.min.js"></script>
-
     <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
     <script src="../../assets/js/vendor/holder.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
