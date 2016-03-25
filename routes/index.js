@@ -17,7 +17,6 @@ router.post('/login', function(req, res, next) {
          res.sendStatus(406);
        }else if(!result || result.rows.length === 0) {
          done();
-         console.log(result);
          res.status(404).sendFile(path.join(__dirname, '../public', 'Signin.html'));
        }else {
          var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
