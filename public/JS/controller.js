@@ -61,7 +61,12 @@ app.controller('loginCtrl', function($scope, $http, $location) {
 
 app.controller('settingsCtrl', function($scope, $http) {
   $scope.sub = function() {
-
+    $http.put('' , $scope.formData)
+    success(function(data) {
+      console.log('Sent to the server successfully.');
+    }).error(function(data) {
+      console.log('ERROR: Not sent to server.');
+    });
   }
 });
 
