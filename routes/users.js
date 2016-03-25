@@ -61,9 +61,11 @@ router.delete('/delete', function(req, res, next) {
 
 router.put('/create', function(req, res, next) {
   pg.connect(connectionString, function(err, client, done) {
+    console.log(req.body);
     var hashlist = passHash.generate(req.body.pass).split('$');
     pass = hashlist[3];
     salt = hashlist[1];
+    console.log(hashlist);
     client.query('INSERT INTO users VALUES (\'' + req.body.username + '\', \'' +
       pass + '\', \'' + salt + '\', \'' +
       req.body.email + '\', \'' + req.body.first_name + '\', \'' +

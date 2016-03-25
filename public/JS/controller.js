@@ -3,7 +3,7 @@ var app = angular.module('nodesConnect', []);
 app.controller('newUserCtrl', function($scope, $http) {
     $scope.sub = function() {
         console.log($scope.formData);
-        $http.post('/register', $scope.formData).
+        $http.put('/user/create', $scope.formData).
         success(function(data) {
             console.log('Sent to sever successfully.');
         }).error(function(data){
