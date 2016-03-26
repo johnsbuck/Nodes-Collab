@@ -8,9 +8,10 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
 /* Returns the post of the given post id and a 200 status code.
  * If no post exists, return a 204 status code.
  */
-app.get('/', function(req, res) {
-	client.query('SELECT * FROM user_group_perm WHERE id=' + req.body.id + ';');
-	return query;
+app.get('/get/info', function(req, res) {
+	pg.connect(connectionString, function(err, client, done) {
+		client.query('');
+	});
 });
 
 /* Posts a given post onto the database.

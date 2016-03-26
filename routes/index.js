@@ -6,7 +6,7 @@ var path = require('path');
 
 var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhost/nodesconnect';
 
-router.post('/login', function(req, res, next) {
+router.put('/login', function(req, res, next) {
   console.log(req.body);
   pg.connect(connectionString, function(err, client, done) {
     client.query('SELECT pass, salt FROM users WHERE email = \'' + req.body.email + '\';',
