@@ -14,7 +14,6 @@ app.controller('newUserCtrl', function($scope, $http) {
 });
 
 app.controller('loginCtrl', function($scope, $http, $location) {
-<<<<<<< HEAD
   $scope.sub = function() {
     console.log($scope.formData);
     console.log($http.defaults.headers.common);
@@ -44,7 +43,6 @@ app.controller('loginCtrl', function($scope, $http, $location) {
       };
 
       $scope.sub($scope.formData);
-=======
     $scope.sub = function() {
         console.log($scope.formData);
         $http.post('/login', $scope.formData).
@@ -54,7 +52,6 @@ app.controller('loginCtrl', function($scope, $http, $location) {
         }).error(function(data){
             console.log('ERROR: Not sent to server.');
         });
->>>>>>> Updated paths for .css files, added change to bring back new signup button
     }
   };
 });
