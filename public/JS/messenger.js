@@ -1,0 +1,100 @@
+var socket = io.connect('http://localhost:8000');
+
+// Taken from http://www.jquerybyexample.net/2012/06/get-url-parameters-using-jquery.html
+function getParameterUrl(sParam) {
+  var sPageURL = window.location.search.substring(1);
+	var sURLVariables = sPageURL.split('?');
+	for (var i = 0; i < sURLVariables.length; i++)
+	{
+	  var sParameterName = sURLVariables[i].split('=');
+	  if (sParameterName[0] == sParam)
+	  {
+	    return sParameterName[1];
+	  }
+	}
+
+  return null;
+}
+
+// on connection to server, ask for user's name with an anonymous callback
+socket.on('connect', function(){
+	// call the server-side function 'adduser' and send one parameter (value of prompt)
+  var otheruser = getParameterUrl('user');
+
+  if (otheruser == sessionStorage.username) {
+    otheruser = null;
+  }
+
+	socket.emit('adduser', sessionStorage.username, otheruser);
+});
+
+// listener, whenever the server emits 'updatechat', this updates the chat body
+socket.on('updatechat', function (username, data) {
+  time = new Date().toLocaleString();
+  if(username !== socket.username) {
+	   $('#conversation').append('<b>'+ username + ':</b> ' + data + '<br>' + time + '<br>');
+  } else {
+    $('#conversation').append('<b>'+ username + ':</b> ' + data + '<br>' + time + '<br>');
+  }
+});
+
+// listener, whenever the server emits 'updateusers', this updates the username list
+socket.on('updateusers', function(data) {
+	$('#users').empty();
+  console.log('username given: ' + data['username']);
+  console.log('otheruser given: ' + data['otheruser']);
+
+  if(sessionStorage.username == data['username'] && data['otheruser']) {
+    sessionStorage.otheruser = data['otheruser'];
+  }
+
+  console.log("Other User: " + sessionStorage.otheruser);
+
+  if(typeof sessionStorage.otheruser === 'string') {
+    $('#users').append('<a href="?">Return to General</a><br><br>');
+    $('#users').append(sessionStorage.otheruser + '<br>');
+  }
+
+  $('#users').append(sessionStorage.username + '<br>');
+
+  console.log(data['users']);
+
+	$.each(data['users'], function(index, value) {
+    if(value !== sessionStorage.username && (!sessionStorage.otheruser || value !== sessionStorage.otheruser)) {
+		    $('#users').append('<a href="?user=' + value + '">' + value + '</a><br>');
+    }
+	});
+});
+
+$(window).unload(function() {
+  socket.emit('disconnect');
+
+  sessionStorage.removeItem('otheruser');
+});
+
+// on load of page
+$(function(){
+	// when the client clicks SEND
+	$('#datasend').click( function() {
+		var message = $('#data').val();
+		$('#data').val('');
+		// tell server to execute 'sendchat' and send along one parameter
+		socket.emit('sendchat', message);
+	});
+
+	// when the client hits ENTER on their keyboard
+	$('#data').keypress(function(e) {
+		if(e.which == 13) {
+			$(this).blur();
+			$('#datasend').focus().click();
+		}
+	});
+
+  $('#users a').click(function() {
+    $('#conversation').clear();
+    var otheruser = getParameterUrl('user');
+    if(otheruser !== socket.username) {
+      socket.emit('switchuser', otheruser);
+    }
+  });
+});

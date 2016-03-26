@@ -7,8 +7,9 @@ client.connect();
 var user = 'CREATE TABLE users (username VARCHAR(40) PRIMARY KEY, ' +
                                 'pass VARCHAR(128) NOT NULL, salt VARCHAR(32) NOT NULL,' +
                                 'email VARCHAR(40) UNIQUE NOT NULL, ' +
-                                'first_name VARCHAR(40) NOT NULL, last_name VARCHAR(40) NOT NULL' +
-                                'gender INTEGER NOT NULL, birthdate DATE NOT NULL);';
+                                'first_name VARCHAR(40) NOT NULL, last_name VARCHAR(40) NOT NULL, ' +
+                                'gender VARCHAR(40) NOT NULL);';
+
 var group = 'CREATE TABLE groups (groupname VARCHAR(40) PRIMARY KEY, ' +
                                   'dirpath VARCHAR(40) NOT NULL, ' +
                                   'privacy INTEGER NOT NULL);';

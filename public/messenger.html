@@ -26,8 +26,16 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <!-- JQuery -->
+    <script src="JS/jquery.js"></script>
+
+    <!-- AngularJS -->
     <script src="JS/angular.min.js"></script>
     <script src="JS/controller.js"></script>
+
+    <!-- Socket.IO -->
+    <script src="JS/socket.io.js"></script>
+    <script src="JS/messenger.js"></script>
   </head>
 
   <body ng-controller="mainCtrl">
@@ -85,7 +93,7 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">Home <span class="sr-only">(current)</span></a></li>
+            <li><a href="#">Home <span class="sr-only">(current)</span></a></li>
             <li><a href="QandA.html" class="QA" onclick="QA()">Q and A</a></li>
             <li><a href="ProjectCollab.html">Project Collab</a></li>
             <li><a href="FreelanceEx.html" class="Freelance" onclick="FreeLance()">Freelance Work</a></li>
@@ -93,7 +101,7 @@
           <ul class="nav nav-sidebar">
             <li><a href="TextEditorEx.html"  >Text Editor</a></li>
             <li><a href="MyProject.html">My Projects</a></li>
-            <li><a href="#" class="Messanger">Messaging</a></li>
+            <li class="active"><a href="#" class="Messenger">Messaging</a></li>
           </ul>
           <ul class="nav nav-sidebar">
             <li><a href="SearchEx.html">Search</a></li>
@@ -104,16 +112,17 @@
       </div>
     </div>
 
+    <!--MAIN DIV USED-->
     <div class="main col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
-       <p>{{ message }}</p>
-
-    <footer class="blog-footer">
-      <h6>Home page built for NodesConnect</h6>
-      <p>
-        <a href="#">Back to top</a>
-      </p>
-    </footer>
-</div>
+      <div style="float:left;width:100px;border-right:1px solid black;height:300px;padding:10px;overflow:scroll-y;">
+      	<b>USERS</b>
+      	<div id="users"></div>
+      </div>
+      <div style="float:left;width:300px;height:250px;overflow:scroll-y;padding:10px;">
+      	<div id="conversation"></div>
+      	<input id="data" style="width:200px;" />
+      	<input type="button" id="datasend" value="send" />
+      </div>
 
     <div class="messaging container" id="messaging" style="display:none;">
         <div class="row">

@@ -15,7 +15,7 @@ router.put('/get', function(req, res, next) {
   pg.connect(connectionString, function(err, client, done) {
     var where_clause = null;
     console.log(req.body);
-    if (req.body.username) {    console.log(hashlist);
+    if (req.body.username) {
       where_clause = 'username = \'' + req.body.username + '\'';
     }else if (req.body.email) {
       where_clause = 'email = \'' + req.body.email + '\'';
