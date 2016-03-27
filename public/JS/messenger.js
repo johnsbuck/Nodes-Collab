@@ -31,10 +31,15 @@ socket.on('connect', function(){
 // listener, whenever the server emits 'updatechat', this updates the chat body
 socket.on('updatechat', function (username, data) {
   time = new Date().toLocaleString();
-  if(username !== socket.username) {
-	   $('#conversation').append('<b>'+ username + ':</b> ' + data + '<br>' + time + '<br>');
-  } else {
-    $('#conversation').append('<b>'+ username + ':</b> ' + data + '<br>' + time + '<br>');
+
+  var scroll = document.getElementById('conversation');
+  var oldScrollHeight = scroll.scrollHeight;
+  var oldScrollTop = scroll.scrollTop;
+
+  $('#conversation').append('<b>'+ username + ':</b> ' + data + '<br>' + time + '<br>');
+
+  if(oldScrollTop + scroll.clientHeight === oldScrollHeight) {
+    scroll.scrollTop = scroll.scrollHeight;
   }
 });
 
@@ -52,10 +57,13 @@ socket.on('updateusers', function(data) {
 
   if(typeof sessionStorage.otheruser === 'string') {
     $('#users').append('<a href="?">Return to General</a><br><br>');
+    $('#users').append(sessionStorage.username + '<br>');
     $('#users').append(sessionStorage.otheruser + '<br>');
+  } else {
+    $('#users').append(sessionStorage.username + '<br>');
   }
 
-  $('#users').append(sessionStorage.username + '<br>');
+  $('#users').append('<br>');
 
   console.log(data['users']);
 
@@ -77,9 +85,11 @@ $(function(){
 	// when the client clicks SEND
 	$('#datasend').click( function() {
 		var message = $('#data').val();
-		$('#data').val('');
-		// tell server to execute 'sendchat' and send along one parameter
-		socket.emit('sendchat', message);
+    if(message.length > 0) {
+		  $('#data').val('');
+		  // tell server to execute 'sendchat' and send along one parameter
+		  socket.emit('sendchat', message);
+    }
 	});
 
 	// when the client hits ENTER on their keyboard
