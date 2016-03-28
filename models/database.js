@@ -16,7 +16,7 @@ var group = 'CREATE TABLE groups (groupname VARCHAR(40) PRIMARY KEY, ' +
 var user_group_perm = 'CREATE TABLE user_group_perms (username VARCHAR(40) REFERENCES users (username), ' +
                                     'groupname VARCHAR(40) REFERENCES groups (groupname), ' +
                                     'permissions INTEGER NOT NULL, ' +
-                                    'PRIMARY KEY(username, groupname));';
+                                    'PRIMARY KEY (username, groupname));';
 var basic_post = 'CREATE TABLE posts (id SERIAL PRIMARY KEY, ' +
                                 'username VARCHAR(40) REFERENCES users (username), ' +
                                 'timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, ' +
