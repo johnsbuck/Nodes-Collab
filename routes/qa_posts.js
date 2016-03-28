@@ -5,28 +5,115 @@ var pg = require('pg');
 
 var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhost/nodesconnect';
 
-/* Returns the post of the given post id and a 200 status code.
- * If no post exists, return a 204 status code.
+/* /get
+ * Method: PUT (Should be GET)
+ *
+ * Returns all qa_posts.
  */
-app.get('/get', function(req, res) {
-	client.query('SELECT * FROM POST WHERE id = \'' + req.body.id + '\';');
+app.put('/get', function(req, res) {
+	pg.connect(connectionString, function(err, client, done) {
+		client.query('SELECT * FROM posts WHERE type=0;',
+		function(err, result) {
+			if(err) {
+				console.error(err);
+				res.sendStatus(406);
+			}else if(!result || result.rows.length === 0) {
+				res.sendStatus(204);
+			}else {
+				res.status(202).send(result.rows);
+			}
+		});
+	});
 });
 
-/* Posts a given post onto the database.
+/* /get/post
+ * Method: PUT (Should be GET)
+ *
+ * Returns a single Q&A post.
  */
-app.put('/post', function(req, res) {
-	client.query('INSERT INTO POST VALUES (\'' + req.body + '\');');
+app.put('/get/post', function(req, res) {
+	pg.connect(connectionString, function(err, client, done) {
+		client.query('SELECT * FROM posts WHERE id = \'' + req.body.id + '\' AND type=\'0\';',
+		function(err, result) {
+			if(err) {
+				console.error(err);
+				res.sendStatus(406);
+			}else if(!result || result.rows.length === 0) {
+				res.sendStatus(204);
+			}else {
+				res.status(202).send(result.rows[0]);
+			}
+		});
+	});
 });
 
-/* Deletes a given post onto the database.
+/* /post
+ * Method: POST
+ *
+ * Submits a single Q&A POST. Requires username and password.
+ */
+app.post('/post', function(req, res) {
+	pg.connect(connectionString, function(err, client, done) {
+		client.query('INSERT INTO posts (username, timestamp, title, text, type) VALUES ' +
+								'(\'' + req.body.username + '\', \'' + req.body.timestamp +'\', \'' + req.body.title + '\' ' +
+								'\'' + req.body.text + '\', \'0\');',
+								function(err, result) {
+									if(err) {
+										console.error(err);
+										res.sendStatus(406);
+									} else {
+										res.sendStatus(206);
+									}
+								});
+							});
+});
+
+/* /delete
+ * Method: DELETE
+ *
+ * Deletes a single Q&A post. Requires username and password.
  */
 app.delete('/delete', function(req, res) {
-	client.query('DELETE FROM POST WHERE id = \'' + req.body.id + '\';');
+	pg.connect(connectionString, function(err, client, done) {
+		client.query('DELETE FROM posts WHERE id = \'' + req.body.id + '\' and type=\'0\';',
+								function(err, result) {
+									if(err) {
+										console.error(err);
+										res.sendStatus(406);
+									} else {
+										res.sendStatus(202);
+									}
+								});
+							});
 });
 
+/* /edit
+ * Method: PUT
+ *
+ * Edits a single Q&A post. Requires username and password.
+ */
 app.put('/edit', function(req, res) {
-	text = req.body.text.replace('\'', '\'\'');
-	client.query('UPDATE POST SET text = \'' req.body.text + '\'');
-})
+	var sqlQuery = 'UPDATE posts SET ';
+	if(req.body.text) {
+		sqlQuery += 'test = \'' + req.body.text.replace('\'', '\'\'') + '\'';
+	}
+	if(req.body.title) {
+		sqlQuery += ', title = \'' + req.body.title.replace('\'', '\'\'') + '\'';
+	}
+
+	sqlQuery += ';';
+
+	pg.connect(connectionString, function(err, client, done) {
+		client.query(sqlQuery,
+								function(err, result) {
+									if(err) {
+										console.error(err);
+										res.sendStatus(406);
+									} else {
+										res.sendStatus(206);
+									}
+								});
+							});
+});
 
 module.exports = router;

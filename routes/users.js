@@ -5,19 +5,35 @@ var pg = require('pg');
 
 var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhost/nodesconnect';
 
-/* GET user */
-router.get('/get', function(req, res, next) {
+/* /get
+ * Method: PUT (Should be GET)
+ *
+ * Gets the description of a single user that either matches their email or
+ * their username.
+ */
+router.put('/get', function(req, res, next) {
   pg.connect(connectionString, function(err, client, done) {
-    client.query('SELECT first_name, last_name, username, email, gender, birthdate ' +
-      'FROM users WHERE username = \'' + req.body.username + '\';',
+    var where_clause = null;
+    console.log(req.body);
+    if (req.body.username) {    console.log(hashlist);
+      where_clause = 'username = \'' + req.body.username + '\'';
+    }else if (req.body.email) {
+      where_clause = 'email = \'' + req.body.email + '\'';
+    }
+
+    console.log(where_clause);
+
+    client.query('SELECT first_name, last_name, username, email, gender ' +
+      'FROM users WHERE ' + where_clause + ';',
       function(err, result) {
         done();
+        console.log(result);
 
         if(err) {
           console.error(err);
           res.sendStatus(406);
         }else if(!result || result.rows.length === 0) {
-          res.sendStatus(404);
+          res.sendStatus(204);
         }else {
           res.status(202).send(result.rows[0]);
         }
@@ -25,6 +41,11 @@ router.get('/get', function(req, res, next) {
   })
 });
 
+/* /delete
+ * Method: DELETE
+ *
+ * Deletes a single user. Requires their username and password to proceed.
+ */
 router.delete('/delete', function(req, res, next) {
   pg.connect(connectionString, function(err, client, done) {
      client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
@@ -59,6 +80,13 @@ router.delete('/delete', function(req, res, next) {
   });
 });
 
+
+/* /create
+ * Method: PUT
+ *
+ * Creates a new user. Requires their basic information that should match with
+ * the 'NewUser.html' form.
+ */
 router.put('/create', function(req, res, next) {
   pg.connect(connectionString, function(err, client, done) {
     console.log(req.body);
@@ -69,7 +97,7 @@ router.put('/create', function(req, res, next) {
     client.query('INSERT INTO users VALUES (\'' + req.body.username + '\', \'' +
       pass + '\', \'' + salt + '\', \'' +
       req.body.email + '\', \'' + req.body.first_name + '\', \'' +
-      req.body.last_name + '\');',
+      req.body.last_name + '\', \'' + req.body.dob + '\');',
       function(err, result) {
         done();
 
@@ -83,6 +111,11 @@ router.put('/create', function(req, res, next) {
   });
 });
 
+/* /edit/pass
+ * Method: PUT
+ *
+ * Edits the password for a user. Requires their password to continue.
+ */
 router.put('/edit/pass', function(req, res, next) {
   pg.connect(connectionString, function(err, client, done) {
     client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
