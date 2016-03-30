@@ -15,7 +15,7 @@
     <link href="../Bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <link href="../Bootstrap/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="../CSS/main.css" rel="stylesheet">
@@ -113,16 +113,28 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">My Projects</a>
+      <a class="navbar-brand">My Projects</a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="#">All Projects <span class="sr-only">(current)</span></a></li>
-        <li><a href="#">Posted by Me</a></li>
-        <li><a href="#">Collaborator</a></li>
+        <li class="active"><a data-toggle="tab" href="#All">All Projects <span class="sr-only">(current)</span></a></li>
+        <li><a data-toggle="tab" href="#Posted">Posted by Me</a> </li>
+        <li><a data-toggle="tab" href="#Collaborator">Collaborator</a></li>
       </ul>
+
+      <div class="tab-content">
+            <div id="All" class="tab-pane fade in active">
+                <h3>PUT ALL PROJECTS HERE</h3>
+            </div>
+            <div id="Posted" class="tab-pane fade">
+                <h3>PUT POSTED BY ME HERE</h3>
+            </div>
+            <div id="Collaborator" class="tab-pane fade">
+                <h3>PUT COLLABORATOR PROJECTS HERE</h3>
+            </div>
+        </div>
 
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
@@ -261,10 +273,9 @@
     </script>
     <script>window.jQuery || document.write('<script src="../Bootstrap/assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script src="../Bootstrap/dist/js/bootstrap.min.js"></script>
-
     <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
-    <script src="../../assets/js/vendor/holder.min.js"></script>
+    <script src="../Bootstrap/assets/js/vendor/holder.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+    <script src="../Bootstrap/assets/js/ie10-viewport-bug-workaround.js"></script>
   </body>
 </html>

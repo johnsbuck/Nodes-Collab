@@ -13,22 +13,37 @@ var user = 'CREATE TABLE users (username VARCHAR(40) PRIMARY KEY, ' +
 var group = 'CREATE TABLE groups (groupname VARCHAR(40) PRIMARY KEY, ' +
                                   'dirpath VARCHAR(40) NOT NULL, ' +
                                   'privacy INTEGER NOT NULL);';
+
 var user_group_perm = 'CREATE TABLE user_group_perms (username VARCHAR(40) REFERENCES users (username), ' +
                                     'groupname VARCHAR(40) REFERENCES groups (groupname), ' +
                                     'permissions INTEGER NOT NULL, ' +
-                                    'PRIMARY KEY(username, groupname));';
-var post = 'CREATE TABLE posts (id SERIAL PRIMARY KEY, ' +
+                                    'PRIMARY KEY (username, groupname));';
+
+var basic_post = 'CREATE TABLE posts (id SERIAL PRIMARY KEY, ' +
                                 'username VARCHAR(40) REFERENCES users (username), ' +
                                 'timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, ' +
+                                'title VARCHAR(64) NOT NULL UNIQUE, ' +
+                                'text VARCHAR(63206) NOT NULL, ' +
                                 'type INTEGER NOT NULL);';
-var comment = 'CREATE TABLE comments (id SERIAL PRIMARY KEY, ' +
+
+var comment = 'CREATE TABLE comments (id SERIAL NOT NULL, ' +
                                     'username VARCHAR(40) REFERENCES users (username), ' +
                                     'post_id INTEGER REFERENCES posts (id), ' +
                                     'timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, ' +
-                                    'type INTEGER NOT NULL);';
-var tag = 'CREATE TABLE tags (post_id INTEGER PRIMARY KEY REFERENCES posts (id), ' +
-                              'tag VARCHAR(40));';
+                                    'type INTEGER NOT NULL, ' +
+                                    'PRIMARY KEY (id, post_id));';
 
-var query = client.query(user + group + user_group_perm + post + comment + tag);
+var tag = 'CREATE TABLE tags (post_id INTEGER NOT NULL REFERENCES posts (id), ' +
+                              'tag VARCHAR(40) NOT NULL, ' +
+                              'PRIMARY KEY (post_id, tag));';
+
+var group_post = 'CREATE TABLE group_posts (id SERIAL NOT NULL, ' +
+                                'groupname VARCHAR(40) NOT NULL REFERENCES groups (groupname), ' +
+                                'username VARCHAR(40) NOT NULL REFERENCES users (username), ' +
+                                'text VARCHAR(63206) NOT NULL, ' +
+                                'timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,' +
+                                'PRIMARY KEY (id, groupname));';
+
+var query = client.query(user + group + user_group_perm + basic_post + group_post + comment + tag);
 
 query.on('end', function() { client.end(); });

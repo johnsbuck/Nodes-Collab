@@ -5,7 +5,16 @@ var pg = require('pg');
 
 var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhost/nodesconnect';
 
+<<<<<<< HEAD
 /* GET user */
+=======
+/* /get
+ * Method: PUT (Should be GET)
+ *
+ * Gets the description of a single user that either matches their email or
+ * their username.
+ */
+>>>>>>> 09f5f989f808aefc6bd8ddff2764b18a741db429
 router.put('/get', function(req, res, next) {
   pg.connect(connectionString, function(err, client, done) {
     var where_clause = null;
@@ -36,6 +45,11 @@ router.put('/get', function(req, res, next) {
   })
 });
 
+/* /delete
+ * Method: DELETE
+ *
+ * Deletes a single user. Requires their username and password to proceed.
+ */
 router.delete('/delete', function(req, res, next) {
   pg.connect(connectionString, function(err, client, done) {
      client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
@@ -70,6 +84,13 @@ router.delete('/delete', function(req, res, next) {
   });
 });
 
+
+/* /create
+ * Method: PUT
+ *
+ * Creates a new user. Requires their basic information that should match with
+ * the 'NewUser.html' form.
+ */
 router.put('/create', function(req, res, next) {
   pg.connect(connectionString, function(err, client, done) {
     console.log(req.body);
@@ -77,10 +98,14 @@ router.put('/create', function(req, res, next) {
     pass = hashlist[3];
     salt = hashlist[1];
     console.log(hashlist);
-    client.query('INSERT INTO users VALUES (\'' + req.body.username + '\', \'' +
+    client.query('INSERT INTO users (username, pass, salt, email, first_name, last_name, gender) VALUES (\'' + req.body.username + '\', \'' +
       pass + '\', \'' + salt + '\', \'' +
       req.body.email + '\', \'' + req.body.first_name + '\', \'' +
+<<<<<<< HEAD
       req.body.last_name + '\', \'' + req.body.dob + '\');',
+=======
+      req.body.last_name + '\', \'' + req.body.gender + '\');',
+>>>>>>> 09f5f989f808aefc6bd8ddff2764b18a741db429
       function(err, result) {
         done();
 
@@ -94,6 +119,11 @@ router.put('/create', function(req, res, next) {
   });
 });
 
+/* /edit/pass
+ * Method: PUT
+ *
+ * Edits the password for a user. Requires their password to continue.
+ */
 router.put('/edit/pass', function(req, res, next) {
   pg.connect(connectionString, function(err, client, done) {
     client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',

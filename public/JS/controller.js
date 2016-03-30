@@ -43,13 +43,27 @@ app.controller('loginCtrl', function($scope, $http, $location) {
       };
 
       $scope.sub($scope.formData);
+    $scope.sub = function() {
+        console.log($scope.formData);
+        $http.post('/login', $scope.formData).
+        success(function(data) {
+          window.location.replace('main.html' , 'Signin.html');
+            console.log('Sent to sever successfully.');
+        }).error(function(data){
+            console.log('ERROR: Not sent to server.');
+        });
     }
   };
 });
 
 app.controller('settingsCtrl', function($scope, $http) {
   $scope.sub = function() {
-
+    $http.put('' , $scope.formData)
+    success(function(data) {
+      console.log('Sent to the server successfully.');
+    }).error(function(data) {
+      console.log('ERROR: Not sent to server.');
+    });
   }
 });
 
