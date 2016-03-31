@@ -54,18 +54,32 @@ app.put('/get/post', function(req, res) {
  */
 app.post('/post', function(req, res) {
 	pg.connect(connectionString, function(err, client, done) {
-		client.query('INSERT INTO posts (username, timestamp, title, text, type) VALUES ' +
-								'(\'' + req.body.username + '\', \'' + req.body.timestamp +'\', \'' + req.body.title + '\' ' +
-								'\'' + req.body.text + '\', \'0\');',
-								function(err, result) {
-									if(err) {
-										console.error(err);
-										res.sendStatus(406);
-									} else {
-										res.sendStatus(206);
-									}
-								});
-							});
+     client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
+      function(err, result) {
+        if(err) {
+          console.error(err);
+          res.sendStatus(406);
+        }else if(!result || result.rows.length === 0) {
+          done();
+          res.sendStatus(404);
+        }else {
+          var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
+
+          if(passHash.verify(req.body.pass, hashpass)) {
+						client.query('INSERT INTO posts (username, timestamp, title, text, type) VALUES ' +
+												'(\'' + req.body.username + '\', \'' + req.body.timestamp +'\', \'' + req.body.title + '\' ' +
+												'\'' + req.body.text + '\', \'0\');',
+						function(err, result) {
+							if(err) {
+								console.error(err);
+								res.sendStatus(406);
+							} else {
+								res.sendStatus(206);
+							}
+						});
+					}
+				}
+	});
 });
 
 /* /delete
@@ -75,16 +89,32 @@ app.post('/post', function(req, res) {
  */
 app.delete('/delete', function(req, res) {
 	pg.connect(connectionString, function(err, client, done) {
-		client.query('DELETE FROM posts WHERE id = \'' + req.body.id + '\' and type=\'0\';',
-								function(err, result) {
-									if(err) {
-										console.error(err);
-										res.sendStatus(406);
-									} else {
-										res.sendStatus(202);
-									}
-								});
-							});
+     client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
+      function(err, result) {
+        if(err) {
+          console.error(err);
+          res.sendStatus(406);
+        }else if(!result || result.rows.length === 0) {
+          done();
+          res.sendStatus(404);
+        }else {
+          var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
+
+          if(passHash.verify(req.body.pass, hashpass)) {
+						client.query('DELETE FROM posts WHERE id = \'' + req.body.id + '\' AND username=\'' + req.body.username +
+							'\' AND type=\'0\';',
+						function(err, result) {
+							if(err) {
+								console.error(err);
+								res.sendStatus(406);
+							} else {
+								res.sendStatus(202);
+							}
+						});
+						}
+					}
+				});
+			});
 });
 
 /* /edit
@@ -95,25 +125,40 @@ app.delete('/delete', function(req, res) {
 app.put('/edit', function(req, res) {
 	var sqlQuery = 'UPDATE posts SET ';
 	if(req.body.text) {
-		sqlQuery += 'test = \'' + req.body.text.replace('\'', '\'\'') + '\'';
+		sqlQuery += 'text = \'' + req.body.text.replace('\'', '\'\'') + '\'';
 	}
 	if(req.body.title) {
 		sqlQuery += ', title = \'' + req.body.title.replace('\'', '\'\'') + '\'';
 	}
 
-	sqlQuery += ';';
+	sqlQuery += ' WHERE username = \'' + req.body.username + '\' AND id = \'' + req.body.id + '\';';
 
 	pg.connect(connectionString, function(err, client, done) {
-		client.query(sqlQuery,
-								function(err, result) {
-									if(err) {
-										console.error(err);
-										res.sendStatus(406);
-									} else {
-										res.sendStatus(206);
-									}
-								});
-							});
+		client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
+		 function(err, result) {
+			 if(err) {
+				 console.error(err);
+				 res.sendStatus(406);
+			 }else if(!result || result.rows.length === 0) {
+				 done();
+				 res.sendStatus(404);
+			 }else {
+				 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
+
+				 if(passHash.verify(req.body.pass, hashpass)) {
+					client.query(sqlQuery,
+						function(err, result) {
+							if(err) {
+								console.error(err);
+								res.sendStatus(406);
+							} else {
+								res.sendStatus(206);
+							}
+						});
+					}
+				}
+			});
+		});
 });
 
 module.exports = router;
