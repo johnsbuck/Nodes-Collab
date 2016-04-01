@@ -73,7 +73,7 @@ app.controller('mainCtrl', function($scope, $http) {
 
 app.controller('groupPostCtrl', function($scope, $http) {
   $scope.sub = function() {
-    $http.put('/', $scope.formData)
+    $http.put('/group/post', $scope.formData)
     success(function(data) {
       console.log('Sent to the server successfully.');
     }).error(function(data) {
