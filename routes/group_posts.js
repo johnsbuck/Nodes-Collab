@@ -12,7 +12,7 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
  * If no post exists, return a 204 status code.
  * If not authorized, return 403 status code.
  */
-app.put('/get/group', function(req, res) {
+router.put('/get/group', function(req, res) {
 	pg.connect(connectionString, function(err, client, done) {
 		client.query('SELECT permissions FROM user_group_perm WHERE groupname=\'' +
 			req.body.groupname + '\' AND username =\'' + req.body.username + '\';',
@@ -61,7 +61,7 @@ app.put('/get/group', function(req, res) {
 
 /* Posts a given post onto the database.
  */
-app.put('/post', function(req, res) {
+router.put('/post', function(req, res) {
 	client.query('INSERT INTO group_posts (groupname, username, text, timestamp) VALUES (\'' +
 		req.body.groupname + '\', \'' + req.body.username + '\', \'' + req.body.text + '\', \'' + req.body.timestamp + '\');',
 	function(err, result) {
@@ -69,7 +69,7 @@ app.put('/post', function(req, res) {
 		if(err) {
 			console.log(err);
 			res.sendStatus(406);
-		} else if(!resut || result.rows.length == 0) {
+		} else if(!result || result.rows.length == 0) {
 			res.sendStatus(204);
 		} else {
 			res.sendStatus(202);
@@ -79,13 +79,13 @@ app.put('/post', function(req, res) {
 
 /* Deletes a given post onto the database.
  */
-app.delete('/delete', function(req, res) {
+router.delete('/delete', function(req, res) {
 	client.query('DELETE FROM group_posts WHERE groupname=\'' + group.body.groupname + '\'AND id=\'' + group.body.id + '\';');
 });
 
-app.put('/edit', function(req, res) {
+router.put('/edit', function(req, res) {
 	text = req.body.text.replace('\'', '\'\'');
-	client.query('UPDATE POST SET text = \'' req.body.text + '\'');
+	client.query('UPDATE POST SET text = \'' + req.body.text + '\'');
 })
 
 module.exports = router;

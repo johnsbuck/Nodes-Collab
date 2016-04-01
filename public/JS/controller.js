@@ -70,3 +70,14 @@ app.controller('settingsCtrl', function($scope, $http) {
 app.controller('mainCtrl', function($scope, $http) {
   $scope.message = "Welcome back, " + sessionStorage.getItem('username');
 });
+
+app.controller('groupPostCtrl', function($scope, $http) {
+  $scope.sub = function() {
+    $http.put('/', $scope.formData)
+    success(function(data) {
+      console.log('Sent to the server successfully.');
+    }).error(function(data) {
+      console.log('ERROR: Not sent to server.');
+    });
+  }
+});
