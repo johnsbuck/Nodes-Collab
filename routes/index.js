@@ -6,22 +6,21 @@ var path = require('path');
 
 var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhost/nodesconnect';
 
-router.post('/login', function(req, res, next) {
+router.put('/login', function(req, res, next) {
   console.log(req.body);
   pg.connect(connectionString, function(err, client, done) {
     client.query('SELECT pass, salt FROM users WHERE email = \'' + req.body.email + '\';',
      function(err, result) {
        console.log(result);
+       done();
        if(err) {
          console.error(err);
          res.sendStatus(406);
        }else if(!result || result.rows.length === 0) {
-         done();
-         res.status(404).sendFile(path.join(__dirname, '../public', 'Signin.html'));
+
+         res.sendStatus(406);
        }else {
          var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
-         done();
-
          if(passHash.verify(req.body.pass, hashpass)) {
            res.status(202).sendFile(path.join(__dirname, '../public','main.html'));
          } else {
