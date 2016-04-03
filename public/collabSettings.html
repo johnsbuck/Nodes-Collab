@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="nodesConnect">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>NodesConnect Project Collab</title>
+    <title>NodesConnect Collab Settings</title>
 
     <!-- Bootstrap core CSS -->
     <link href="../Bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -19,12 +19,15 @@
 
     <!-- Custom styles for this template -->
     <link href="../CSS/main.css" rel="stylesheet">
+
+    <script src="JS/angular.min.js"></script>
+    <script src="JS/controller.js"></script>
   </head>
 
   <body>
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container-fluid">
+      <div class="container-fluid" ng-controller="settingsCtrl">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
@@ -37,7 +40,7 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             <li><a href="main.html">Dashboard</a></li>
-            <li><a href="SettingsEx.html">Settings</a></li>
+            <li><a href="#">Settings</a></li>
             <li><a href="ProfileEx.html">Profile</a></li>
             <li><a href="Help.html">Help</a></li>
           </ul>
@@ -47,21 +50,21 @@
             <ul class="dropdown-menu">
               <li>
                 <div class="form-group">
-                  <label for="filter">Search in:</label>
-                  <select class="form-control">
-                    <option value="0" selected>All</option>
-                    <option value="1">Projects</option>
-                    <option value="2">Freelance Work</option>
-                    <option value="3">Q&A</option>
-                    <option value="4">People</option>
-                  </select>
+                    <label for="filter">Search in:</label>
+                    <select class="form-control">
+                      <option value="0" selected>All</option>
+                      <option value="1">Projects</option>
+                      <option value="2">Freelance Work</option>
+                      <option value="3">Q&A</option>
+                      <option value="4">People</option>
+                    </select>
                 </div>
               </li> <label></label>
               <li>
                 <label for="contain">Contains the words</label>
                 <input class="form-control" type="text" />
-              </li> <label></label>
-                <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+               </li> <label></label>
+               <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
             </ul>
           </form>
         </div>
@@ -74,7 +77,7 @@
           <ul class="nav nav-sidebar">
             <li><a href="main.html">Home <span class="sr-only">(current)</span></a></li>
             <li><a href="QandA.html" class="QA" onclick="QA()">Q and A</a></li>
-            <li class="active"><a href="#">Project Collab</a></li>
+            <li   class="active"> <a href="ProjectCollab.html">Project Collab</a></li>
             <li><a href="FreelanceEx.html" class="Freelance" onclick="FreeLance()">Freelance Work</a></li>
           </ul>
           <ul class="nav nav-sidebar">
@@ -91,77 +94,49 @@
       </div>
     </div>
 
-    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <div class="main col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
 
-    <div class="blog-masthead">
-      <div class="container">
-        <nav class="blog-nav">
-          <a class="blog-nav-item" href="#">Filter</a>
-          <a class="blog-nav-item" href="#">Post</a>
-          <a class="blog-nav-item" href="collabSettings.html">Settings</a>
-        </nav>
-      </div>
-    </div>
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand">Settings</a>
+                </div>
 
-    <div class="container">
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#General"> Switch Groups <span class="sr-only">(current)</span></a></li>
+                        <li><a data-toggle="tab" href="#privacy">People</a></li>
+                    </ul>
 
-      <div class="blog-header">
-        <h1 class="blog-title">Project Collaboration</h1>
-        <p class="lead blog-description">See Projects with others, Do Projects with others.</p>
-      </div>
-
-      <div class="main col-sm-9">
-         <h2>Recent Post Activity</h2>
-         <hr>
-         <div id="tableGen"></div>
-         <script type="text/javascript" src="JS/tableGen.js"></script>
-      </div>
-      <div class="row">
-
-        <div class="col-sm-8 blog-main">
-            <nav>
-            <ul class="pager">
-              <li><a href="#">Previous</a></li>
-              <li><a href="#">Next</a></li>
-            </ul>
-          </nav>
-
-        </div><!-- /.blog-main -->
-      </div><!-- /.row -->
-    </div><!-- /.container -->
-
-    <footer class="blog-footer">
-
-      <div class="container">
-        <div class="row">
-          <section class="panel panel-info">
-            <header class="panel-heading">
-              <div class="row">
-              <!--Author and Time stamp removed. Should be generated from user and time-->
-              <div class="col-xs-4"> <h4>Create a post </h4></div>
+      <div class="tab-content">
+            <div id="General" class="tab-pane fade in active">
+                <p>PUT groups here</p>
             </div>
-          </header>
-          <section class="row panel-body">
-            <section class="col-md-6">
-                            <h3>Enter a Title:</h3>
-                            <input type="text" name="postTitle">
-                            <h4> Post text: </h4>
-                            <textarea rows = "4" cols = "50" name="postText"></textarea>
-                            <h5>Enter Tags (Separate by commas):<h5>
-                            <input type="text"  name="postTags"> <br>
-                            <button class="btn"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span> Post </button>
-                        </section>
-                       </section>
-                      </section>
-                      </div>
-                    </div>
+            <div id="privacy" class="tab-pane fade">
+                <h3>PUT associated users here</h3>
+            </div>
+        </div>
 
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
 
-      <h6>Project Collab page built for NodesConnect</h6>
-      <p>
-        <a href="#">Back to top</a>
-      </p>
-    </footer>
+        <footer class="blog-footer">
+            <h6>Group settings page built for NodesConnect</h6>
+            <p>
+                <a href="#">Back to top</a>
+            </p>
+        </footer>
+
+    </div>
 
     <div class="messaging container" id="messaging" style="display:none;">
         <div class="row">
@@ -262,15 +237,11 @@
         </div>
     </div>
 
-
-
-
-
-    </div>
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="../JS/FreeLance.js"></script>
     <script>
       $(document).ready(function() {
         $('.Messanger').click(function() {
