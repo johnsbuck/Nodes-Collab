@@ -7,8 +7,12 @@ var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+<<<<<<< HEAD
 var groupPost = require('./routes/group_posts');
 //var posts = require('./routes/posts');
+=======
+//var posts = require('./routes/qa_posts');
+>>>>>>> Syntactical Errors Resolved - controller.js, qa_posts.js
 
 var app = express();
 
@@ -26,8 +30,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/user', users);
+<<<<<<< HEAD
 app.use('/group', groupPost);
 //app.use('/post', posts);
+=======
+//app.use('/posts', posts);
+>>>>>>> Syntactical Errors Resolved - controller.js, qa_posts.js
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
