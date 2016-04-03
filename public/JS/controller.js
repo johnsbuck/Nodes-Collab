@@ -1,5 +1,22 @@
 var app = angular.module('nodesConnect', []);
 
+app.controller('tableGen', function($scope, $http) {
+    $scope.txt = "Test text";
+
+    $scope.sub = function() {
+    $http.put('/posts/get')
+      .then(function(response) {
+          alert(response.data);
+      });
+    }
+
+    $scope.childOnLoad = function() {
+        alert("Loaded!");
+    };
+
+    $scope.childOnLoad();
+});
+
 app.controller('newUserCtrl', function($scope, $http) {
 
   $scope.sub = function() {
@@ -13,7 +30,8 @@ app.controller('newUserCtrl', function($scope, $http) {
     }
 });
 
-app.controller('loginCtrl', function($scope, $http, $location) {
+app.controller('loginCtrl', function($scope, $http, $location) {//no closing bracket?
+
   $scope.sub = function() {
     console.log($scope.formData);
     console.log($http.defaults.headers.common);
@@ -54,6 +72,7 @@ app.controller('loginCtrl', function($scope, $http, $location) {
         });
     }
   };
+}
 });
 
 app.controller('settingsCtrl', function($scope, $http) {

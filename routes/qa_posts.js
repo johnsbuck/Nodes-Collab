@@ -80,6 +80,7 @@ app.post('/post', function(req, res) {
 					}
 				}
 	});
+ });
 });
 
 /* /delete
