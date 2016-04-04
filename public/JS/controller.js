@@ -94,7 +94,7 @@ app.controller('groupPostCtrl', function($scope, $http) {
   }
 });
 
-app.controller('collabSettingsCtrl', function($scope, $http)
+app.controller('collabSettingsCtrl', function($scope, $http) {
     $scope.sub = function() {
       $http.put('', $scope.formData)
       success(function(data) {

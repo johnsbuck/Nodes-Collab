@@ -11,7 +11,7 @@ function generate(){
   '{ "groupname":"scottboyce", "username":"1 minute ago", "text":"Im a scrub!!", "timestamp":"noobin" }' +
    ']}';
 
-
+document.getElementById("groupGen").innerHTML = ``;
 
 
   var obj = JSON.parse(samplePost);
@@ -30,33 +30,14 @@ function singlePost(singleData)
   //document.getElementById("groupGen").innerHTML= singleData;
   var obj = JSON.parse(singleData);
 
-  var divBuilder = `<div class="container">
-	                   <div class="row">
-  		                <section class="panel panel-info">
-                        <header class="panel-heading">
-                          <div class="row">
-                            <div class="col-xs-4">` + obj.post[0].groupname + `</div>
-                            <div class="col-xs-8">
-                               <div class="row">
-                                     <div class="col-md-4 col-md-push-10">` + obj.post[0].username + `</div>
-                               </div>
-                              </div>
-                            </div>
-                        </header>
-                        <section class="row panel-body">
-                          <section class="col-md-6">
-                            <h3><u>` + obj.post[0].text + `</u></h3>
-                            <p>Tags: <a href="#">` + obj.post[0].timestamp + `</a><p>
-                            <hr>
-                            <section class="row">
-                              <ul class="col-md-6">
-                              <li class="list-unstyled"><a href="#"><i class="glyphicon glyphicon-comment"> </i> View Full Post</a>
-                            </section>
-                        </section>
-                       </section>
-                      </section>
-                      </div>
-                    </div>`;
+  var divBuilder = `<table style ="width:100%">
+                        <tr>
+                          <td align="left"> `+obj.post[0].groupname+` </td>
+                          <td align="center"> `+obj.post[0].text+` </td>
+                          <td align="right"> `+obj.post[0].username+` </td>
+                        </tr>
+                        <hr>
+                        </table>`;
 
   return divBuilder;
 
