@@ -4,9 +4,10 @@ app.controller('tableGen', function($scope, $http) {
     $scope.txt = "Test text";
 
     $scope.sub = function() {
-    $http.put('/posts/get')
+    console.log($http);
+    $http.get('/posts')
       .then(function(response) {
-          alert(response.data);
+          alert(response.json());
       });
     }
 
@@ -15,6 +16,7 @@ app.controller('tableGen', function($scope, $http) {
     };
 
     $scope.childOnLoad();
+    $scope.sub();
 });
 
 app.controller('newUserCtrl', function($scope, $http) {
@@ -71,15 +73,9 @@ app.controller('loginCtrl', function($scope, $http, $location) {//no closing bra
         }).error(function(data){
             console.log('ERROR: Not sent to server.');
         });
-<<<<<<< HEAD
       }
     };
   }
-=======
-    }
-  };
-}
->>>>>>> Syntactical Errors Resolved - controller.js, qa_posts.js
 });
 
 app.controller('settingsCtrl', function($scope, $http) {

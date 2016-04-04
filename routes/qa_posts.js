@@ -5,6 +5,8 @@ var pg = require('pg');
 
 var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhost/nodesconnect';
 
+var app = express();
+
 /* /get
  * Method: PUT (Should be GET)
  *
