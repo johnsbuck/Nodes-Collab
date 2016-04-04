@@ -20,6 +20,8 @@
     <!-- Custom styles for this template -->
     <link href="../CSS/main.css" rel="stylesheet">
     <script src="JS/angular.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.7.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.10/jquery-ui.js"></script>
     <script src="JS/controller.js"></script>
     <script src="JS/pageGen.js"></script>
   </head>
@@ -75,8 +77,8 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="#" onclick="generate(0)">Home <span class="sr-only">(current)</span></a></li>
-            <li><a href="#" class="QA" onclick="pageGen.generate(1)">Q and A</a></li>
+            <li class="active"><a href="#" onclick= "pageGen(0)">Home <span class="sr-only">(current)</span></a></li>
+            <li><a href="#" class="QA" onclick="pageGen(1)">Q and A</a></li>
             <li><a href="ProjectCollab.html">Project Collab</a></li>
             <li><a href="FreelanceEx.html" class="Freelance" onclick="FreeLance()">Freelance Work</a></li>
           </ul>
@@ -107,7 +109,6 @@
         <a href="#">Back to top</a>
       </p>
     </footer>-->
-    
     <div id="pageGen"></div>
     <script type="text/javascript" src = "JS/pageGen.js"></script>
     <!--INSERT SCRIPTS REFERENCED AFTER PAGEGEN-->

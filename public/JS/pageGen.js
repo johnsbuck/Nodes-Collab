@@ -1,9 +1,10 @@
 //Hand me a JSON file to parse into a post style forum page
 
+function generatePage(param){
 
-function generate(param){
-
-  var homeBuilder = `<h2>Recent Post Activity</h2>
+  // $('#pageGen').empty();
+    var homeBuilder = `<h1>{{message}}</h1>
+    <h2>Recent Post Activity</h2>
        <hr>
        <div id="tableGen"></div>
 
@@ -61,18 +62,27 @@ function generate(param){
       </p>
     </footer>`;
 
+    console.log(param);
     switch(param){
       case 0:
+      console.log("case 0");
       return homeBuilder;
       break;
       case 1:
+        console.log("case 1");
       return qandaBuilder;
       break;
-      default: 
+      default:
+        console.log("case default");
       return homeBuilder;
       break;
     }
-    
+
 }
 
-document.getElementById("pageGen").innerHTML = generate();
+function pageGen(param) {
+
+document.getElementById("pageGen").innerHTML = generatePage(param);
+}
+
+pageGen(0);
