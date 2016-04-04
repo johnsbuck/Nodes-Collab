@@ -86,6 +86,8 @@ router.delete('/delete', function(req, res, next) {
  *
  * Creates a new user. Requires their basic information that should match with
  * the 'NewUser.html' form.
+ *
+ * TODO Modify for new attributes!
  */
 router.put('/create', function(req, res, next) {
   pg.connect(connectionString, function(err, client, done) {

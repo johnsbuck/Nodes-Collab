@@ -54,7 +54,7 @@ app.controller('loginCtrl', function($scope, $http, $location) {
         });
     }
   };
-});
+}});
 
 app.controller('settingsCtrl', function($scope, $http) {
   $scope.sub = function() {
@@ -69,4 +69,21 @@ app.controller('settingsCtrl', function($scope, $http) {
 
 app.controller('mainCtrl', function($scope, $http) {
   $scope.message = "Welcome back, " + sessionStorage.getItem('username');
+});
+/*
+* Controller for the user profile page.
+**/
+app.controller('profileCtrl', function($scope, $http) {
+  //Here we need to fill all the data for the fields in the HTML.
+  $scope.username = "" + sessionStorage.getItem('username');    //get the username for the current user from sessionStorage (after all we already have it)
+  //get all the user information from the DB
+  $http.put('/user/get', $scope.formData).success(function(data) {
+    //set further fields in the HTML here
+    $scope.about_text = data.about_text;    //about text retreived from the db
+    $scope.karma = data.karma;              //amount of karma the current user has.
+    //TODO: other stuff to add here: languages known, etc.
+    console.log('Successfully retrieved user info from server.');
+  }).error(function(data) {
+    console.log('Unable to retrieve user info from server!');
+  });
 });
