@@ -8,7 +8,7 @@ function generate(){
   //Sample data JSON
   var samplePost = '{ "post" : [' +
   '{ "groupname":"middle59", "username":"39 seconds ago", "text":"JQUERY HELP NEEDED!!", "timestamp":"jquery" },' +
-  '{ "groupname":"scottboyce", "username":"1 minute ago", "text":"Im a scrub!!", "timestamp":"noobin" }' +
+  '{ "groupname":"scottboyce", "username":"1 minute ago", "text":"Im am scripting", "timestamp":"noobin" }' +
    ']}';
 
 document.getElementById("groupGen").innerHTML = ``;
