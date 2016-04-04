@@ -80,6 +80,8 @@ app.controller('groupPostCtrl', function($scope, $http) {
     console.log($scope.formData);
     if($scope.formData != undefined) {
     $scope.formData.username = 'name';
+    $scope.formData.groupname = 'group'
+    $scope.formData.timestamp = '4/21/2016'
     console.log($http);
     $http.put('/group/post', $scope.formData).
     success(function(data) {
