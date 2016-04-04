@@ -62,30 +62,37 @@ router.put('/get/group', function(req, res) {
 /* Posts a given post onto the database.
  */
 router.put('/post', function(req, res) {
-	client.query('INSERT INTO group_posts (groupname, username, text, timestamp) VALUES (\'' +
-		req.body.groupname + '\', \'' + req.body.username + '\', \'' + req.body.text + '\', \'' + req.body.timestamp + '\');',
-	function(err, result) {
-		done();
-		if(err) {
-			console.log(err);
-			res.sendStatus(406);
-		} else if(!result || result.rows.length == 0) {
-			res.sendStatus(204);
-		} else {
-			res.sendStatus(202);
-		}
+	pg.connect(connectionString, function(err, client, done) {
+		console.log(req.body);
+		client.query('INSERT INTO group_posts (groupname, username, text, timestamp) VALUES (\'' +
+			req.body.groupname + '\', \'' + req.body.username + '\', \'' + req.body.text + '\', \'' + req.body.timestamp + '\');',
+		function(err, result) {
+			done();
+			if(err) {
+				console.log(err);
+				res.sendStatus(406);
+			} else if(!result || result.rows.length == 0) {
+				res.sendStatus(204);
+			} else {
+				res.sendStatus(202);
+			}
+		});
 	});
 });
 
 /* Deletes a given post onto the database.
  */
 router.delete('/delete', function(req, res) {
-	client.query('DELETE FROM group_posts WHERE groupname=\'' + group.body.groupname + '\'AND id=\'' + group.body.id + '\';');
+	pg.connect(connectionString, function(err, client, done) {
+		client.query('DELETE FROM group_posts WHERE groupname=\'' + group.body.groupname + '\'AND id=\'' + group.body.id + '\';');
+	});
 });
 
 router.put('/edit', function(req, res) {
-	text = req.body.text.replace('\'', '\'\'');
-	client.query('UPDATE POST SET text = \'' + req.body.text + '\'');
+	pg.connect(connectionString, function(err, client, done) {
+		text = req.body.text.replace('\'', '\'\'');
+		client.query('UPDATE POST SET text = \'' + req.body.text + '\'');
+	});
 })
 
 module.exports = router;

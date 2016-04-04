@@ -3,6 +3,7 @@ var app = angular.module('nodesConnect', []);
 app.controller('newUserCtrl', function($scope, $http) {
 
   $scope.sub = function() {
+    console.log($http);
       console.log($scope.formData);
       $http.put('/user/create', $scope.formData).
       success(function(data) {
@@ -52,8 +53,9 @@ app.controller('loginCtrl', function($scope, $http, $location) {
         }).error(function(data){
             console.log('ERROR: Not sent to server.');
         });
-    }
-  };
+      }
+    };
+  }
 });
 
 app.controller('settingsCtrl', function($scope, $http) {
@@ -72,13 +74,23 @@ app.controller('mainCtrl', function($scope, $http) {
 });
 
 app.controller('groupPostCtrl', function($scope, $http) {
+  console.log("GROUPPOSTCTRL");
+  $scope.message = "This function works";
   $scope.sub = function() {
-    $http.put('/group/post', $scope.formData)
+    console.log($scope.formData);
+    if($scope.formData != undefined) {
+    $scope.formData.username = 'name';
+    console.log($http);
+    $http.put('/group/post', $scope.formData).
     success(function(data) {
       console.log('Sent to the server successfully.');
     }).error(function(data) {
       console.log('ERROR: Not sent to server.');
     });
+    }
+    else {
+      console.log("Please input data");
+    }
   }
 });
 
