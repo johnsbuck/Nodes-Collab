@@ -135,22 +135,21 @@
       <div class="container" ng-controller="groupPostCtrl">
         <h1>{{message}}</h1>
         <form class="form-groupPost" role="form" method="post">
-        <div class="row">
+        <div class="row" style="width: 480px;">
           <section class="panel panel-info">
             <header class="panel-heading">
               <div class="row">
-              <!--Author and Time stamp removed. Should be generated from user and time-->
-              <div class="col-xs-4"> <h4>Create a post </h4></div>
-            </div>
-          </header>
+                <div class="col-xs-4"> <h4>Post a message </h4></div>
+              </div>
+            </header>
           <section class="row panel-body">
             <section class="col-md-6">
-                            <h3>Enter a Title:</h3>
-                            <input type="text" class="form-control" ng-model="formData.groupname">
+                          <!--LEFT for groupname. Delete Later-->
+                            <class="form-control" ng-model="formData.groupname">
                             <h4> Post text: </h4>
                             <textarea rows = "4" cols = "50" ng-model="formData.text"></textarea>
-                            <h5>Enter Tags (Separate by commas):</h5>
-                            <input type="text" class="form-control" ng-model="formData.timestamp"> <br>
+                            <!--LEFT for timestamp. Delete Later-->
+                            <class="form-control" ng-model="formData.timestamp"> <br>
                             <button class="btn" class="form-control" ng-click="sub(formData)"><span class="glyphicon glyphicon-pushpin" type="submit" aria-hidden="true"></span> Post </button>
                         </section>
                        </section>
