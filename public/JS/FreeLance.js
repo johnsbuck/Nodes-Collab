@@ -1,5 +1,6 @@
 function FreeLance(stuff) {
-  var body = <body>
+  //this was not wrapped together in the var.. must include ``
+  var body = `<body>
 
             <div class="blog-masthead">
               <div class="container">
@@ -132,7 +133,7 @@ function FreeLance(stuff) {
               <p>
                 <a href="#">Back to top</a>
               </p>
-            </footer>
+            </footer>`
             ;
   stuff.empty().append(body);
 }
