@@ -7,7 +7,7 @@ app.controller('tableGen', function($scope, $http) {
 
     $scope.sub = function() {
       //API CALL -> qa_posts put (which is redefined as a get).
-      $http.put('/posts/get').
+      $http.put('/qa-post/get').
         success(function(data) {
             console.log('Sent to sever successfully.');
             //Apparently we need a directive to parse this data into a string -> use value.table_name

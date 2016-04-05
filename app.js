@@ -7,8 +7,12 @@ var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var group = require('./routes/groups');
 var groupPost = require('./routes/group_posts');
-//var posts = require('./routes/posts');
+var freePost = require('./routes/freelance_posts');
+var qaPost = require('./routes/qa_posts');
+var tag = require('./routes/tags');
+var comments = require('./routes/comments');
 
 var app = express();
 
@@ -26,8 +30,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/user', users);
-app.use('/group', groupPost);
-//app.use('/post', posts);
+app.use('/group', group);
+app.use('/group-post', groupPost);
+app.use('/qa-post', qaPost);
+app.use('/free-post', freePost);
+app.use('/comments', comments);
+app.use('/tag', tag);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

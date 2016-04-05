@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var passHash = require('password-hash');
 var pg = require('pg');
-
+var quoteFixer = require('./db_tools');
 
 var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhost/nodesconnect';
 
@@ -247,7 +247,7 @@ router.put('/edit', function(req, res) {
 
 						 // If authorized
 						 if(passHash.verify(req.body.pass, hashpass)) {
-							 client.query('UPDATE group_posts SET text = \'' req.body.text +
+							 client.query('UPDATE group_posts SET text = \'' + req.body.text +
 							 	'\' WHERE id=\'' + req.body.id + '\' AND groupname=\'' + req.body.groupname + '\';',
 							 function(err, result) {
 								 done();
@@ -267,21 +267,5 @@ router.put('/edit', function(req, res) {
 		 });
 	});
 });
-
-/* quoteFixer
- * Adds a second, single quote to a message to avoid PostgeSQL injection.
- */
-function quoteFixer(msg) {
-	if(typeof msg === 'string') {
-		return msg.replace('\'', '\'\'');
-	}else if(typeof msg === 'object') {
-		for(var key in msg) {
-			msg[key] = quoteFixer(msg);
-		}
-		return msg;
-	} else {
-		return msg;
-	}
-}
 
 module.exports = router;

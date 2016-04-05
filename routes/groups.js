@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var passHash = require('password-hash');
 var pg = require('pg');
+var quoteFixer = require('./db_tools');
 
 var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhost/nodesconnect';
 
@@ -14,15 +15,16 @@ router.put('/get/info', function(req, res) {
 		client.query('SELECT * FROM group, user_group_perms WHERE groupname=\'' + req.body.groupname + '\';',
 		function(err, result) {
 			done();
-			if (result.rows[0].privacy === 2) {
-				res.sendStats(403);
-			} else if(err)
-			{
+			if(err) {
 				res.sendStatus(400);
 			} else if (!result || result.rows.length == 0) {
 				res.sendStatus(406);
 			} else {
-				res.status(200).send(result.rows);
+				if (result.rows[0].privacy === 2) {
+					res.sendStatus(403);
+				}else {
+					res.status(200).send(result.rows);
+				}
 			}
 		});
 	});
@@ -52,27 +54,14 @@ router.post('/add/user', function(req, res) {
  */
 router.delete('/delete/user', function(req, res) {
 	req.body = quoteFixer(req.body);
+	pg.connect(connectionString, function(err, client, done) {
+
+	});
 	client.query('DELETE FROM user_group_perm WHERE username=\'' + req.body.username +
 	 '\' AND WHERE groupname=\'' + req.body.groupname + ';',
  function(err, request) {
 
  });
 });
-
-/* quoteFixer
- * Adds a second, single quote to a message to avoid PostgeSQL injection.
- */
-function quoteFixer(msg) {
-	if(typeof msg === 'string') {
-		return msg.replace('\'', '\'\'');
-	}else if(typeof msg === 'object') {
-		for(var key in msg) {
-			msg[key] = quoteFixer(msg);
-		}
-		return msg;
-	} else {
-		return msg;
-	}
-}
 
 module.exports = router;
