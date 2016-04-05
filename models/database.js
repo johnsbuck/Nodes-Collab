@@ -11,7 +11,6 @@ var user = 'CREATE TABLE users (username VARCHAR(40) PRIMARY KEY, ' +
                                 'gender VARCHAR(40) NOT NULL);';
 
 var group = 'CREATE TABLE groups (groupname VARCHAR(40) PRIMARY KEY, ' +
-                                  'dirpath VARCHAR(40) NOT NULL, ' +
                                   'privacy INTEGER NOT NULL);';
 
 var user_group_perm = 'CREATE TABLE user_group_perms (username VARCHAR(40) REFERENCES users (username), ' +
@@ -22,13 +21,14 @@ var user_group_perm = 'CREATE TABLE user_group_perms (username VARCHAR(40) REFER
 var basic_post = 'CREATE TABLE posts (id SERIAL PRIMARY KEY, ' +
                                 'username VARCHAR(40) REFERENCES users (username), ' +
                                 'timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, ' +
-                                'title VARCHAR(64) NOT NULL UNIQUE, ' +
+                                'title VARCHAR(64) NOT NULL, ' +
                                 'text VARCHAR(63206) NOT NULL, ' +
                                 'type INTEGER NOT NULL);';
 
 var comment = 'CREATE TABLE comments (id SERIAL NOT NULL, ' +
                                     'username VARCHAR(40) REFERENCES users (username), ' +
                                     'post_id INTEGER REFERENCES posts (id), ' +
+                                    'text VARCHAR(63206) NOT NULL, ' +
                                     'timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, ' +
                                     'type INTEGER NOT NULL, ' +
                                     'PRIMARY KEY (id, post_id));';
