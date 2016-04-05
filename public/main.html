@@ -16,6 +16,8 @@
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <link href="../Bootstrap/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <link href="CSS/jquery-u.min.css" rel="stylesheet">
+    <link href="CSS/jquery-ui.theme.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="../CSS/main.css" rel="stylesheet">
@@ -26,13 +28,15 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <script src="JS/jquery.js"></script>
+    <script src="JS/jquery-ui.min.js"></script>
     <script src="JS/angular.min.js"></script>
     <script src="JS/controller.js"></script>
   </head>
 
   <body ng-controller="mainCtrl">
 
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav class="navbar navbar-inverse navbar-fixed-top" ng-controller="navCtrl">
       <div class="container-fluid" ng-controller="mainCtrl">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -49,6 +53,7 @@
             <li><a href="SettingsEx.html">Settings</a></li>
             <li><a href="ProfileEx.html">Profile</a></li>
             <li><a href="Help.html">Help</a></li>
+            <li><a ng-click="signout()">Sign Out</a></li>
           </ul>
           <form class="navbar-form navbar-right">
             <input type="text" class="form-control" placeholder="Search...">
@@ -122,7 +127,7 @@
     </footer>
 </div>
 
-    <div class="messaging container" id="messaging" style="display:none;">
+    <div class="messaging container ui-widget-content" id="messaging" style="display:none;">
         <div class="row">
             <div class="col-md-5">
                 <div class="panel panel-primary">
