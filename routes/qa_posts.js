@@ -172,8 +172,8 @@ router.put('/edit', function(req, res) {
             res.sendStatus(406);
           }
 				}
-			});
 		});
+	});
 });
 
 module.exports = router;
