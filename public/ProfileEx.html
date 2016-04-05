@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="nodesConnect">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,6 +20,14 @@
     <!-- Custom styles for this template -->
     <link href="../CSS/main.css" rel="stylesheet">
 
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="JS/angular.min.js"></script>
+    <script src="JS/controller.js"></script>
   </head>
 
   <body>
@@ -94,6 +102,11 @@
 
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
+      <!-- START OF -> PROFILE DISPLAY -->
+      <div id="userProfile" ng-controller="userProfile"><p ng-bind="txt">
+         <!-- under this div a user's profile will be generated, it is identified by it's controller/div id-->
+      </p></div>
+      <!-- END OF -> PROFILE DISPLAY -->
 
       <div class="container" align = "center">
         <div class="row">
