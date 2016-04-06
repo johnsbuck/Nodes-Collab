@@ -6,10 +6,12 @@ var quoteFixer = require('./db_tools');
 
 var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhost/nodesconnect';
 
-/* Returns the post of the given groupname, the group permissions and a 200 status code.
- * If no post exists, return a 204 status code.
+/* /get
+ * METHOD: PUT (Should be GET)
+ *
+ * Used to retrieve information on a group. Requires access for private group.
  */
-router.put('/get/info', function(req, res) {
+router.put('/get', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
 		client.query('SELECT * FROM group, user_group_perms WHERE groupname=\'' + req.body.groupname + '\';',
@@ -25,7 +27,8 @@ router.put('/get/info', function(req, res) {
 					var groupInfo = result.rows;
 
 					//Authorization
-					client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
+					client.query('SELECT pass, salt FROM users INNER JOIN user_group_perms AS ugp ON users.username = \'' + req.body.username +
+						'\' AND ugp.groupname = \'' + req.body.groupname + '\';',
 					 function(err, result) {
 						 if(err) {
 							 done();
