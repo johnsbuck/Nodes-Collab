@@ -2,27 +2,85 @@ var express = require('express');
 var router = express.Router();
 var passHash = require('password-hash');
 var pg = require('pg');
+var quoteFixer = require('./db_tools');
 
 var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhost/nodesconnect';
 
-/* Returns the post of the given post id and a 200 status code.
+/* Returns the comment of the given post id and a 200 status code.
  * If no post exists, return a 204 status code.
  */
-app.get('/', function(req, res) {
-	client.query('SELECT * FROM COMMENTS WHERE id=' + req.body.id + ';');
-	return query;
+router.get('/', function(req, res) {
+	req.body = quoteFixer(req.body);
+	pg.connect(connectionString, function(err, client, done) {
+		client.query('SELECT * FROM comments WHERE post_id=\'' + req.body.post_id + '\';',
+		function(err, result) {
+			done();
+			if(err) {
+				console.error(err);
+				res.sendStatus(406);
+			}else if(!result || result.rows.length == 0) {
+				res.sendStatus(203);
+			}else {
+				res.status(200).send(result.rows);
+			}
+		});
+	});
 });
 
-/* Posts a given post onto the database.
+/* Posts a given comment connected to a post onto the database.
  */
-app.post('/', function(req, res) {
-	client.query('INSERT INTO COMMENTS VALUES (' + req.body + ');');
+router.put('/', function(req, res) {
+	req.body = quoteFixer(req.body);
+	pg.connect(connectionString, function(err, client, done) {
+		client.query('INSERT INTO comments (username, post_id, text, type) VALUES (\'' +
+			req.body.username + '\', \'' + req.body.post_id +
+			'\', \'' + req.body.text + '\', \'' + req.body.type + '\');',
+		function(err, result) {
+			done();
+			if(err) {
+				console.error(err);
+				res.sendStatus(406);
+			}else {
+				res.sendStatus(202);
+			}
+		});
+	});
 });
 
 /* Deletes a given post onto the database.
  */
-app.delete('/', function(req, res) {
-	client.query('DELETE FROM COMMENTS WHERE id=' + req.body.id +';');
+router.delete('/', function(req, res) {
+	req.body = quoteFixer(req.body);
+	pg.connect(connectionString, function(req, res) {
+		client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
+		 function(err, result) {
+			 if(err) {
+				 console.error(err);
+				 res.sendStatus(406);
+			 }else if(!result || result.rows.length === 0) {
+				 done();
+				 res.sendStatus(404);
+			 }else {
+				 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
+
+				 if(passHash.verify(req.body.pass, hashpass)) {
+					 client.query('DELETE FROM comments WHERE id=\'' + req.body.id +'\' AND post_id=\'' + req.body.post_id +
+					 	'\' AND username=\'' + req.body.username + '\';',
+					 function(err, result) {
+						done();
+						if(err) {
+							console.error(err);
+				 			res.sendStatus(406);
+						}else {
+			 				res.sendStatus(201);
+			 			}
+			 		});
+				 }else {
+					 res.sendStatus(406);
+				 }
+			 }
+		 });
+	});
 });
 
 module.exports = router;

@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var passHash = require('password-hash');
 var pg = require('pg');
+var quoteFixer = require('./db_tools');
 
 var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhost/nodesconnect';
 
@@ -10,7 +11,8 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
  *
  * Returns all tags connected to a single post.
  */
-app.put('/get', function(req, res) {
+router.put('/get', function(req, res) {
+	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
 		client.query('SELECT * FROM tags WHERE post_id=\'' + req.body.id + '\';',
 		function(err, result) {
@@ -31,7 +33,8 @@ app.put('/get', function(req, res) {
  *
  * Returns one tag connected to a post.
  */
-app.put('/get/tag', function(req, res) {
+router.put('/get/tag', function(req, res) {
+	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
 		client.query('SELECT * FROM tags WHERE post_id=\'' + req.body.id + '\' AND tag=\'' + req.body.tag + '\';',
 		function(err, result) {
@@ -52,7 +55,8 @@ app.put('/get/tag', function(req, res) {
  *
  * Adds a single tag connected to a post. Requires the poster's username and password to proceed.
  */
-app.post('/post', function(req, res) {
+router.post('/post', function(req, res) {
+	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
 		client.query('INSERT INTO tags VALUES (\'' + req.body.id + '\', \'' + req.body.tag + '\');',
 		function(err, result) {
@@ -71,7 +75,8 @@ app.post('/post', function(req, res) {
  *
  * Deletes all tags connected to a post. Requires the poster's username and password to proceed.
  */
-app.delete('/delete', function(req, res) {
+router.delete('/delete', function(req, res) {
+	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
 		client.query('DELETE FROM tags WHERE post_id=\'' + req.body.id + '\';',
 		function(err, result) {
@@ -90,7 +95,8 @@ app.delete('/delete', function(req, res) {
  *
  * Deletes a single tag connected to a post. Requires the poster's username and password to proceed.
  */
-app.delete('/delete/tag', function(req, res) {
+router.delete('/delete/tag', function(req, res) {
+	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
 		client.query('DELETE FROM tags WHERE post_id=\'' + req.body.id + '\' AND tag=\'' + req.body.tag + '\';',
 		function(err, result) {

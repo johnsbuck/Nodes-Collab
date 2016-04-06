@@ -3,10 +3,13 @@ var router = express.Router();
 var passHash = require('password-hash');
 var pg = require('pg');
 var path = require('path');
+var quoteFixer = require('./db_tools');
 
 var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhost/nodesconnect';
 
 router.put('/login', function(req, res, next) {
+  console.log(req.body);
+  req.body = quoteFixer(req.body);
   console.log(req.body);
   pg.connect(connectionString, function(err, client, done) {
     client.query('SELECT pass, salt FROM users WHERE email = \'' + req.body.email + '\';',

@@ -2,17 +2,20 @@ var express = require('express');
 var router = express.Router();
 var passHash = require('password-hash');
 var pg = require('pg');
+var quoteFixer = require('./db_tools');
 
 var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhost/nodesconnect';
+
 
 /* /get
  * Method: PUT (Should be GET)
  *
  * Returns all qa_posts.
  */
-app.put('/get', function(req, res) {
+router.put('/get', function(req, res) {
+	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
-		client.query('SELECT * FROM posts WHERE type=0;',
+		client.query('SELECT * FROM posts WHERE type=\'0\';',
 		function(err, result) {
 			if(err) {
 				console.error(err);
@@ -31,7 +34,8 @@ app.put('/get', function(req, res) {
  *
  * Returns a single Q&A post.
  */
-app.put('/get/post', function(req, res) {
+router.put('/get/post', function(req, res) {
+	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
 		client.query('SELECT * FROM posts WHERE id = \'' + req.body.id + '\' AND type=\'0\';',
 		function(err, result) {
@@ -52,20 +56,38 @@ app.put('/get/post', function(req, res) {
  *
  * Submits a single Q&A POST. Requires username and password.
  */
-app.post('/post', function(req, res) {
+router.post('/post', function(req, res) {
+	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
-		client.query('INSERT INTO posts (username, timestamp, title, text, type) VALUES ' +
-								'(\'' + req.body.username + '\', \'' + req.body.timestamp +'\', \'' + req.body.title + '\' ' +
-								'\'' + req.body.text + '\', \'0\');',
-								function(err, result) {
-									if(err) {
-										console.error(err);
-										res.sendStatus(406);
-									} else {
-										res.sendStatus(206);
-									}
-								});
-							});
+     client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
+      function(err, result) {
+        if(err) {
+          console.error(err);
+          res.sendStatus(406);
+        }else if(!result || result.rows.length === 0) {
+          done();
+          res.sendStatus(404);
+        }else {
+          var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
+
+          if(passHash.verify(req.body.pass, hashpass)) {
+						client.query('INSERT INTO posts (username, timestamp, title, text, type) VALUES ' +
+												'(\'' + req.body.username + '\', \'' + req.body.timestamp +'\', \'' + req.body.title + '\' ' +
+												'\'' + req.body.text + '\', \'0\');',
+						function(err, result) {
+							if(err) {
+								console.error(err);
+								res.sendStatus(406);
+							} else {
+								res.sendStatus(206);
+							}
+						});
+					}else {
+            res.sendStatus(406);
+          }
+				}
+			});
+ 	});
 });
 
 /* /delete
@@ -73,18 +95,37 @@ app.post('/post', function(req, res) {
  *
  * Deletes a single Q&A post. Requires username and password.
  */
-app.delete('/delete', function(req, res) {
+router.delete('/delete', function(req, res) {
+	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
-		client.query('DELETE FROM posts WHERE id = \'' + req.body.id + '\' and type=\'0\';',
-								function(err, result) {
-									if(err) {
-										console.error(err);
-										res.sendStatus(406);
-									} else {
-										res.sendStatus(202);
-									}
-								});
-							});
+     client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
+      function(err, result) {
+        if(err) {
+          console.error(err);
+          res.sendStatus(406);
+        }else if(!result || result.rows.length === 0) {
+          done();
+          res.sendStatus(404);
+        }else {
+          var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
+
+          if(passHash.verify(req.body.pass, hashpass)) {
+						client.query('DELETE FROM posts WHERE id = \'' + req.body.id + '\' AND username=\'' + req.body.username +
+							'\' AND type=\'0\';',
+						function(err, result) {
+							if(err) {
+								console.error(err);
+								res.sendStatus(406);
+							} else {
+								res.sendStatus(202);
+							}
+						});
+					}else {
+	          res.sendStatus(406);
+	        }
+				}
+		});
+	});
 });
 
 /* /edit
@@ -92,28 +133,47 @@ app.delete('/delete', function(req, res) {
  *
  * Edits a single Q&A post. Requires username and password.
  */
-app.put('/edit', function(req, res) {
+router.put('/edit', function(req, res) {
+	req.body = quoteFixer(req.body);
 	var sqlQuery = 'UPDATE posts SET ';
 	if(req.body.text) {
-		sqlQuery += 'test = \'' + req.body.text.replace('\'', '\'\'') + '\'';
+		sqlQuery += 'text = \'' + req.body.text.replace('\'', '\'\'') + '\'';
 	}
 	if(req.body.title) {
 		sqlQuery += ', title = \'' + req.body.title.replace('\'', '\'\'') + '\'';
 	}
 
-	sqlQuery += ';';
+	sqlQuery += ' WHERE username = \'' + req.body.username + '\' AND id = \'' + req.body.id + '\';';
 
 	pg.connect(connectionString, function(err, client, done) {
-		client.query(sqlQuery,
-								function(err, result) {
-									if(err) {
-										console.error(err);
-										res.sendStatus(406);
-									} else {
-										res.sendStatus(206);
-									}
-								});
-							});
+		req.body = quoteFixer(req.body);
+		client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
+		 function(err, result) {
+			 if(err) {
+				 console.error(err);
+				 res.sendStatus(406);
+			 }else if(!result || result.rows.length === 0) {
+				 done();
+				 res.sendStatus(404);
+			 }else {
+				 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
+
+				 if(passHash.verify(req.body.pass, hashpass)) {
+					client.query(sqlQuery,
+						function(err, result) {
+							if(err) {
+								console.error(err);
+								res.sendStatus(406);
+							} else {
+								res.sendStatus(206);
+							}
+						});
+					}else {
+            res.sendStatus(406);
+          }
+				}
+		});
+	});
 });
 
 module.exports = router;

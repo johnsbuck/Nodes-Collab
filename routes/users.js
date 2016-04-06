@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var passHash = require('password-hash');
 var pg = require('pg');
+var quoteFixer = require('./db_tools');
 
 var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhost/nodesconnect';
 
@@ -12,6 +13,7 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
  * their username.
  */
 router.put('/get', function(req, res, next) {
+  req.body = quoteFixer(req.body);
   pg.connect(connectionString, function(err, client, done) {
     var where_clause = null;
     console.log(req.body);
@@ -20,8 +22,6 @@ router.put('/get', function(req, res, next) {
     }else if (req.body.email) {
       where_clause = 'email = \'' + req.body.email + '\'';
     }
-
-    console.log(where_clause);
 
     client.query('SELECT first_name, last_name, username, email, gender ' +
       'FROM users WHERE ' + where_clause + ';',
@@ -47,10 +47,12 @@ router.put('/get', function(req, res, next) {
  * Deletes a single user. Requires their username and password to proceed.
  */
 router.delete('/delete', function(req, res, next) {
+  req.body = quoteFixer(req.body);
   pg.connect(connectionString, function(err, client, done) {
      client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
       function(err, result) {
         if(err) {
+          done();
           console.error(err);
           res.sendStatus(406);
         }else if(!result || result.rows.length === 0) {
@@ -88,8 +90,9 @@ router.delete('/delete', function(req, res, next) {
  * the 'NewUser.html' form.
  */
 router.put('/create', function(req, res, next) {
+  req.body = quoteFixer(req.body);
+  console.log(req.body);
   pg.connect(connectionString, function(err, client, done) {
-    console.log(req.body);
     var hashlist = passHash.generate(req.body.pass).split('$');
     pass = hashlist[3];
     salt = hashlist[1];
@@ -100,7 +103,6 @@ router.put('/create', function(req, res, next) {
       req.body.last_name + '\', \'' + req.body.gender + '\');',
       function(err, result) {
         done();
-
         if(err) {
           console.error(err);
           res.status(406).send('406 Not Acceptable - Username already taken');
@@ -117,12 +119,12 @@ router.put('/create', function(req, res, next) {
  * Edits the password for a user. Requires their password to continue.
  */
 router.put('/edit/pass', function(req, res, next) {
+  req.body = quoteFixer(req.body);
   pg.connect(connectionString, function(err, client, done) {
     client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
      function(err, result) {
        if(err) {
          done();
-
          console.error(err);
          res.sendStatus(406);
        }else if(!result || result.rows.length === 0) {
