@@ -18,6 +18,7 @@ router.put('/get', function(req, res) {
 	// Connect to postgreSQL
 	pg.connect(connectionString, function(err, client, done) {
 		// Query group to get privacy
+		console.log(req.body);
 		client.query('SELECT * FROM groups WHERE groupname=\'' +
 			req.body.groupname + '\';', function(err, result) {
 				// If error, send client error
@@ -32,7 +33,7 @@ router.put('/get', function(req, res) {
 				// If not private, send rows
 				}else if(result.rows[0].privacy !== 2){
 					// Get group posts
-					client.query('SELECT username, text, timestamp FROM group_posts WHERE groupname = \'' + req.body.id + '\';',
+					client.query('SELECT username, text, timestamp FROM group_posts WHERE groupname = \'' + req.body.groupname + '\';',
 					function(err, result) {
 						done();
 						// If error, send client err
@@ -49,8 +50,8 @@ router.put('/get', function(req, res) {
 					});
 				// If private, check permission and user authentication
 				}else {
-					// Get permissions
-					client.query('SELECT permissions FROM user_group_perms WHERE groupname=\'' +
+					// Get perms
+					client.query('SELECT perms FROM user_group_perms WHERE groupname=\'' +
 						req.body.groupname + '\' AND username =\'' + req.body.username + '\';',
 					function(err, result) {
 						// If error, send client error
@@ -79,7 +80,7 @@ router.put('/get', function(req, res) {
 									 // If authorized
 									 if(passHash.verify(req.body.pass, hashpass)) {
 										// Get group posts
-										client.query('SELECT username, text, timestamp FROM group_posts WHERE groupname = \'' + req.body.id + '\';',
+										client.query('SELECT username, text, timestamp FROM group_posts WHERE groupname = \'' + req.body.groupname + '\';',
 										function(err, result) {
 											done();
 											// If error, send client err
@@ -110,8 +111,9 @@ router.put('/get', function(req, res) {
  */
 router.put('/post', function(req, res) {
 	req.body = quoteFixer(req.body);
+	console.log(req.body);
 	pg.connect(connectionString, function(err, client, done) {
-		client.query('SELECT permissions FROM user_group_perms WHERE groupname=\'' +
+		client.query('SELECT perms FROM user_group_perms WHERE groupname=\'' +
 			req.body.groupname + '\' AND username =\'' + req.body.username + '\';',
 		function(err, result) {
 			// If error, send client error
@@ -153,7 +155,7 @@ router.put('/post', function(req, res) {
 					 			}
 					 		});
 						 }else {
-							 res.sendStatus(406).end();
+							 res.sendStatus(403).end();
 						 }
 					}
 				});
@@ -167,7 +169,7 @@ router.put('/post', function(req, res) {
 router.delete('/delete', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
-		client.query('SELECT permissions FROM user_group_perms WHERE groupname=\'' +
+		client.query('SELECT perms FROM user_group_perms WHERE groupname=\'' +
 			req.body.groupname + '\' AND username =\'' + req.body.username + '\';',
 		function(err, result) {
 			// If error, send client error

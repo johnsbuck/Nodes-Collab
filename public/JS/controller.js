@@ -82,6 +82,77 @@ app.controller('userProfile', function($scope, $http) {
     $scope.sub();
 });
 
+app.controller('groupPostGen', function($scope, $http) {
+    $scope.txt = "";
+    $scope.groupname = sessionStorage.getItem('groupname');
+    $scope.username = sessionStorage.getItem('username');
+    $scope.init = function() {
+      $scope.formData = {'username': sessionStorage.getItem('username'),
+                          'groupname': sessionStorage.getItem('groupname'),
+                          'pass': sessionStorage.getItem('pass')};
+      $http.put('/group-post/get', $scope.formData)
+        .success(function(data) {
+          console.log(data);
+          console.log('Sent to sever successfully.');
+          //Apparently we need a directive to parse this data into a string -> use value.table_name
+          if(Object.keys(data).length != 0)
+          {
+              //$scope.txt = "Some data has been found, let's print it out!";
+              angular.forEach(data, function(value, key) {
+
+                console.log("Key: " + key + ", Value: " + value.username + ", " + value.text + ", " + value.timestamp);
+                //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
+                $.getScript("JS/groupGen.js", function(){
+                  param = '{ "post" : [' +
+                  '{ "username": "' + value.username + '", "text":"' + value.text + '", "timestamp":"' + value.timestamp + '" }]}';
+                  console.log(param);
+                  document.getElementById("groupGen").innerHTML += singlePost(param);
+                });
+              });
+          }
+          else {
+            $scope.txt = "No posts have been found. Make a post to see some activity!";
+          }
+        }).error(function(data) {
+          $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
+          console.log('ERROR: Not sent to server.');
+        });
+    }
+
+    $scope.sub = function() {
+      console.log($scope.groupname);
+      console.log($scope.username);
+      $http.put('/group-post/get', $scope.formData).
+        success(function(data) {
+            console.log('Sent to sever successfully.');
+            //Apparently we need a directive to parse this data into a string -> use value.table_name
+            if(Object.keys(data).length != 0)
+            {
+                //$scope.txt = "Some data has been found, let's print it out!";
+                angular.forEach(data, function(value, key) {
+
+                  console.log("Key: " + key + ", Value: " + value.username + ", " + value.text + ", " + value.timestamp);
+                  //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
+                  $.getScript("JS/groupGen.js", function(){
+                    param = '{ "post" : [' +
+                    '{ "username": "' + value.username + '", "text":"' + value.text + '", "timestamp":"' + value.timestamp + '" }]}';
+                    console.log(param);
+                    document.getElementById("groupGen").innerHTML += singlePost(param);
+                  });
+                });
+            }
+            else {
+              $scope.txt = "No posts have been found. Make a post to see some activity!";
+            }
+        }).error(function(data){
+            $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
+            console.log('ERROR: Not sent to server.');
+        });
+    }
+
+    $scope.init();
+});
+
 app.controller('newUserCtrl', function($scope, $http) {
 
   $scope.sub = function() {
@@ -114,7 +185,7 @@ app.controller('loginCtrl', function($scope, $http, $location) {
         $http.put('/user/get', $scope.formData).success(function(data) {
           sessionStorage.setItem('username', data.username);
           sessionStorage.setItem('email', $scope.formData.email);
-          sessionStorage.setItem('password', $scope.formData.pass);
+          sessionStorage.setItem('pass', $scope.formData.pass);
 
           window.location.href = '/main.html';
           console.log('Sent to sever successfully.');
@@ -183,11 +254,12 @@ app.controller('groupPostCtrl', function($scope, $http) {
   $scope.sub = function() {
     console.log($scope.formData);
     if($scope.formData != undefined) {
-    $scope.formData.username = 'name';
-    $scope.formData.groupname = 'group'
+    $scope.formData.username = sessionStorage.getItem('username');
+    $scope.formData.groupname = sessionStorage.getItem('groupname');
     $scope.formData.timestamp = '4/21/2016'
+    $scope.formData.pass = sessionStorage.getItem('pass');
     console.log($http);
-    $http.put('/group/post', $scope.formData).
+    $http.put('/group-post/post', $scope.formData).
     success(function(data) {
       console.log('Sent to the server successfully.');
     }).error(function(data) {
@@ -201,9 +273,13 @@ app.controller('groupPostCtrl', function($scope, $http) {
 });
 
 app.controller('collabSettingsCtrl', function($scope, $http) {
+    console.log("CollabSettings");
     $scope.sub = function() {
-      $http.put('', $scope.formData)
+      console.log($scope.formData);
+      $scope.formData.username = sessionStorage.getItem('username');
+      $http.put('/group/create', $scope.formData).
       success(function(data) {
+        sessionStorage.groupname = $scope.formData.groupname;
         console.log('Sent to the server successfully.');
       }).error(function(data) {
         console.log('ERROR: Not sent to server.');

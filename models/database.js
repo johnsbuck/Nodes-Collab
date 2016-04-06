@@ -13,7 +13,7 @@ var user = 'CREATE TABLE users (username VARCHAR(40) PRIMARY KEY, ' +
 var group = 'CREATE TABLE groups (groupname VARCHAR(40) PRIMARY KEY, ' +
                                   'privacy INTEGER NOT NULL);';
 
-var user_group_perm = 'CREATE TABLE user_group_perms (username VARCHAR(40) REFERENCES users (username) ON DELETE CASCADE, ' +
+var user_group_perms = 'CREATE TABLE user_group_perms (username VARCHAR(40) REFERENCES users (username) ON DELETE CASCADE, ' +
                                     'groupname VARCHAR(40) REFERENCES groups (groupname) ON DELETE CASCADE, ' +
                                     'perms INTEGER NOT NULL DEFAULT 2, ' +
                                     'PRIMARY KEY (username, groupname));';
@@ -44,6 +44,6 @@ var group_post = 'CREATE TABLE group_posts (id SERIAL NOT NULL, ' +
                                 'timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,' +
                                 'PRIMARY KEY (id, groupname));';
 
-var query = client.query(user + group + user_group_perm + basic_post + group_post + comment + tag);
+var query = client.query(user + group + user_group_perms + basic_post + group_post + comment + tag);
 
 query.on('end', function() { client.end(); });

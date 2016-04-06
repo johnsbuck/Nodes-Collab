@@ -70,11 +70,12 @@ router.put('/get', function(req, res) {
  */
 router.put('/create', function(req, res) {
 	req.body = quoteFixer(req.body);
+	console.log(req.body);
 	pg.connect(connectionString, function(err, client,done) {
 		client.query('INSERT INTO groups (groupname, privacy) VALUES ' +
 			'(\'' + req.body.groupname + '\', \'' + req.body.privacy + '\'); ' +
 			'INSERT INTO user_group_perms (username, groupname, perms) VALUES ' +
-			'(\'' + req.body.username + '\', \'' + req.body.groupname + ', 0);',
+			'(\'' + req.body.username + '\', \'' + req.body.groupname + '\', 0);',
 		function(err, result) {
 			if(err) {
 				console.error(err);
@@ -147,7 +148,7 @@ router.put('/add/user', function(req, res) {
 
 				if(passHash.verify(req.body.pass, hashpass)) {
 					client.query('INSERT INTO user_group_perms (username, groupname, perms) VALUES (\'' +
- 						req.body.newuser + '\', \'' + req.body.groupname + '\', \'' + req.body.perms + ');',
+ 						req.body.new.user + '\', \'' + req.body.groupname + '\', \'' + req.body.perms + ');',
  					function(err, request) {
  						done();
  						if(err)

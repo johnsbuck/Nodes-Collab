@@ -117,8 +117,12 @@
                     </ul>
 
       <div class="tab-content">
-            <div id="General" class="tab-pane fade in active">
+            <div id="General" class="tab-pane fade in active" ng-controller= "collabSettingsCtrl">
                 <p>PUT groups here</p>
+                <textarea rows= "1" ng-model= "formData.groupname"> </textarea>
+                <label><input type="radio" ng-model="formData.privacy" value= 2 name="genderradio"> Private </label>
+                <label><input type="radio" ng-model="formData.privacy" value= 1 name="genderradio"> Public </label>
+                <button class="btn" class="form-control" ng-click="sub(formData)">Create Group</button>
             </div>
             <div id="privacy" class="tab-pane fade">
                 <h3>PUT associated users here</h3>
