@@ -50,10 +50,10 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="main.html">Dashboard</a></li>
-            <li><a href="SettingsEx.html">Settings</a></li>
-            <li><a href="ProfileEx.html">Profile</a></li>
-            <li><a href="Help.html">Help</a></li>
+            <li><a href="#" onclick="pageGen(0)">Dashboard</a></li>
+            <li><a href="#" onclick="pageGen(7)">Settings</a></li>
+            <li><a href="#" onclick="pageGen(8)">Profile</a></li>
+            <li><a href="#" onclick="pageGen(9)">Help</a></li>
             <li><a ng-click="signout()">Sign Out</a></li>
           </ul>
           <form class="navbar-form navbar-right">
@@ -89,18 +89,18 @@
           <ul class="nav nav-sidebar">
             <li class="active"><a href="#" onclick= "pageGen(0)">Home <span class="sr-only">(current)</span></a></li>
             <li><a href="#" class="QA" onclick="pageGen(1)">Q and A</a></li>
-            <li><a href="ProjectCollab.html">Project Collab</a></li>
-            <li><a href="FreelanceEx.html" class="Freelance" onclick="FreeLance()">Freelance Work</a></li>
+            <li><a href="#" onclick="pageGen(2)">Project Collab</a></li>
+            <li><a href="#" class="Freelance" onclick="pageGen(3)">Freelance Work</a></li>
           </ul>
           <ul class="nav nav-sidebar">
-            <li><a href="TextEditorEx.html"  >Text Editor</a></li>
-            <li><a href="MyProject.html">My Projects</a></li>
+            <li><a href="#" onclick="pageGen(4)"  >Text Editor</a></li>
+            <li><a href="#" onclick="pageGen(5)">My Projects</a></li>
             <li><a href="#" class="Messanger">Messaging</a></li>
           </ul>
           <ul class="nav nav-sidebar">
-            <li><a href="SearchEx.html">Search</a></li>
-            <li><a href="SettingsEx.html">Settings</a></li>
-            <li><a href="ProfileEx.html">Profile</a></li>
+            <li><a href="#" onclick="pageGen(6)">Search</a></li>
+            <li><a href="#" onclick="pageGen(7)">Settings</a></li>
+            <li><a href="#" onclick="pageGen(8)">Profile</a></li>
           </ul>
         </div>
       </div>
@@ -125,6 +125,7 @@
     <script type="text/javascript" src = "JS/pageGen.js"></script>
     <!--INSERT SCRIPTS REFERENCED AFTER PAGEGEN-->
     <script type="text/javascript" src="JS/tableGen.js"></script>
+    <script type="text/javascript" src="JS/groupGen.js"></script>
     </div>
 
     <div class="messaging container ui-widget-content" id="messaging" style="display:none;">
@@ -238,6 +239,20 @@
           toggleContent($('.messaging'));
         });
       });
+
+$(document).ready(function () {
+    $('.nav li a').click(function(e) {
+
+        $('.nav li').removeClass('active');
+
+        var $parent = $(this).parent();
+        if (!$parent.hasClass('active')) {
+            $parent.addClass('active');
+        }
+        e.preventDefault();
+    });
+});
+
     </script>
 
     <script type="text/javascript">
