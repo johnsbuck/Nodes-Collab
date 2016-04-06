@@ -8,7 +8,9 @@ var user = 'CREATE TABLE users (username VARCHAR(40) PRIMARY KEY, ' +
                                 'pass VARCHAR(128) NOT NULL, salt VARCHAR(32) NOT NULL,' +
                                 'email VARCHAR(40) UNIQUE NOT NULL, ' +
                                 'first_name VARCHAR(40) NOT NULL, last_name VARCHAR(40) NOT NULL, ' +
-                                'gender VARCHAR(40) NOT NULL);';
+                                'gender VARCHAR(40), ' +
+                                'bio VARCHAR(63206), ' +
+                                'facebook VARCHAR(80), linkedin VARCHAR(80));';
 
 var connections = 'CREATE TABLE connections (first_user VARCHAR(40) REFERENCES users (username) ON DELETE CASCADE, ' +
                                             'second_user VARCHAR(40) REFERENCES users (username) ON DELETE CASCADE, ' +

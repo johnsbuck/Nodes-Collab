@@ -143,7 +143,8 @@ router.put('/edit', function(req, res, next) {
          if(passHash.verify(req.body.pass, hashpass)) {
            // Check what to UPDATE in user's row
            var sqlQuery = 'UPDATE users SET';
-           var columns = {'username': true, 'pass': true, 'email': true, 'first_name': true, 'last_name': true, 'gender': true};
+           var columns = {'username': true, 'pass': true, 'email': true, 'first_name': true, 'last_name': true,
+            'gender': true, 'bio': true, 'facebook': true, 'linkedin': true};
            for(key in req.body.new) {
              if(key in columns) {
                sqlQuery += ' ' + key + '=\'' + req.body.new[key] + '\',';
