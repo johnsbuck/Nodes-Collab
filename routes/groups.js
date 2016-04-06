@@ -116,6 +116,7 @@ router.put('/delete', function(req, res) {
 				}else {
 					res.sendStatus(403);
 				}
+			}
 		});
 	});
 });
@@ -154,6 +155,7 @@ router.put('/add/user', function(req, res) {
 				}else {
 					res.sendStatus(403);
 				}
+			}
 		});
 	});
 });
