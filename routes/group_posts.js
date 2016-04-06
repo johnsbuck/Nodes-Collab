@@ -24,11 +24,11 @@ router.put('/get', function(req, res) {
 				if(err) {
 					done();
 					console.log(err);
-					res.sendStatus(406);
+					res.sendStatus(406).end();
 				// If empty, send Not Found
 				}else if(!result || result.rows.length === 0) {
 					done();
-					res.sendStatus(404);
+					res.sendStatus(404).end();
 				// If not private, send rows
 				}else if(result.rows[0].privacy !== 2){
 					// Get group posts
@@ -38,13 +38,13 @@ router.put('/get', function(req, res) {
 						// If error, send client err
 						if(err) {
 							console.log(err);
-							res.sendStatus(406);
+							res.sendStatus(406).end();
 						// If empty, send no content
 						} else if (!result || result.rows.length === 0) {
-							res.sendStatus(204);
+							res.sendStatus(204).end();
 						// Send accepted with rows
 						} else {
-							res.status(201).send(result.rows);
+							res.status(201).send(result.rows).end();
 						}
 					});
 				// If private, check permission and user authentication
@@ -57,11 +57,11 @@ router.put('/get', function(req, res) {
 						if(err) {
 							done();
 							console.log(err);
-							res.sendStatus(406);
+							res.sendStatus(406).end();
 						// If user isn't found, send Forbidden.
 						} else if(!result || result.rows.length === 0) {
 							done();
-							res.sendStatus(403);
+							res.sendStatus(403).end();
 						// Authenticate otherwise
 						} else {
 							client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
@@ -69,10 +69,10 @@ router.put('/get', function(req, res) {
 								 if(err) {
 									 done();
 									 console.error(err);
-									 res.sendStatus(406);
+									 res.sendStatus(406).end();
 								 }else if(!result || result.rows.length === 0) {
 									 done();
-									 res.sendStatus(404);
+									 res.sendStatus(404).end();
 								 }else {
 									 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
@@ -85,17 +85,17 @@ router.put('/get', function(req, res) {
 											// If error, send client err
 											if(err) {
 												console.log(err);
-												res.sendStatus(406);
+												res.sendStatus(406).end();
 											// If empty, send no content
 											} else if (!result || result.rows.length === 0) {
-												res.sendStatus(204);
+												res.sendStatus(204).end();
 											// Send accepted with rows
 											} else {
-												res.status(201).send(result.rows);
+												res.status(201).send(result.rows).end();
 											}
 										});
 									} else {
-										res.sendStatus(406);
+										res.sendStatus(406).end();
 									}
 								}
 							});
@@ -118,11 +118,11 @@ router.put('/post', function(req, res) {
 			if(err) {
 				done();
 				console.log(err);
-				res.sendStatus(406);
+				res.sendStatus(406).end();
 			// If user isn't found, send Forbidden.
 			} else if(!result || result.rows.length === 0) {
 				done();
-				res.sendStatus(403);
+				res.sendStatus(403).end();
 			// Authenticate otherwise
 			} else {
 				client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
@@ -130,10 +130,10 @@ router.put('/post', function(req, res) {
 					 if(err) {
 						 done();
 						 console.error(err);
-						 res.sendStatus(406);
+						 res.sendStatus(406).end();
 					 }else if(!result || result.rows.length === 0) {
 						 done();
-						 res.sendStatus(404);
+						 res.sendStatus(404).end();
 					 }else {
 						 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
@@ -146,14 +146,14 @@ router.put('/post', function(req, res) {
 								// If error, send client error
 					 			if(err) {
 					 				console.log(err);
-					 				res.sendStatus(406);
+					 				res.sendStatus(406).end();
 								// Else, return Created
 					 			} else {
-					 				res.sendStatus(202);
+					 				res.sendStatus(202).end();
 					 			}
 					 		});
 						 }else {
-							 res.sendStatus(406);
+							 res.sendStatus(406).end();
 						 }
 					}
 				});
@@ -174,11 +174,11 @@ router.delete('/delete', function(req, res) {
 			if(err) {
 				done();
 				console.log(err);
-				res.sendStatus(406);
+				res.sendStatus(406).end();
 			// If user isn't found, send Forbidden.
 			} else if(!result || result.rows.length === 0) {
 				done();
-				res.sendStatus(403);
+				res.sendStatus(403).end();
 			// Authenticate otherwise
 			} else {
 				client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
@@ -186,10 +186,10 @@ router.delete('/delete', function(req, res) {
 					 if(err) {
 						 done();
 						 console.error(err);
-						 res.sendStatus(406);
+						 res.sendStatus(406).end();
 					 }else if(!result || result.rows.length === 0) {
 						 done();
-						 res.sendStatus(404);
+						 res.sendStatus(404).end();
 					 }else {
 						 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
@@ -202,14 +202,14 @@ router.delete('/delete', function(req, res) {
 
 								if(err) {
 									console.error(err);
-									res.sendStatus(406);
+									res.sendStatus(406).end();
 								// If finished, send Accepted
 								} else {
-									res.sendStatus(201);
+									res.sendStatus(201).end();
 								}
 							});
 						 }else {
-							 res.sendStatus(406);
+							 res.sendStatus(406).end();
 						 }
 					}
 				});
@@ -227,21 +227,21 @@ router.put('/edit', function(req, res) {
 			if(err) {
 				done();
 				console.err(err);
-				res.sendStatus(406);
+				res.sendStatus(406).end();
 			}else if(!result || result.rows.length == 0) {
 				done();
 				console.err(err);
-				res.sendStatus(404);
+				res.sendStatus(404).end();
 			}else {
 				client.query('SELECT pass, salt FROM users WHERE username = \'' + result.rows[0].username +'\';',
 				 function(err, result) {
 					 if(err) {
 						 done();
 						 console.error(err);
-						 res.sendStatus(406);
+						 res.sendStatus(406).end();
 					 }else if(!result || result.rows.length === 0) {
 						 done();
-						 res.sendStatus(404);
+						 res.sendStatus(404).end();
 					 }else {
 						 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
@@ -253,13 +253,13 @@ router.put('/edit', function(req, res) {
 								 done();
 								 if(err) {
 									 console.err(err);
-									 res.sendStatus(406);
+									 res.sendStatus(406).end();
 								 } else {
-									 res.sendStatus(201);
+									 res.sendStatus(201).end();
 								 }
 							 });
 						 }else {
-							 res.sendStatus(406);
+							 res.sendStatus(406).end();
 						 }
 					 }
 				 });

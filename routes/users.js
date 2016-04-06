@@ -31,11 +31,11 @@ router.put('/get', function(req, res, next) {
 
         if(err) {
           console.error(err);
-          res.sendStatus(406);
+          res.sendStatus(406).end();
         }else if(!result || result.rows.length === 0) {
-          res.sendStatus(204);
+          res.sendStatus(204).end();
         }else {
-          res.status(202).send(result.rows[0]);
+          res.status(202).send(result.rows[0]).end();
         }
       });
   })
@@ -54,10 +54,10 @@ router.delete('/delete', function(req, res, next) {
         if(err) {
           done();
           console.error(err);
-          res.sendStatus(406);
+          res.sendStatus(406).end();
         }else if(!result || result.rows.length === 0) {
           done();
-          res.sendStatus(404);
+          res.sendStatus(404).end();
         }else {
           var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
@@ -69,13 +69,13 @@ router.delete('/delete', function(req, res, next) {
 
               if(err) {
                 console.error(err);
-                res.sendStatus(406);
+                res.sendStatus(406).end();
               } else {
-                res.sendStatus(202);
+                res.sendStatus(202).end();
               }
             });
           }else {
-            res.sendStatus(406);
+            res.sendStatus(406).end();
           }
         }
       });
@@ -105,9 +105,9 @@ router.put('/create', function(req, res, next) {
         done();
         if(err) {
           console.error(err);
-          res.status(406).send('406 Not Acceptable - Username already taken');
+          res.status(406).send('406 Not Acceptable - Username already taken').end();
         }else {
-          res.sendStatus(201);
+          res.sendStatus(201).end();
         }
       });
   });
@@ -118,7 +118,12 @@ router.put('/create', function(req, res, next) {
  *
  * Edits the password for a user. Requires their password to continue.
  */
-router.put('/edit/pass', function(req, res, next) {
+router.put('/edit', function(req, res, next) {
+  // Nothing new to change
+  if(!req.body.new) {
+    res.sendStatus(406).end();
+  }
+
   req.body = quoteFixer(req.body);
   pg.connect(connectionString, function(err, client, done) {
     client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
@@ -126,30 +131,41 @@ router.put('/edit/pass', function(req, res, next) {
        if(err) {
          done();
          console.error(err);
-         res.sendStatus(406);
+         res.sendStatus(406).end();
        }else if(!result || result.rows.length === 0) {
          done();
-         res.sendStatus(404);
+         res.sendStatus(404).end();
        }else {
          var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
          console.log(passHash.verify(req.body.pass, hashpass));
          if(passHash.verify(req.body.pass, hashpass)) {
-           var hashlist = passHash.generate(req.body.newpass).split('$');
-           client.query('UPDATE users SET pass = \'' + hashlist[3] +
-            '\', salt = \'' + hashlist[1] + '\' WHERE username = \'' +
-            req.body.username + '\';',
+           // Check what to UPDATE in user's row
+           var sqlQuery = 'UPDATE users SET';
+           var columns = {'username': true, 'pass': true, 'email': true, 'first_name': true, 'last_name': true, 'gender': true};
+           for(key in req.body.new) {
+             if(key in columns) {
+               sqlQuery += ' ' + key + '=\'' + req.body.new[key] + '\',';
+             } else {
+               console.err('INVALID COLUMN GIVEN');
+               res.sendStatus(406).end();
+             }
+           }
+
+           sqlQuery = sqlQuery.slice(0, -1) + 'WHERE username=\'' + req.body.username + '\';';
+
+           client.query(sqlQuery,
             function(err, result) {
               done();
 
               if(err) {
                 console.err(err);
-                res.sendStatus(406);
+                res.sendStatus(406).end();
               }else {
-                res.sendStatus(202);
+                res.sendStatus(202).end();
               }
             });
         }else {
-          res.sendStatus(406);
+          res.sendStatus(403).end();
         }
       }
     });

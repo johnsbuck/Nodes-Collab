@@ -18,11 +18,11 @@ router.put('/get', function(req, res) {
 		function(err, result) {
 			if(err) {
 				console.error(err);
-				res.sendStatus(406);
+				res.sendStatus(406).end();
 			}else if(!result || result.rows.length === 0) {
-				res.sendStatus(204);
+				res.sendStatus(204).end();
 			}else {
-				res.status(202).send(result.rows[0]);
+				res.status(202).send(result.rows[0]).end();
 			}
 		});
 	});
@@ -40,11 +40,11 @@ router.put('/get/tag', function(req, res) {
 		function(err, result) {
 			if(err) {Adds
 				console.error(err);
-				res.sendStatus(406);
+				res.sendStatus(406).end();
 			}else if(!result || result.rows.length === 0) {
-				res.sendStatus(204);
+				res.sendStatus(204).end();
 			}else {
-				res.status(202).send(result.rows[0]);
+				res.status(202).send(result.rows[0]).end();
 			}
 		});
 	});
@@ -62,9 +62,9 @@ router.post('/post', function(req, res) {
 		function(err, result) {
 			if(err) {
 				console.error(err);
-				res.sendStatus(406);
+				res.sendStatus(406).end();
 			}else {
-				res.sendStatus(202);
+				res.sendStatus(202).end();
 			}
 		});
 	});
@@ -82,9 +82,9 @@ router.delete('/delete', function(req, res) {
 		function(err, result) {
 			if(err) {
 				console.error(err);
-				res.sendStatus(406);
+				res.sendStatus(406).end();
 			}else {
-				res.sendStatus(202);
+				res.sendStatus(202).end();
 			}
 		});
 	});
@@ -102,9 +102,9 @@ router.delete('/delete/tag', function(req, res) {
 		function(err, result) {
 			if(err) {
 				console.error(err);
-				res.sendStatus(406);
+				res.sendStatus(406).end();
 			}else {
-				res.sendStatus(202);
+				res.sendStatus(202).end();
 			}
 		});
 	});

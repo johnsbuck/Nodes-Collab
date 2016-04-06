@@ -16,9 +16,9 @@ router.put('/get/info', function(req, res) {
 		function(err, result) {
 			done();
 			if(err) {
-				res.sendStatus(400);
+				res.sendStatus(400).end();
 			} else if (!result || result.rows.length == 0) {
-				res.sendStatus(406);
+				res.sendStatus(406).end();
 			} else {
 				if (result.rows[0].privacy === 2) {
 					//store results
@@ -29,10 +29,10 @@ router.put('/get/info', function(req, res) {
 					 function(err, result) {
 						 if(err) {
 							 console.error(err);
-							 res.sendStatus(406);
+							 res.sendStatus(406).end();
 						 }else if(!result || result.rows.length === 0) {
 							 done();
-							 res.sendStatus(404);
+							 res.sendStatus(404).end();
 						 }else {
 							 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
@@ -41,18 +41,18 @@ router.put('/get/info', function(req, res) {
 									function(err, result) {
 										if(err) {
 											console.error(err);
-											res.sendStatus(406);
+											res.sendStatus(406).end();
 										} else {
-											res.send(206).sendStatus(groupInfo);
+											res.status(206).send(groupInfo).end();
 										}
 									});
 								}else {
-			            res.sendStatus(403);
+			            res.sendStatus(403).end();
 			          }
 							}
 						});
 				}else {
-					res.status(200).send(result.rows);
+					res.status(200).send(result.rows).end();
 				}
 			}
 		});
@@ -74,9 +74,9 @@ router.put('/create', function(req, res) {
 		function(err, result) {
 			if(err) {
 				console.error(err);
-				res.sendStatus(406);
+				res.sendStatus(406).end();
 			} else {
-				res.sendStatus(202);
+				res.sendStatus(202).end();
 			}
 		});
 	});
@@ -96,10 +96,10 @@ router.put('/delete', function(req, res) {
 		 function(err, result) {
 			 if(err) {
 				 console.error(err);
-				 res.sendStatus(406);
+				 res.sendStatus(406).end();
 			}else if(!result || result.rows.length === 0) {
 				 done();
-				 res.sendStatus(404);
+				 res.sendStatus(404).end();
 			}else {
 				var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
@@ -108,13 +108,13 @@ router.put('/delete', function(req, res) {
 					function(err, result) {
 						if(err) {
 							console.error(err);
-							res.sendStatus(406);
+							res.sendStatus(406).end();
 						} else {
-							res.sendStatus(202);
+							res.sendStatus(202).end();
 						}
 					});
 				}else {
-					res.sendStatus(403);
+					res.sendStatus(403).end();
 				}
 			}
 		});
@@ -132,10 +132,10 @@ router.put('/add/user', function(req, res) {
 		 function(err, result) {
 			 if(err) {
 				 console.error(err);
-				 res.sendStatus(406);
+				 res.sendStatus(406).end();
 			}else if(!result || result.rows.length === 0) {
 				 done();
-				 res.sendStatus(404);
+				 res.sendStatus(404).end();
 			}else {
 				var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
@@ -147,13 +147,13 @@ router.put('/add/user', function(req, res) {
  						if(err)
  						{
  							console.log(err);
- 							res.sendStatus(406);
+ 							res.sendStatus(406).end();
  						}else {
- 							res.sendStatus(202);
+ 							res.sendStatus(202).end();
  						}
  					});
 				}else {
-					res.sendStatus(403);
+					res.sendStatus(403).end();
 				}
 			}
 		});
@@ -171,10 +171,10 @@ router.delete('/delete/user', function(req, res) {
 		 function(err, result) {
 			 if(err) {
 				 console.error(err);
-				 res.sendStatus(406);
+				 res.sendStatus(406).end();
 			 }else if(!result || result.rows.length === 0) {
 				 done();
-				 res.sendStatus(404);
+				 res.sendStatus(404).end();
 			 }else {
 				 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
@@ -186,13 +186,13 @@ router.delete('/delete/user', function(req, res) {
 						done();
 						if(err) {
 							console.error(err);
-							res.sendStatus(406);
+							res.sendStatus(406).end();
 						} else {
-							res.sendStatus(201);
+							res.sendStatus(201).end();
 						}
  				 	});
 				}else {
-          res.sendStatus(403);
+          res.sendStatus(403).end();
         }
 			}
 		});

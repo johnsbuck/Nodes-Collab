@@ -17,11 +17,11 @@ router.get('/', function(req, res) {
 			done();
 			if(err) {
 				console.error(err);
-				res.sendStatus(406);
+				res.sendStatus(406).end();
 			}else if(!result || result.rows.length == 0) {
-				res.sendStatus(203);
+				res.sendStatus(203).end();
 			}else {
-				res.status(200).send(result.rows);
+				res.status(200).send(result.rows).end();
 			}
 		});
 	});
@@ -39,9 +39,9 @@ router.put('/', function(req, res) {
 			done();
 			if(err) {
 				console.error(err);
-				res.sendStatus(406);
+				res.sendStatus(406).end();
 			}else {
-				res.sendStatus(202);
+				res.sendStatus(202).end();
 			}
 		});
 	});
@@ -56,10 +56,10 @@ router.delete('/', function(req, res) {
 		 function(err, result) {
 			 if(err) {
 				 console.error(err);
-				 res.sendStatus(406);
+				 res.sendStatus(406).end();
 			 }else if(!result || result.rows.length === 0) {
 				 done();
-				 res.sendStatus(404);
+				 res.sendStatus(404).end();
 			 }else {
 				 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
@@ -70,13 +70,13 @@ router.delete('/', function(req, res) {
 						done();
 						if(err) {
 							console.error(err);
-				 			res.sendStatus(406);
+				 			res.sendStatus(406).end();
 						}else {
-			 				res.sendStatus(201);
+			 				res.sendStatus(201).end();
 			 			}
 			 		});
 				 }else {
-					 res.sendStatus(406);
+					 res.sendStatus(406).end();
 				 }
 			 }
 		 });

@@ -20,11 +20,11 @@ router.put('/get', function(req, res) {
 		function(err, result) {
 			if(err) {
 				console.error(err);
-				res.sendStatus(406);
+				res.sendStatus(406).end();
 			}else if(!result || result.rows.length === 0) {
-				res.sendStatus(204);
+				res.sendStatus(204).end();
 			}else {
-				res.status(202).send(result.rows);
+				res.status(202).send(result.rows).end();
 			}
 		});
 	});
@@ -42,11 +42,11 @@ router.put('/get/post', function(req, res) {
 		function(err, result) {
 			if(err) {
 				console.error(err);
-				res.sendStatus(406);
+				res.sendStatus(406).end();
 			}else if(!result || result.rows.length === 0) {
-				res.sendStatus(204);
+				res.sendStatus(204).end();
 			}else {
-				res.status(202).send(result.rows[0]);
+				res.status(202).send(result.rows[0]).end();
 			}
 		});
 	});
@@ -64,10 +64,10 @@ router.post('/post', function(req, res) {
       function(err, result) {
         if(err) {
           console.error(err);
-          res.sendStatus(406);
+          res.sendStatus(406).end();
         }else if(!result || result.rows.length === 0) {
           done();
-          res.sendStatus(404);
+          res.sendStatus(404).end();
         }else {
           var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
@@ -78,13 +78,13 @@ router.post('/post', function(req, res) {
 						function(err, result) {
 							if(err) {
 								console.error(err);
-								res.sendStatus(406);
+								res.sendStatus(406).end();
 							} else {
-								res.sendStatus(206);
+								res.sendStatus(206).end();
 							}
 						});
 					}else {
-            res.sendStatus(406);
+            res.sendStatus(406).end();
           }
 				}
 			});
@@ -103,10 +103,10 @@ router.delete('/delete', function(req, res) {
       function(err, result) {
         if(err) {
           console.error(err);
-          res.sendStatus(406);
+          res.sendStatus(406).end();
         }else if(!result || result.rows.length === 0) {
           done();
-          res.sendStatus(404);
+          res.sendStatus(404).end();
         }else {
           var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
@@ -116,13 +116,13 @@ router.delete('/delete', function(req, res) {
 						function(err, result) {
 							if(err) {
 								console.error(err);
-								res.sendStatus(406);
+								res.sendStatus(406).end();
 							} else {
-								res.sendStatus(202);
+								res.sendStatus(202).end();
 							}
 						});
 					}else {
-	          res.sendStatus(406);
+	          res.sendStatus(406).end();
 	        }
 				}
 		});
@@ -152,10 +152,10 @@ router.put('/edit', function(req, res) {
 		 function(err, result) {
 			 if(err) {
 				 console.error(err);
-				 res.sendStatus(406);
+				 res.sendStatus(406).end();
 			 }else if(!result || result.rows.length === 0) {
 				 done();
-				 res.sendStatus(404);
+				 res.sendStatus(404).end();
 			 }else {
 				 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
@@ -164,13 +164,13 @@ router.put('/edit', function(req, res) {
 						function(err, result) {
 							if(err) {
 								console.error(err);
-								res.sendStatus(406);
+								res.sendStatus(406).end();
 							} else {
-								res.sendStatus(206);
+								res.sendStatus(206).end();
 							}
 						});
 					}else {
-            res.sendStatus(406);
+            res.sendStatus(406).end();
           }
 				}
 			});
