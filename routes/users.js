@@ -75,6 +75,7 @@ router.delete('/delete', function(req, res, next) {
               }
             });
           }else {
+            done();
             res.sendStatus(406).end();
           }
         }
@@ -107,6 +108,7 @@ router.put('/create', function(req, res, next) {
           console.error(err);
           res.status(406).send('406 Not Acceptable - Username already taken').end();
         }else {
+          done();
           res.sendStatus(201).end();
         }
       });
@@ -166,6 +168,81 @@ router.put('/edit', function(req, res, next) {
               }
             });
         }else {
+          done();
+          res.sendStatus(403).end();
+        }
+      }
+    });
+  });
+
+router.put('/create/connection', function(req, res, next) {
+  if(req.body.username === req.body.newuser) {
+    res.sendStatus(406).end();
+  }
+  req.body = quoteFixer(req.body);
+  pg.connect(connectionString, function(err, client, done) {
+    client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
+     function(err, result) {
+       if(err) {
+         done();
+         console.error(err);
+         res.sendStatus(406).end();
+       }else if(!result || result.rows.length === 0) {
+         done();
+         res.sendStatus(404).end();
+       }else {
+         var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
+         console.log(passHash.verify(req.body.pass, hashpass));
+         if(passHash.verify(req.body.pass, hashpass)) {
+          client.query('INSERT INTO connections (first_user, second_user) VALUES (\'' +
+            req.body.username + '\', \'' + req.body.connect_user + ');',
+          function(err, result) {
+            done();
+            if(err) {
+              console.error(err);
+              res.sendStatus(406).end();
+            } else {
+              res.sendStatus(202).end();
+            }
+          });
+        }else {
+          done();
+          res.sendStatus(403).end();
+        }
+      }
+    });
+  });
+});
+
+router.delete('/delete/connection', function(req, res, next) {
+  req.body = quoteFixer(req.body);
+  pg.connect(connectionString, function(err, client, done) {
+    client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
+     function(err, result) {
+       if(err) {
+         done();
+         console.error(err);
+         res.sendStatus(406).end();
+       }else if(!result || result.rows.length === 0) {
+         done();
+         res.sendStatus(404).end();
+       }else {
+         var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
+         console.log(passHash.verify(req.body.pass, hashpass));
+         if(passHash.verify(req.body.pass, hashpass)) {
+          client.query('DELETE FROM connections WHERE first_user = \'' + req.body.username + '\'' +
+            'AND second_user = \'' + req.body.connect_user + '\';',
+          function(err, result) {
+            done();
+            if(err) {
+              console.error(err);
+              res.sendStatus(406).end();
+            } else {
+              res.sendStatus(202).end();
+            }
+          });
+        }else {
+          done();
           res.sendStatus(403).end();
         }
       }

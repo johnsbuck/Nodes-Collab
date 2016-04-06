@@ -16,7 +16,6 @@ router.put('/get', function(req, res) {
 	pg.connect(connectionString, function(err, client, done) {
 		client.query('SELECT * FROM group, user_group_perms WHERE groupname=\'' + req.body.groupname + '\';',
 		function(err, result) {
-			done();
 			if(err) {
 				res.sendStatus(400).end();
 			} else if (!result || result.rows.length == 0) {
@@ -43,6 +42,7 @@ router.put('/get', function(req, res) {
 							 if(passHash.verify(req.body.pass, hashpass)) {
 								client.query(sqlQuery,
 									function(err, result) {
+										done();
 										if(err) {
 											console.error(err);
 											res.sendStatus(406).end();
@@ -51,11 +51,13 @@ router.put('/get', function(req, res) {
 										}
 									});
 								}else {
+									done();
 			            res.sendStatus(403).end();
 			          }
 							}
 						});
 				}else {
+					done();
 					res.status(200).send(result.rows).end();
 				}
 			}
@@ -120,6 +122,7 @@ router.put('/delete', function(req, res) {
 						}
 					});
 				}else {
+					done();
 					res.sendStatus(403).end();
 				}
 			}
@@ -160,6 +163,7 @@ router.put('/add/user', function(req, res) {
  						}
  					});
 				}else {
+					done();
 					res.sendStatus(403).end();
 				}
 			}
@@ -200,6 +204,7 @@ router.delete('/delete/user', function(req, res) {
 						}
  				 	});
 				}else {
+					done();
           res.sendStatus(403).end();
         }
 			}
@@ -260,6 +265,7 @@ router.put('/edit', function(req, res) {
 						}
 					});
 				}else {
+					done();
 					res.sendStatus(403).end();
 				}
 			}

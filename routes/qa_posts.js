@@ -17,6 +17,7 @@ router.put('/get', function(req, res) {
 	pg.connect(connectionString, function(err, client, done) {
 		client.query('SELECT * FROM posts WHERE type=\'0\';',
 		function(err, result) {
+			done();
 			if(err) {
 				console.error(err);
 				res.sendStatus(406).end();
@@ -39,6 +40,7 @@ router.put('/get/post', function(req, res) {
 	pg.connect(connectionString, function(err, client, done) {
 		client.query('SELECT * FROM posts WHERE id = \'' + req.body.id + '\' AND type=\'0\';',
 		function(err, result) {
+			done();
 			if(err) {
 				console.error(err);
 				res.sendStatus(406).end();
@@ -61,6 +63,7 @@ router.post('/post', function(req, res) {
 	pg.connect(connectionString, function(err, client, done) {
      client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
       function(err, result) {
+				done();
         if(err) {
           console.error(err);
           res.sendStatus(406).end();
@@ -113,6 +116,7 @@ router.delete('/delete', function(req, res) {
 						client.query('DELETE FROM posts WHERE id = \'' + req.body.id + '\' AND username=\'' + req.body.username +
 							'\' AND type=\'0\';',
 						function(err, result) {
+							done();
 							if(err) {
 								console.error(err);
 								res.sendStatus(406).end();
@@ -121,7 +125,8 @@ router.delete('/delete', function(req, res) {
 							}
 						});
 					}else {
-	          res.sendStatus(406).end();
+						done();
+	          res.sendStatus(403).end();
 	        }
 				}
 		});
@@ -173,6 +178,7 @@ router.put('/edit', function(req, res) {
 
 					client.query(sqlQuery,
 						function(err, result) {
+							done();
 							if(err) {
 								console.error(err);
 								res.sendStatus(406).end();
@@ -181,6 +187,7 @@ router.put('/edit', function(req, res) {
 							}
 						});
 					}else {
+						done();
             res.sendStatus(406).end();
           }
 				}

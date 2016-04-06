@@ -96,7 +96,8 @@ router.put('/get', function(req, res) {
 											}
 										});
 									} else {
-										res.sendStatus(406).end();
+										done();
+										res.sendStatus(403).end();
 									}
 								}
 							});
@@ -155,6 +156,7 @@ router.put('/post', function(req, res) {
 					 			}
 					 		});
 						 }else {
+							 done();
 							 res.sendStatus(403).end();
 						 }
 					}
@@ -211,7 +213,8 @@ router.delete('/delete', function(req, res) {
 								}
 							});
 						 }else {
-							 res.sendStatus(406).end();
+							 done();
+							 res.sendStatus(403).end();
 						 }
 					}
 				});
@@ -284,7 +287,8 @@ router.put('/edit', function(req, res) {
 								 }
 							 });
 						 }else {
-							 res.sendStatus(406).end();
+							 done();
+							 res.sendStatus(403).end();
 						 }
 					 }
 				 });

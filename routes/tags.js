@@ -183,7 +183,7 @@ router.put('/edit/tag', function(req, res) {
  						}
  					});
 				 }else {
-					 res.sendStatus(403);
+					 res.sendStatus(403).end();
 				 }
 			 }
 		 });

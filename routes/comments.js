@@ -76,7 +76,8 @@ router.delete('/delete', function(req, res) {
 			 			}
 			 		});
 				 }else {
-					 res.sendStatus(406).end();
+					 done();
+					 res.sendStatus(403).end();
 				 }
 			 }
 		 });
