@@ -219,6 +219,11 @@ router.delete('/delete', function(req, res) {
 });
 
 router.put('/edit', function(req, res) {
+	// Nothing new to change
+  if(!req.body.new) {
+    res.sendStatus(406).end();
+  }
+
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
 		client.query('SELECT * FROM group_posts WHERE id=\'' + req.body.id +
@@ -232,6 +237,10 @@ router.put('/edit', function(req, res) {
 				done();
 				console.err(err);
 				res.sendStatus(404).end();
+			}else if(result.rows.username !== req.body.username) {
+				done();
+				console.err(err);
+				res.sendStatus(403).end();
 			}else {
 				client.query('SELECT pass, salt FROM users WHERE username = \'' + result.rows[0].username +'\';',
 				 function(err, result) {
@@ -247,8 +256,22 @@ router.put('/edit', function(req, res) {
 
 						 // If authorized
 						 if(passHash.verify(req.body.pass, hashpass)) {
-							 client.query('UPDATE group_posts SET text = \'' + req.body.text +
-							 	'\' WHERE id=\'' + req.body.id + '\' AND groupname=\'' + req.body.groupname + '\';',
+							 // Check what to UPDATE in user's row
+		           var sqlQuery = 'UPDATE group_posts SET';
+		           var columns = {'text': true, 'id': true, 'groupname': true};
+		           for(key in req.body.new) {
+		             if(key in columns) {
+		               sqlQuery += ' ' + key + '=\'' + req.body.new[key] + '\',';
+		             } else {
+		               console.err('INVALID COLUMN GIVEN');
+		               res.sendStatus(406).end();
+		             }
+		           }
+
+		           // Replace last ',' with end query.
+		           sqlQuery = sqlQuery.slice(0, -1) + 'WHERE username=\'' + req.body.username + '\';';
+
+							 client.query(sqlQuery,
 							 function(err, result) {
 								 done();
 								 if(err) {

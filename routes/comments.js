@@ -9,7 +9,7 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
 /* Returns the comment of the given post id and a 200 status code.
  * If no post exists, return a 204 status code.
  */
-router.get('/', function(req, res) {
+router.get('/get', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
 		client.query('SELECT * FROM comments WHERE post_id=\'' + req.body.post_id + '\';',
@@ -29,7 +29,7 @@ router.get('/', function(req, res) {
 
 /* Posts a given comment connected to a post onto the database.
  */
-router.put('/', function(req, res) {
+router.put('/create', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
 		client.query('INSERT INTO comments (username, post_id, text, type) VALUES (\'' +
@@ -49,7 +49,7 @@ router.put('/', function(req, res) {
 
 /* Deletes a given post onto the database.
  */
-router.delete('/', function(req, res) {
+router.delete('/delete', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(req, res) {
 		client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',

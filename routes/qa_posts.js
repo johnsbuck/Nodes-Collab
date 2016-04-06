@@ -134,20 +134,17 @@ router.delete('/delete', function(req, res) {
  * Edits a single Q&A post. Requires username and password.
  */
 router.put('/edit', function(req, res) {
-	req.body = quoteFixer(req.body);
-	var sqlQuery = 'UPDATE posts SET ';
-	if(req.body.text) {
-		sqlQuery += 'text = \'' + req.body.text.replace('\'', '\'\'') + '\'';
-	}
-	if(req.body.title) {
-		sqlQuery += ', title = \'' + req.body.title.replace('\'', '\'\'') + '\'';
-	}
+	// Nothing new to change
+  if(!req.body.new) {
+    res.sendStatus(406).end();
+  }
 
-	sqlQuery += ' WHERE username = \'' + req.body.username + '\' AND id = \'' + req.body.id + '\';';
+	req.body = quoteFixer(req.body);
 
 	pg.connect(connectionString, function(err, client, done) {
 		req.body = quoteFixer(req.body);
-		client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
+		client.query('SELECT pass, salt FROM users INNER JOIN posts WHERE ' +
+			'posts.username = \'' + req.body.username +'\' AND posts.post_id = \'' + req.body.post_id + '\' AND posts.type=\'0\';',
 		 function(err, result) {
 			 if(err) {
 				 console.error(err);
@@ -159,6 +156,21 @@ router.put('/edit', function(req, res) {
 				 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
 				 if(passHash.verify(req.body.pass, hashpass)) {
+					// Check what to UPDATE in user's row
+ 					var sqlQuery = 'UPDATE posts SET';
+ 					var columns = {'title': true, 'text': true};
+ 					for(key in req.body.new) {
+ 						if(key in columns) {
+ 							sqlQuery += ' ' + key + '=\'' + req.body.new[key] + '\',';
+ 						} else {
+ 							console.err('INVALID COLUMN GIVEN');
+ 							res.sendStatus(406).end();
+ 						}
+ 					}
+
+ 					// Replace last ',' with end query.
+ 					sqlQuery = sqlQuery.slice(0, -1) + 'WHERE username=\'' + req.body.username + '\';';
+
 					client.query(sqlQuery,
 						function(err, result) {
 							if(err) {
