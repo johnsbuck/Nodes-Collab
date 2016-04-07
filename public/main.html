@@ -28,11 +28,7 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <script src="JS/jquery.js"></script>
-    <script src="JS/jquery-ui.min.js"></script>
-    <script src="JS/angular.min.js"></script>
-    <script src="JS/controller.js"></script>
-    <script src="JS/pageGen.js"></script>
+    
   </head>
 
   <body ng-controller="mainCtrl">
@@ -109,9 +105,7 @@
     <div class="main col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
        
     <div id="pageGen"></div>
-    <script type="text/javascript" src = "JS/pageGen.js"></script>
-    <!--INSERT SCRIPTS REFERENCED AFTER PAGEGEN-->
-    <script type="text/javascript" src="JS/tableGen.js"></script>
+    
     <script type="text/javascript" src="JS/groupGen.js"></script>
     </div>
 
@@ -219,15 +213,18 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
 
-    <script src="../JS/FreeLance.js"></script>
-    <script>
-      $(document).ready(function() {
-        $('.Messanger').click(function() {
-          toggleContent($('.messaging'));
-        });
-      });
+    <script src="JS/FreeLance.js"></script>
+    <script src="JS/jquery.js"></script>
+    <script src="JS/jquery-ui.min.js"></script>
+    <script src="JS/angular.min.js"></script>
+    <script src="JS/controller.js"></script>
+    <script src="JS/tableGen.js"></script>
+    <script src="JS/groupGen.js"></script>
+    <script src="JS/pageGen.js"></script>
 
-$(document).ready(function () {
+    <script>
+    
+    $(document).ready(function () {
     $('.nav li a').click(function(e) {
 
         $('.nav li').removeClass('active');
@@ -256,7 +253,6 @@ $(document).ready(function () {
     <script src="../Bootstrap/assets/js/vendor/holder.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../Bootstrap/assets/js/ie10-viewport-bug-workaround.js"></script>
-
 
   </body>
 </html>
