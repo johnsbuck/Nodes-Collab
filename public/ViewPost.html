@@ -96,22 +96,14 @@
       </div>
     </div>
 
-
-    <div class="main col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2"  ng-controller = 'qaPostCtrl'>
-      <H1>Creating a Q&A Post..</H1>
-      <hr>
-      <form class="form-qaPost" role = 'form' method = 'post'>
-          <div id="author">
-           <script type="text/javascript">document.getElementById("author").innerHTML = "<p>Author: " + sessionStorage.getItem('username') + "</p>";</script>
-          </div>
-
-          <input type="text" class="form-control" placeholder="Title" aria-describedby="sizing-addon1" style="width: 300px;" ng-model="formData.title" required autofocus></input>
-          <br>
-          <textarea name="area3" style="width: 1000px; height: 500px;" ng-model="formData.text" required> </textarea>
-          <br><br>
-          <button type="button" class="btn btn-primary" type="submit" ng-click='sub(formData)'>Submit</button>
-     </form>
-
+    <!-- Here will show the post that a user is trying to view -->
+    <div class="main col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
+      <!-- START OF -> Viewing Post -->
+     <div id="viewPostCtrl" ng-controller="viewPostCtrl"><p ng-bind="txt">
+       <!-- under this div a single post be generated-->
+     </p>
+   </div>
+      <!-- END OF -> Viewing Post -->
       <hr>
     <footer class="blog-footer">
       <h6>Text Editor page built for NodesConnect</h6>

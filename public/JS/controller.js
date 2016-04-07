@@ -20,7 +20,8 @@ app.controller('allPostsGen', function($scope, $http) {
                   //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
                   $.getScript("JS/tableGen.js", function(){
                     param = '{ "post" : [' +
-                    '{ "postAuthor": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + "No tags found." + '" }]}';
+                    '{ "username": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + "No Additional Tags Found." +
+                    '", "type":"' + value.type + '", "id":"' + value.id + '" }]}';
                     console.log(param);
                     document.getElementById("allPostsGen").innerHTML += singlePost(param);
                   });
@@ -54,11 +55,12 @@ app.controller('QAPostGen', function($scope, $http) {
                 //$scope.txt = "Some data has been found, let's print it out!";
                 angular.forEach(data, function(value, key) {
 
-                  console.log("Key: " + key + ", Value: " + value.username + ", " + value.title + ", " + value.text);
+                  console.log("Key: " + key + ", Value: " + value.username + ", " + value.title + ", " + value.text + ", " + value.type);
                   //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
                   $.getScript("JS/tableGen.js", function(){
                     param = '{ "post" : [' +
-                    '{ "postAuthor": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + "No tags found." + '" }]}';
+                    '{ "username": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + "No Additional Tags Found." +
+                    '", "type":"' + value.type + '", "id":"' + value.id + '" }]}';
                     console.log(param);
                     document.getElementById("QAPostGen").innerHTML += singlePost(param);
                   });
@@ -190,6 +192,93 @@ app.controller('groupPostGen', function($scope, $http) {
 
     $scope.init();
 });
+
+app.controller('viewPostCtrl', function($scope, $http) {
+    $scope.txt = "";
+    $scope.init = function() {
+      $scope.formData = { 'id': '3'};//change this to be passed by jquery
+      //First get the post
+      $http.put('/qa-post/get/post', $scope.formData)
+        .success(function(data) {
+          console.log(data);
+          console.log('Sent to sever successfully.');
+          //There should only be one object here
+          if(Object.keys(data).length != 0)
+          {
+                $.getScript("JS/viewPost.js", function(){
+                  param = '{ "post" : [' +
+                  '{ "author": "' + data.username + '", "text":"' + data.text + '", "timestamp":"' + data.timestamp + '", "title":"' + data.title +
+                  '", "type":"' + data.type + '", "id":"' + data.id + '" }]}';
+                  console.log(param);
+                  document.getElementById("viewPostCtrl").innerHTML += viewPost(param);
+                });
+                document.getElementById("viewPostCtrl").innerHTML += '<p ng-bind="commentTxt"></p>';
+
+                $scope.formData = { 'post_id' : 3};
+                console.log("--Sending Comment Data--");
+                $scope.commentTxt = "";
+                //Now we build the comment section
+                $http.get('/comments/get', $scope.formData)
+                  .success(function(data) {
+                    console.log('Sent to sever successfully.');
+                    //There should only be one object here
+                    if(Object.keys(data).length != 0)
+                    {
+                      angular.forEach(data, function(value, key) {
+                          $.getScript("JS/commentGen.js", function(){
+                            param = '{ "comment" : [' +
+                            '{ "username": "' + value.username + '", "text":"' + value.text + '", "timestamp":"' + value.timestamp + '" }]}';
+                            console.log(param);
+                            document.getElementById("viewPostCtrl").innerHTML += viewComment(param);
+                          });
+                      });
+                    }
+                    else {
+                      $scope.commentTxt = "No comments for this post have been made yet!";
+                    }
+                  }).error(function(data) {
+                    $scope.commentTxt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
+                    console.log('ERROR: Not sent to server.');
+                  });
+          }
+          else {
+            $scope.txt = "No posts have been found. Make a post to see some activity!";
+          }
+        }).error(function(data) {
+          $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
+          console.log('ERROR: Not sent to server.');
+        });
+    }
+
+    $scope.init();
+});
+
+//Submit a post for Q&A
+app.controller('qaPostCtrl', function($scope, $http, $location) {
+  $scope.sub = function() {
+    console.log($scope.formData);
+    if($scope.formData && $scope.formData.email && $scope.formData.pass) {
+      $http.put('/qa-post/post', $scope.formData).
+      success(function(data) {
+        console.log($scope.formData);
+        $http.put('/user/get', $scope.formData).success(function(data) {
+          sessionStorage.setItem('username', data.username);
+          sessionStorage.setItem('email', $scope.formData.email);
+          sessionStorage.setItem('pass', $scope.formData.pass);
+
+          window.location.href = '/QandA.html';
+          console.log('Sent to sever successfully.');
+        }).error(function(data) {
+          console.log('Unable to receive user info.');
+          popError('Unable to receive user info');
+        });
+      }).error(function(data){
+          console.log('ERROR: Not sent to server.');
+          popError('Username or password is not correct');
+      });
+    }
+  }
+  });
 
 app.controller('newUserCtrl', function($scope, $http) {
 
