@@ -53,12 +53,37 @@ router.put('/get/post', function(req, res) {
 	});
 });
 
+/*/post
+ * Method: POST
+ *
+ * Submits a single Q&A POST. Only requires username
+ */
+router.post('/post', function(req, res) {
+	req.body = quoteFixer(req.body);
+	pg.connect(connectionString, function(err, client, done) {
+      function(err, result) {
+						client.query('INSERT INTO posts (username, timestamp, title, text, type) VALUES ' +
+												'(\'' + req.body.username + '\', \'' + req.body.timestamp +'\', \'' + req.body.title + '\' ' +
+												'\'' + req.body.text + '\', \'0\');',
+						function(err, result) {
+							if(err) {
+								console.error(err);
+								res.sendStatus(406).end();
+							} else {
+								res.sendStatus(206).end();
+							}
+						});
+				}
+			});
+ 	});
+});
+
 /* /post
  * Method: POST
  *
  * Submits a single Q&A POST. Requires username and password.
  */
-router.post('/post', function(req, res) {
+/*router.post('/post', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
      client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
@@ -91,7 +116,7 @@ router.post('/post', function(req, res) {
 				}
 			});
  	});
-});
+});*/
 
 /* /delete
  * Method: DELETE

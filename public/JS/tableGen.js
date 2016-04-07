@@ -28,6 +28,15 @@ function singlePost(singleData)
 {
   //document.getElementById("tableGen").innerHTML= singleData;
   var obj = JSON.parse(singleData);
+  //well just set the post type as a tag
+  var type;
+  if(obj.post[0].type==0)
+  {
+    type == "Q & A";
+  }
+  else {
+    type == "Freelance";
+  }
 
   var divBuilder = `<div class="container">
 	                   <div class="row">
@@ -45,7 +54,9 @@ function singlePost(singleData)
                         <section class="row panel-body">
                           <section class="col-md-6">
                             <h3><u>` + obj.post[0].post_title + `</u></h3>
-                            <p>Tags: <a href=#><span class="label label-info tags">` + obj.post[0].post_tags + `</span></a><p>
+                            <p>Tags:
+                            <a href=#><span class="label label-info tags">` + type + `</span></a>
+                            <a href=#><span class="label label-info tags">` + obj.post[0].post_tags + `</span></a><p>
                             <hr>
                             <section class="row">
                               <ul class="col-md-6">
