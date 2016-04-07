@@ -6,7 +6,13 @@ function generatePage(param){
     var homeBuilder = `<h1>{{message}}</h1>
     <h2>Recent Post Activity</h2>
        <hr>
-       <div id="tableGen"></div>
+       <!--<h2>Recent Post Activity</h2>
+       <hr>
+       <!-- START OF -> Post Activity -->
+       <div id="tableGen" ng-controller="tableGen"><p ng-bind="txt">
+          <!-- under this div the posts will be generated, it is identified by its controller/div id-->
+       </p></div>
+       <!-- END OF -> Post Activity -->
 
     <footer class="blog-footer">
       <hr>
