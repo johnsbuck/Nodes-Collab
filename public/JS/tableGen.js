@@ -28,22 +28,24 @@ function singlePost(singleData)
 {
   //document.getElementById("tableGen").innerHTML= singleData;
   var obj = JSON.parse(singleData);
+  console.log(obj);
   //well just set the post type as a tag
-  var type;
-  if(obj.post[0].type==0)
+  var type = obj.post[0].type;
+  if(type==0)//if the type is 0 then we will show this as a Q & A post, otherwise it is a freelance post
   {
-    type == "Q & A";
+    type = "Q & A";
   }
   else {
-    type == "Freelance";
+    type = "Freelance";
   }
 
   var divBuilder = `<div class="container">
 	                   <div class="row">
   		                <section class="panel panel-info">
                         <header class="panel-heading">
-                          <div class="row">
-                            <div class="col-xs-4">` + obj.post[0].groupname + `</div>
+                          <div class="row">`+
+                            //<div class="col-xs-4">` + obj.post[0].groupname + `</div>//uncomment when we have groups done
+                            `<div class="col-xs-4">` + "Temp-Group" + `</div>
                             <div class="col-xs-8">
                                <div class="row">
                                      <div class="col-md-4 col-md-push-10">` + obj.post[0].username + `</div>
@@ -57,10 +59,11 @@ function singlePost(singleData)
                             <p>Tags:
                             <a href=#><span class="label label-info tags">` + type + `</span></a>
                             <a href=#><span class="label label-info tags">` + obj.post[0].post_tags + `</span></a><p>
+                            <p><i class="glyphicon glyphicon-time"></i> ` + obj.post[0].timestamp + `</p>
                             <hr>
                             <section class="row">
                               <ul class="col-md-6">
-                              <li class="list-unstyled"><a href="#"><i class="glyphicon glyphicon-comment"> </i> View Full Post</a>
+                              <li class="list-unstyled"><a href="ViewPost.html?id=` + obj.post[0].id + `"><i class="glyphicon glyphicon-comment"> </i> View Full Post</a>
                             </section>
                         </section>
                        </section>
