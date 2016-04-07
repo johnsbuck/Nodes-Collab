@@ -177,6 +177,7 @@ router.put('/edit', function(req, res, next) {
       }
     });
   });
+});
 
 router.put('/create/connection', function(req, res, next) {
   if(req.body.username === req.body.newuser) {
