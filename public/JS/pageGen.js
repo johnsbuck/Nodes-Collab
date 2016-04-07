@@ -6,7 +6,7 @@ function generatePage(param){
     var homeBuilder = `<h1>{{message}}</h1>
     <h2>Recent Post Activity</h2>
        <hr>
-       <div id="tableGen"></div>
+       <div id="allPostsGen"></div>
 
     <footer class="blog-footer">
       <hr>

@@ -2,7 +2,7 @@ var app = angular.module('nodesConnect', []);
 
 //Seperate this controller per post generating pages i.e. Q&A, Freelance
 //AngularJS to retrieve the data from the DB
-app.controller('tableGen', function($scope, $http) {
+app.controller('allPostsGen', function($scope, $http) {
     $scope.txt = "";
 
     $scope.sub = function() {
@@ -22,7 +22,45 @@ app.controller('tableGen', function($scope, $http) {
                     param = '{ "post" : [' +
                     '{ "postAuthor": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + "No tags found." + '" }]}';
                     console.log(param);
-                    document.getElementById("tableGen").innerHTML += singlePost(param);
+                    document.getElementById("allPostsGen").innerHTML += singlePost(param);
+                  });
+                });
+            }
+            else {
+              $scope.txt = "No posts have been found. Make a post to see some activity!";
+            }
+        }).error(function(data){
+            $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
+            console.log('ERROR: Not sent to server.');
+        });
+    }
+
+    $scope.sub();
+});
+
+//Only shows QA posts
+//AngularJS to retrieve the data from the DB
+app.controller('QAPostGen', function($scope, $http) {
+    $scope.txt = "";
+
+    $scope.sub = function() {
+      //API CALL -> qa_posts put (which is redefined as a get).
+      $http.put('/qa-post/get').
+        success(function(data) {
+            console.log('Sent to sever successfully.');
+            //Apparently we need a directive to parse this data into a string -> use value.table_name
+            if(Object.keys(data).length != 0)
+            {
+                //$scope.txt = "Some data has been found, let's print it out!";
+                angular.forEach(data, function(value, key) {
+
+                  console.log("Key: " + key + ", Value: " + value.username + ", " + value.title + ", " + value.text);
+                  //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
+                  $.getScript("JS/tableGen.js", function(){
+                    param = '{ "post" : [' +
+                    '{ "postAuthor": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + "No tags found." + '" }]}';
+                    console.log(param);
+                    document.getElementById("QAPostGen").innerHTML += singlePost(param);
                   });
                 });
             }
