@@ -2,31 +2,193 @@ var express = require('express');
 var router = express.Router();
 var passHash = require('password-hash');
 var pg = require('pg');
+var quoteFixer = require('./db_tools');
 
 var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhost/nodesconnect';
 
-/* Returns the post of the given post id and a 200 status code.
- * If no post exists, return a 204 status code.
+var router = express();
+
+/* /get
+ * Method: PUT (Should be GET)
+ *
+ * Returns all qa_posts.
  */
-app.get('/get', function(req, res) {
-	client.query('SELECT * FROM POST WHERE id = \'' + req.body.id + '\';');
+router.put('/get', function(req, res) {
+	req.body = quoteFixer(req.body);
+	pg.connect(connectionString, function(err, client, done) {
+		client.query('SELECT * FROM posts WHERE type=\'1\';',
+		function(err, result) {
+			if(err) {
+				console.error(err);
+				res.sendStatus(406).end();
+			}else if(!result || result.rows.length === 0) {
+				res.sendStatus(204).end();
+			}else {
+				res.status(202).send(result.rows).end();
+			}
+		});
+	});
 });
 
-/* Posts a given post onto the database.
+/* /get/post
+ * Method: PUT (Should be GET)
+ *
+ * Returns a single Q&A post.
  */
-app.put('/post', function(req, res) {
-	client.query('INSERT INTO POST VALUES (\'' + req.body + '\');');
+router.put('/get/post', function(req, res) {
+	req.body = quoteFixer(req.body);
+	pg.connect(connectionString, function(err, client, done) {
+		client.query('SELECT * FROM posts WHERE id = \'' + req.body.id + '\' AND type=\'1\';',
+		function(err, result) {
+			if(err) {
+				console.error(err);
+				res.sendStatus(406).end();
+			}else if(!result || result.rows.length === 0) {
+				res.sendStatus(204).end();
+			}else {
+				res.status(202).send(result.rows[0]).end();
+			}
+		});
+	});
 });
 
-/* Deletes a given post onto the database.
+/* /post
+ * Method: POST
+ *
+ * Submits a single Q&A POST. Requires username and password.
  */
-app.delete('/delete', function(req, res) {
-	client.query('DELETE FROM POST WHERE id = \'' + req.body.id + '\';');
+router.post('/post', function(req, res) {
+	req.body = quoteFixer(req.body);
+	pg.connect(connectionString, function(err, client, done) {
+     client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
+      function(err, result) {
+        if(err) {
+          console.error(err);
+          res.sendStatus(406).end();
+        }else if(!result || result.rows.length === 0) {
+          done();
+          res.sendStatus(404).end();
+        }else {
+          var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
+
+          if(passHash.verify(req.body.pass, hashpass)) {
+						client.query('INSERT INTO posts (username, timestamp, title, text, type) VALUES ' +
+												'(\'' + req.body.username + '\', \'' + req.body.timestamp +'\', \'' + req.body.title + '\' ' +
+												'\'' + req.body.text + '\', \'1\');',
+						function(err, result) {
+							if(err) {
+								console.error(err);
+								res.sendStatus(406).end();
+							} else {
+								res.sendStatus(206).end();
+							}
+						});
+					}else {
+						done();
+            res.sendStatus(403).end();
+          }
+				}
+			});
+ 	});
 });
 
-app.put('/edit', function(req, res) {
-	text = req.body.text.replace('\'', '\'\'');
-	client.query('UPDATE POST SET text = \'' req.body.text + '\'');
-})
+/* /delete
+ * Method: DELETE
+ *
+ * Deletes a single Q&A post. Requires username and password.
+ */
+router.delete('/delete', function(req, res) {
+	req.body = quoteFixer(req.body);
+	pg.connect(connectionString, function(err, client, done) {
+     client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
+      function(err, result) {
+        if(err) {
+          console.error(err);
+          res.sendStatus(406).end();
+        }else if(!result || result.rows.length === 0) {
+          done();
+          res.sendStatus(404).end();
+        }else {
+          var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
+
+          if(passHash.verify(req.body.pass, hashpass)) {
+						client.query('DELETE FROM posts WHERE id = \'' + req.body.id + '\' AND username=\'' + req.body.username +
+							'\' AND type=\'1\';',
+						function(err, result) {
+							if(err) {
+								console.error(err);
+								res.sendStatus(406).end();
+							} else {
+								res.sendStatus(202).end();
+							}
+						});
+					}else {
+						done();
+	          res.sendStatus(403).end();
+	        }
+				}
+		});
+	});
+});
+
+/* /edit
+ * Method: PUT
+ *
+ * Edits a single Freelance post. Requires username and password.
+ */
+router.put('/edit', function(req, res) {
+	// Nothing new to change
+  if(!req.body.new) {
+    res.sendStatus(406).end();
+  }
+
+ 	req.body = quoteFixer(req.body);
+
+ 	pg.connect(connectionString, function(err, client, done) {
+ 		req.body = quoteFixer(req.body);
+ 		client.query('SELECT pass, salt FROM users INNER JOIN posts WHERE ' +
+ 			'posts.username = \'' + req.body.username +'\' AND posts.post_id = \'' + req.body.post_id + '\' AND posts.type=\'1\';',
+ 		 function(err, result) {
+ 			 if(err) {
+ 				 console.error(err);
+ 				 res.sendStatus(406).end();
+ 			 }else if(!result || result.rows.length === 0) {
+ 				 done();
+ 				 res.sendStatus(404).end();
+ 			 }else {
+ 				 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
+
+ 				 if(passHash.verify(req.body.pass, hashpass)) {
+ 					// Check what to UPDATE in user's row
+  					var sqlQuery = 'UPDATE posts SET';
+  					var columns = {'title': true, 'text': true};
+  					for(key in req.body.new) {
+  						if(key in columns) {
+  							sqlQuery += ' ' + key + '=\'' + req.body.new[key] + '\',';
+  						} else {
+  							console.err('INVALID COLUMN GIVEN');
+  							res.sendStatus(406).end();
+  						}
+  					}
+
+  					// Replace last ',' with end query.
+  					sqlQuery = sqlQuery.slice(0, -1) + 'WHERE username=\'' + req.body.username + '\';';
+
+ 					client.query(sqlQuery,
+ 						function(err, result) {
+ 							if(err) {
+ 								console.error(err);
+ 								res.sendStatus(406).end();
+ 							} else {
+ 								res.sendStatus(206).end();
+ 							}
+ 						});
+ 					}else {
+             res.sendStatus(406).end();
+           }
+ 				}
+ 		});
+ 	});
+ });
 
 module.exports = router;

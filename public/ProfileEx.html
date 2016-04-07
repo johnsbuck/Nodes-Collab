@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="nodesConnect">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -25,6 +25,9 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    <script src="JS/angular.min.js"></script>
+    <script src="JS/controller.js"></script>
   </head>
 
   <body>
@@ -53,26 +56,22 @@
             <ul class="dropdown-menu">
               <li>
                 <div class="form-group">
-          <label for="filter">Search in:</label>
-                                    <select class="form-control">
-                                        <option value="0" selected>All</option>
-                                        <option value="1">Projects</option>
-                                        <option value="2">Freelance Work</option>
-                                        <option value="3">Q&A</option>
-                                        <option value="4">People</option>
-                                    </select>
-                                  </div>
-                                  </li> <label></label>
-                                  <li>
-          <label for="contain">Contains the words</label>
-                                    <input class="form-control" type="text" /></li> <label></label>
-                                    <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+                  <label for="filter">Search in:</label>
+                  <select class="form-control">
+                    <option value="0" selected>All</option>
+                    <option value="1">Projects</option>
+                    <option value="2">Freelance Work</option>
+                    <option value="3">Q&A</option>
+                    <option value="4">People</option>
+                  </select>
+                </div>
+              </li> <label></label>
+              <li>
+                <label for="contain">Contains the words</label>
+               <input class="form-control" type="text" />
+              </li> <label></label>
+                <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
             </ul>
-
-            <div>
-
-            </div>
-
           </form>
         </div>
       </div>
@@ -103,56 +102,58 @@
 
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
-
+      <!-- START OF -> PROFILE DISPLAY -->
+      <div id="userProfile" ng-controller="userProfile"><p ng-bind="txt">
+         <!-- under this div a user's profile will be generated, it is identified by it's controller/div id-->
+      </p></div>
+      <!-- END OF -> PROFILE DISPLAY -->
 
       <div class="container" align = "center">
-  <div class="row">
-    <div class="col-md-9">
+        <div class="row">
+          <div class="col-md-9">
+            <div class="panel panel-default" align = "center">
+              <div class="panel-body" align = "center">
+                <div class="row">
+                  <div class="col-xs-12 col-sm-8">
+                    <h2>Finn The Human</h2>
+                     <p><strong>About: </strong> Programmer; Rowan University Graduate. </p>
+                     <p><strong>Current Projects: </strong><a href="https://www.google.com/?gws_rd=ssl"> NodesConnect </a>, <a href="http://happywheelsaz.com/datacenter/imgs/flappy-bird.jpg">FlappyBird</a>, <a href="https://www.halowaypoint.com/en-us">Halo 9 </p>
+                     <p><strong>Languages: </strong>
+                     <span class="label label-info tags">Java</span>
+                     <span class="label label-info tags">HTML</span>
+                     <span class="label label-info tags">LISP</span>
+                     <span class="label label-info tags">Swift</span>
+                      </p>
+                  </div><!--/col-->
+                  <div class="col-xs-12 col-sm-4 text-center">
+                    <img class="center-block img-circle img-responsive" alt="" src="http://img03.deviantart.net/32e0/i/2013/160/d/a/finn_the_human_by_andiscissorhands-d68g4d3.jpg">
+                    <ul title="Ratings" class="list-inline ratings text-center">
+                      <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
+                      <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
+                      <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
+                      <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
+                      <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
+                    </ul>
+                  </div><!--/col-->
 
-      <div class="panel panel-default" align = "center">
-      <div class="panel-body" align = "center">
-                  <div class="row">
-                        <div class="col-xs-12 col-sm-8">
-                            <h2>Finn The Human</h2>
-                            <p><strong>About: </strong> Programmer; Rowan University Graduate. </p>
-                            <p><strong>Current Projects: </strong><a href="https://www.google.com/?gws_rd=ssl"> NodesConnect </a>, <a href="http://happywheelsaz.com/datacenter/imgs/flappy-bird.jpg">FlappyBird</a>, <a href="https://www.halowaypoint.com/en-us">Halo 9 </p>
-                            <p><strong>Languages: </strong>
-                                <span class="label label-info tags">Java</span>
-                                <span class="label label-info tags">HTML</span>
-                                <span class="label label-info tags">LISP</span>
-                                <span class="label label-info tags">Swift</span>
-                            </p>
-                        </div><!--/col-->
-                        <div class="col-xs-12 col-sm-4 text-center">
-                                <img class="center-block img-circle img-responsive" alt="" src="http://img03.deviantart.net/32e0/i/2013/160/d/a/finn_the_human_by_andiscissorhands-d68g4d3.jpg">
-                                <ul title="Ratings" class="list-inline ratings text-center">
-                                  <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
-                                  <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
-                                  <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
-                                  <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
-                                  <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
-                                </ul>
-                        </div><!--/col-->
-
-                        <div class="col-xs-12 col-sm-4">
-                            <h2><strong> 117 </strong></h2>
-                            <p><small>Reward Points</small></p>
-                            <button class="btn btn-success btn-block"><span class="fa fa-plus-circle"></span> <span class="glyphicon glyphicon-phone" aria-hidden="true"></span> Social Medias </button>
-                        </div><!--/col-->
-                        <div class="col-xs-12 col-sm-4">
-                            <h2><strong>24</strong></h2>
-                            <p><small>Connections</small></p>
-                            <button class="btn btn-info btn-block"><span class="fa fa-user"></span> <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add </button>
-                        </div><!--/col-->
-                        <div class="col-xs-12 col-sm-4">
-                            <h2><strong>+43</strong></h2>
-                            <p><small>Karma</small></p>
-                            <button class="btn btn-primary btn-block" type="button"><span class="fa fa-gear"></span> <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Contact </button>
-                        </div><!--/col-->
-                  </div><!--/row-->
-              </div><!--/panel-body-->
-          </div><!--/panel-->
-
+                  <div class="col-xs-12 col-sm-4">
+                    <h2><strong> 117 </strong></h2>
+                    <p><small>Reward Points</small></p>
+                    <button class="btn btn-success btn-block"><span class="fa fa-plus-circle"></span> <span class="glyphicon glyphicon-phone" aria-hidden="true"></span> Social Medias </button>
+                  </div><!--/col-->
+                  <div class="col-xs-12 col-sm-4">
+                    <h2><strong>24</strong></h2>
+                   <p><small>Connections</small></p>
+                    <button class="btn btn-info btn-block"><span class="fa fa-user"></span> <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add </button>
+                  </div><!--/col-->
+                  <div class="col-xs-12 col-sm-4">
+                   <h2><strong>+43</strong></h2>
+                   <p><small>Karma</small></p>
+                    <button class="btn btn-primary btn-block" type="button"><span class="fa fa-gear"></span> <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Contact </button>
+                  </div><!--/col-->
+               </div><!--/row-->
+            </div><!--/panel-body-->
+        </div><!--/panel-->
     </div>
   </div>
 </div>
@@ -262,9 +263,6 @@
         </div>
     </div>
 </div>
-
-
-
 
 
 

@@ -16,6 +16,8 @@
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <link href="../Bootstrap/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <link href="CSS/jquery-u.min.css" rel="stylesheet">
+    <link href="CSS/jquery-ui.theme.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="../CSS/main.css" rel="stylesheet">
@@ -26,13 +28,16 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <script src="JS/jquery.js"></script>
+    <script src="JS/jquery-ui.min.js"></script>
     <script src="JS/angular.min.js"></script>
     <script src="JS/controller.js"></script>
+    <script src="JS/pageGen.js"></script>
   </head>
 
   <body ng-controller="mainCtrl">
 
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav class="navbar navbar-inverse navbar-fixed-top" ng-controller="navCtrl">
       <div class="container-fluid" ng-controller="mainCtrl">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -49,6 +54,7 @@
             <li><a href="SettingsEx.html">Settings</a></li>
             <li><a href="ProfileEx.html">Profile</a></li>
             <li><a href="Help.html">Help</a></li>
+            <li><a ng-click="signout()">Sign Out</a></li>
           </ul>
           <form class="navbar-form navbar-right">
             <input type="text" class="form-control" placeholder="Search...">
@@ -56,26 +62,22 @@
             <ul class="dropdown-menu">
               <li>
                 <div class="form-group">
-          <label for="filter">Search in:</label>
-                                    <select class="form-control">
-                                        <option value="0" selected>All</option>
-                                        <option value="1">Projects</option>
-                                        <option value="2">Freelance Work</option>
-                                        <option value="3">Q&A</option>
-                                        <option value="4">People</option>
-                                    </select>
-                                  </div>
-                                  </li> <label></label>
-                                  <li>
-          <label for="contain">Contains the words</label>
-                                    <input class="form-control" type="text" /></li> <label></label>
-                                    <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+                    <label for="filter">Search in:</label>
+                        <select class="form-control">
+                          <option value="0" selected>All</option>
+                          <option value="1">Projects</option>
+                          <option value="2">Freelance Work</option>
+                          <option value="3">Q&A</option>
+                          <option value="4">People</option>
+                      </select>
+                    </label>
+                </div>
+                </li> <label></label>
+                <li>
+                    <label for="contain">Contains the words</label>
+                        <input class="form-control" type="text" /></li> <label></label>
+                        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
             </ul>
-
-            <div>
-
-            </div>
-
           </form>
         </div>
       </div>
@@ -85,8 +87,8 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">Home <span class="sr-only">(current)</span></a></li>
-            <li><a href="QandA.html" class="QA" onclick="QA()">Q and A</a></li>
+            <li class="active"><a href="#" onclick= "pageGen(0)">Home <span class="sr-only">(current)</span></a></li>
+            <li><a href="#" class="QA" onclick="pageGen(1)">Q and A</a></li>
             <li><a href="ProjectCollab.html">Project Collab</a></li>
             <li><a href="FreelanceEx.html" class="Freelance" onclick="FreeLance()">Freelance Work</a></li>
           </ul>
@@ -105,22 +107,27 @@
     </div>
 
     <div class="main col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
-       <p>{{ message }}</p>
-       <h2>Recent Post Activity</h2>
+       <!--<h2>Recent Post Activity</h2>
        <hr>
-       <div id="tableGen"></div>
-       <script type="text/javascript" src="JS/tableGen.js"></script>
-
+       <!-- START OF -> Post Activity -->
+       <div id="tableGen" ng-controller="tableGen"><p ng-bind="txt">
+          <!-- under this div the posts will be generated, it is identified by it's controller/div id-->
+       </p></div>
+       <!-- END OF -> Post Activity -->
     <footer class="blog-footer">
       <hr>
       <h6>Home page built for NodesConnect</h6>
       <p>
         <a href="#">Back to top</a>
       </p>
-    </footer>
-</div>
+    </footer>-->
+    <div id="pageGen"></div>
+    <script type="text/javascript" src = "JS/pageGen.js"></script>
+    <!--INSERT SCRIPTS REFERENCED AFTER PAGEGEN-->
+    <script type="text/javascript" src="JS/tableGen.js"></script>
+    </div>
 
-    <div class="messaging container" id="messaging" style="display:none;">
+    <div class="messaging container ui-widget-content" id="messaging" style="display:none;">
         <div class="row">
             <div class="col-md-5">
                 <div class="panel panel-primary">
@@ -223,7 +230,7 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
     <script src="../JS/FreeLance.js"></script>
     <script>
       $(document).ready(function() {
@@ -247,5 +254,7 @@
     <script src="../Bootstrap/assets/js/vendor/holder.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../Bootstrap/assets/js/ie10-viewport-bug-workaround.js"></script>
+
+
   </body>
 </html>
