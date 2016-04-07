@@ -27,7 +27,7 @@
   <body>
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container-fluid" ng-controller="qaCtrl">
+      <div class="container-fluid" ng-controller="mainCtrl">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
@@ -96,36 +96,24 @@
       </div>
     </div>
 
-    <div class="main col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">     
-      <div class="blog-masthead">
-          <nav class="blog-nav">
-          <a class="blog-nav-item" href="#">Filter</a>
-          <a class="blog-nav-item" href="#">Post</a>
-          </nav>
-      </div>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <div class="container">
 
       <div class="blog-header">
         <h1 class="blog-title">Question and Answers</h1>
-        <p class="lead blog-description">Ask Questions, Answer Questions.</p>
+        <a href="QASubmitPost.html"><button type="button" class="btn btn-primary">Submit New Post</button></a>
+        <hr>
+        <p class="lead blog-description">Recent QA Activity</p>
       </div>
+      <hr>
+      <!-- START OF -> Post Activity -->
+     <div id="QAPostGen" ng-controller="QAPostGen"><p ng-bind="txt">
+       <!-- under this div the posts will be generated, it is identified by it's controller/div id-->
+     </p></div>
+      <!-- END OF -> Post Activity -->
 
-      <div class="row">
-        <div class="col-sm-8 blog-main">
-          <!--DELETE upon connecting with actual posts. -->
-          <ul>
-            <li>FILL ME</li>
-            <li>FILL ME</li>
-            <li>FILL ME</li>
-          </ul>
-            <nav>
-            <ul class="pager">
-              <li><a href="#">Previous</a></li>
-              <li><a href="#">Next</a></li>
-            </ul>
-          </nav>
-
-        </div><!-- /.blog-main -->
-      </div><!-- /.row -->
+      <hr>
+    </div><!-- /.container -->
 
     <footer class="blog-footer">
       <h6>Q And A page built for NodesConnect</h6>

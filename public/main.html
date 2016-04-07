@@ -86,8 +86,8 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">Home <span class="sr-only">(current)</span></a></li>
-            <li><a href="QandA.html" class="QA">Q and A</a></li>
+            <li class="active"><a href="#" onclick= "pageGen(0)">Home <span class="sr-only">(current)</span></a></li>
+            <li><a href="QandA.html">Q and A</a></li>
             <li><a href="ProjectCollab.html">Project Collab</a></li>
             <li><a href="FreelanceEx.html" class="Freelance" onclick="FreeLance()">Freelance Work</a></li>
           </ul>
@@ -106,17 +106,17 @@
     </div>
 
     <div class="main col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
+      <div id="pageGen"></div>
+      <script type="text/javascript" src = "JS/pageGen.js"></script>
+      <!--INSERT SCRIPTS REFERENCED AFTER PAGEGEN-->
 
-    <h1>{{message}}</h1>
-    <h2>Recent Post Activity</h2>
-       <hr>
-       <!--<h2>Recent Post Activity</h2>
-       <hr>
-       <!-- START OF -> Post Activity -->
-       <div id="tableGen" ng-controller="tableGen"><p ng-bind="txt">
+         <!-- START OF -> Post Activity -->
+        <div id="allPostsGen" ng-controller="allPostsGen"><p ng-bind="txt">
           <!-- under this div the posts will be generated, it is identified by it's controller/div id-->
-       </p></div>
-       <!-- END OF -> Post Activity -->
+        </p></div>
+         <!-- END OF -> Post Activity -->
+      </div>
+       <hr>
 
     <footer class="blog-footer">
       <hr>
@@ -125,8 +125,6 @@
         <a href="#">Back to top</a>
       </p>
     </footer>
-
-    <script type="text/javascript" src="JS/tableGen.js"></script>
     </div>
 
 
