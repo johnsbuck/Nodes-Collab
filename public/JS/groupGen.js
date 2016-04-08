@@ -42,4 +42,10 @@ function singlePost(singleData)
   return divBuilder;
 
 }
+
+function updateScroll(){
+    var element = document.getElementById("groupGen");
+    element.scrollTop = element.scrollHeight;
+}
 //generate();
+ updateScroll();
