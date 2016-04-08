@@ -38,9 +38,52 @@ app.controller('tableGen', function($scope, $http) {
     $scope.sub();
 });
 
+//Controller for the user profile
+app.controller('profileGen', function($scope, $http) {
+    $scope.txt = "";
+    //$scope.username = sessionStorage.getItem('username');
+    $scope.formData = {'username': sessionStorage.getItem('username')}
+    console.log("Username: " + sessionStorage.getItem('username'));
+    $scope.sub = function() {
+      //API call to get user information
+      $http.put('/user/get', $scope.formData).
+        success(function(data) {
+            console.log('User GET Request sent to sever successfully.');
+            //Apparently we need a directive to parse this data into a string -> use value.table_name
+            if(Object.keys(data).length != 0)
+            {
+              //console.log("" + ((data.bio!= null) ? data.bio : "No bio!"));
+              //Clean possible null values from returned data.
+              if(data.bio == null) data.bio = "You don't have a Bio :(";
+              //The JSON to pass to the profile generator
+              var json = JSON.stringify(data);
+              //TEMP: Parse it back so I know what I am doing.
+              //var obj = JSON.parse(json);   //parse the JSON into an object we can use to generate HTML
+              //var string = obj.bio;         //temp, should give us a string.
+              $.getScript("JS/profileGen.js", function(){
+                    console.log(json);
+                    var html = generateProfile(json);
+                    document.getElementById("profileGen").innerHTML = generateProfile(json);
+              });
+
+            }
+            else {
+              $scope.txt = "Error no user found!";
+            }
+        }).error(function(data){
+            $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
+            console.log('ERROR: Not sent to server.');
+        });
+    }
+
+    $scope.sub();
+});
+
 //Used to control generating a user's profile
 //AngularJS to retrieve the data from the DB
 //TEMPORARY: using a static value instead of sessionStorage to grab the user
+//DEPRECATED
+/*
 app.controller('userProfile', function($scope, $http) {
     $scope.txt = "";
 
@@ -81,6 +124,7 @@ app.controller('userProfile', function($scope, $http) {
 
     $scope.sub();
 });
+*/
 
 app.controller('groupPostGen', function($scope, $http) {
     $scope.txt = "";

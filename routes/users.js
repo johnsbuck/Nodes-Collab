@@ -23,7 +23,7 @@ router.put('/get', function(req, res, next) {
       where_clause = 'email = \'' + req.body.email + '\'';
     }
 
-    client.query('SELECT first_name, last_name, username, email, gender ' +
+    client.query('SELECT first_name, last_name, username, email, gender, bio, facebook, linkedin ' +
       'FROM users WHERE ' + where_clause + ';',
       function(err, result) {
         done();
@@ -217,8 +217,45 @@ router.put('/create/connection', function(req, res, next) {
     });
   });
 });
+/*
+Get all the connections for a user.
+**/
+router.delete('/get/connections', function(req, res, next) {
+  req.body = quoteFixer(req.body);
+  pg.connect(connectionString, function(err, client, done) {
+    client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
+     function(err, result) {
+       if(err) {
+         done();
+         console.error(err);
+         res.sendStatus(406).end();
+       }else if(!result || result.rows.length === 0) {
+         done();
+         res.sendStatus(404).end();
+       }else {
+         var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
+         console.log(passHash.verify(req.body.pass, hashpass));
+         if(passHash.verify(req.body.pass, hashpass)) {
+          client.query('SELECT FROM connections WHERE first_user = \'' + req.body.username + '\';',
+          function(err, result) {
+            done();
+            if(err) {
+              console.error(err);
+              res.sendStatus(406).end();
+            } else {
+              res.sendStatus(202).end();
+            }
+          });
+        }else {
+          done();
+          res.sendStatus(403).end();
+        }
+      }
+    });
+  });
+});
 
-router.delete('/delete/connection', function(req, res, next) {
+router.put('/delete/connection', function(req, res, next) {
   req.body = quoteFixer(req.body);
   pg.connect(connectionString, function(err, client, done) {
     client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',

@@ -33,11 +33,11 @@ function generateProfile(data)
   <div class="panel-body" align = "center">
               <div class="row">
                     <div class="col-xs-12 col-sm-8">
-                        <h2>` + obj.profile[0].username + `</h2>
-                        <p><strong>About: </strong> ` + obj.profile[0].about_text + `</p>
-                        <p><strong>Current Projects: </strong><a href="https://www.google.com/?gws_rd=ssl"> ` + expandProfileProjectList(obj.user_projects) + ` </a>, <a href="http://happywheelsaz.com/datacenter/imgs/flappy-bird.jpg">FlappyBird</a>, <a href="https://www.halowaypoint.com/en-us">Halo 9 </p>
+                        <h2>` + obj.username + `</h2>
+                        <p><strong>About: </strong> ` + obj.bio + `</p>
+                        <p><strong>Current Projects: </strong><a href="https://www.google.com/?gws_rd=ssl"> `/* + expandProfileProjectList(obj.user_projects)*/ + ` </a>, <a href="http://happywheelsaz.com/datacenter/imgs/flappy-bird.jpg">FlappyBird</a>, <a href="https://www.halowaypoint.com/en-us">Halo 9 </p>
                         <p><strong>Languages: </strong>
-                            `+ expandLanguagesList(obj.user_languages) + `
+                            `/*+ expandLanguagesList(obj.user_languages) */ + `
                         </p>
                     </div><!--/col-->
                     <div class="col-xs-12 col-sm-4 text-center">
@@ -52,17 +52,17 @@ function generateProfile(data)
                     </div><!--/col-->
 
                     <div class="col-xs-12 col-sm-4">
-                        <h2><strong> `+ obj.profile[0].reward_points + ` </strong></h2>
+                        <h2><strong> `+ /*obj.profile[0].reward_points +*/ ` </strong></h2>
                         <p><small>Reward Points</small></p>
                         <button class="btn btn-success btn-block"><span class="fa fa-plus-circle"></span> <span class="glyphicon glyphicon-phone" aria-hidden="true"></span> Social Medias </button>
                     </div><!--/col-->
                     <div class="col-xs-12 col-sm-4">
-                        <h2><strong>`+ obj.profile[0].no_connections + `</strong></h2>
+                        <h2><strong>`+/* obj.profile[0].no_connections*/ + `</strong></h2>
                         <p><small>Connections</small></p>
                         <button class="btn btn-info btn-block"><span class="fa fa-user"></span> <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add </button>
                     </div><!--/col-->
                     <div class="col-xs-12 col-sm-4">
-                        <h2><strong>`+ obj.profile[0].karma_points + `</strong></h2>
+                        <h2><strong>`/*+ obj.profile[0].karma_points*/ + `</strong></h2>
                         <p><small>Karma</small></p>
                         <button class="btn btn-primary btn-block" type="button"><span class="fa fa-gear"></span> <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Contact </button>
                     </div><!--/col-->
