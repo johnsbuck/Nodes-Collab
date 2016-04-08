@@ -21,7 +21,7 @@ router.put('/get', function(req, res) {
 			} else if (!result || result.rows.length == 0) {
 				res.sendStatus(406).end();
 			} else {
-				if (result.rows[0].privacy === 2) {
+				if (result.rows[0].privacy === 1) {
 					//store results
 					var groupInfo = result.rows;
 
@@ -60,6 +60,30 @@ router.put('/get', function(req, res) {
 					done();
 					res.status(200).send(result.rows).end();
 				}
+			}
+		});
+	});
+});
+
+/* /get/user
+ * METHOD: PUT (Should be GET)
+ *
+ * Used to retrieve information on a group. Requires access for private group.
+ */
+router.put('/get', function(req, res) {
+	req.body = quoteFixer(req.body);
+	pg.connect(connectionString, function(err, client, done) {
+		client.query('SELECT * FROM group, user_group_perms AS ugp WHERE ugp.username=\'' + req.body.username + '\';',
+		function(err, result) {
+			if(err) {
+				res.sendStatus(400).end();
+			} else if (!result) {
+				res.sendStatus(406).end();
+			} else if (results.rows.length === 0) {
+				res.sendStatus(204);
+			} else {
+				done();
+				res.status(200).send(result.rows).end();
 			}
 		});
 	});

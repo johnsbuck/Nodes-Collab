@@ -31,7 +31,7 @@ router.put('/get', function(req, res) {
 					done();
 					res.sendStatus(404).end();
 				// If not private, send rows
-				}else if(result.rows[0].privacy !== 2){
+			}else if(result.rows[0].privacy !== 1){
 					// Get group posts
 					client.query('SELECT username, text, timestamp FROM group_posts WHERE groupname = \'' + req.body.groupname + '\';',
 					function(err, result) {
