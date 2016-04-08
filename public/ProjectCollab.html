@@ -19,11 +19,12 @@
 
     <!-- Custom styles for this template -->
     <link href="../CSS/main.css" rel="stylesheet">
+    <script src="JS/require.js"></script>
     <script src="JS/angular.min.js"></script>
     <script src="JS/controller.js"></script>
   </head>
 
-  <body ng-controllor="groupPostCtrl">
+  <body ng-controller="groupPostCtrl">
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
@@ -111,8 +112,7 @@
       <div class="main col-sm-9">
          <h2>Recent Post Activity</h2>
          <hr>
-         <div id="groupGen" ng-controller="groupPostGen"><p ng-bind="txt">
-          <script type="text/javascript" src="JS/groupGen.js"></script>
+         <div id="groupGen"><p ng-bind="txt">
       </div>
       <div class="row">
 
@@ -129,7 +129,7 @@
 
     <footer class="blog-footer">
 
-      <div ng-controller="groupPostCtrl">
+      <div>
         <h1>{{message}}</h1>
         <form class="form-groupPost" role="form" method="post">
         <div class="row" style="width: 480px;">
@@ -144,7 +144,7 @@
                           <!--LEFT for groupname. Delete Later-->
                             <class="form-control" ng-model="formData.groupname">
                             <h4> Post text: </h4>
-                            <textarea rows = "4" cols = "50" ng-model="formData.text"></textarea>
+                            <textarea id="groupPostForm" rows = "4" cols = "50" placeholder= "Put text here" ng-model="formData.text"></textarea>
                             <!--LEFT for timestamp. Delete Later-->
                             <class="form-control" ng-model="formData.timestamp"> <br>
                             <button class="btn" class="form-control" ng-click="sub(formData)"><span class="glyphicon glyphicon-pushpin" type="submit" aria-hidden="true"></span> Post </button>
