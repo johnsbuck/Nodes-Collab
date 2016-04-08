@@ -121,8 +121,8 @@
             <div id="General" class="tab-pane fade in active" ng-controller= "collabSettingsCtrl">
                 <p>PUT groups here</p>
                 <textarea rows= "1" ng-model= "formData.groupname"> </textarea>
-                <label><input type="radio" ng-model="formData.privacy" value= 2 name="genderradio"> Private </label>
-                <label><input type="radio" ng-model="formData.privacy" value= 1 name="genderradio"> Public </label>
+                <label><input type="radio" ng-model="formData.privacy" value= 0 name="privacyradio"> Private </label>
+                <label><input type="radio" ng-model="formData.privacy" value= 1 name="privacyradio"> Public </label>
                 <button class="btn" class="form-control" ng-click="sub(formData)">Create Group</button>
             </div>
             <div id="privacy" class="tab-pane fade">

@@ -146,7 +146,7 @@ app.controller('groupPostCtrl', function($scope, $http) {
         });
     }
 
-    $scope.sub = function() {
+    $scope.post = function() {
       console.log($scope.formData);
       if($scope.formData != undefined) {
       $scope.formData.username = sessionStorage.getItem('username');
@@ -159,6 +159,7 @@ app.controller('groupPostCtrl', function($scope, $http) {
         document.getElementById('groupPostForm').value="";
         console.log('Sent to the server successfully.');
       }).error(function(data) {
+        $scope.update();
         console.log('ERROR: Not sent to server.');
       });
       }
