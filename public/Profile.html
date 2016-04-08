@@ -101,18 +101,64 @@
     </div>
 
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-
-      <!-- START OF -> PROFILE DISPLAY -->
-      <div id="profileGen" ng-controller="profileGen"><p ng-bind="txt">
-         <!-- under this div a user's profile will be generated, it is identified by it's controller/div id-->
-      </p></div>
-      <!-- END OF -> PROFILE DISPLAY -->
-
+<!--Actual start of profile html -->
       <div class="container" align = "center">
         <div class="row">
           <div class="col-md-9">
+            <div class="panel panel-default" align = "center">
+              <div class="panel-body" align = "center">
+                <div class="row">
+                  <div ng-controller="profileGen" class="col-xs-12 col-sm-8">
+                    <h1>{{ username }}</h1>
+                     <p><strong>About: </strong>{{ bio }}</p>
+                     <p><strong>Current Projects: </strong></p>
+                     <div id="currentProjects"></div>
+                  </div><!--/col-->
+                  <div class="col-xs-12 col-sm-4 text-center">
+                    <img class="center-block img-circle img-responsive" alt="" src="http://img03.deviantart.net/32e0/i/2013/160/d/a/finn_the_human_by_andiscissorhands-d68g4d3.jpg"></img>
+                    <ul title="Ratings" class="list-inline ratings text-center">
+                      <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
+                      <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
+                      <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
+                      <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
+                      <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
+                    </ul>
+                  </div><!--/col-->
 
-</div>
+                  <div class="col-xs-12 col-sm-4">
+                    <button class="btn btn-success btn-block"><span class="fa fa-plus-circle"></span> <span class="glyphicon glyphicon-phone" aria-hidden="true"></span> Social Medias </button>
+                  </div><!--/col-->
+                  <div class="col-xs-12 col-sm-4">
+                   <!--Button to add a connection-->
+                    <button class="btn btn-info btn-block" data-toggle="modal" data-target="#addConnectionModal"><span class="fa fa-user"></span> <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add </button>
+                    <!-- Modal -->
+                    <div id="addConnectionModal" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                          <!-- Modal content-->
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal">&times;</button>
+                              <h4 class="modal-title">Add a Connection</h4>
+                            </div>
+                            <div class="modal-body">
+                              <p>Enter the username below:</p>
+                              <input id="connectionUsername Input" class="form-control" placeholder="Username" ng-model="formData.addUsername" required></input>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-default" data-dismiss="modal" type="submit" ng-click="addConnection(formData)">Add</button>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                  </div><!--/col-->
+                  <div class="col-xs-12 col-sm-4">
+                    <!--Button to email user -->
+                    <button class="btn btn-primary btn-block" type="button"><span class="fa fa-gear"></span> <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Contact </button>
+                  </div><!--/col-->
+               </div><!--/row-->
+            </div><!--/panel-body-->
+        </div><!--/panel-->
     </div>
   </div>
 </div>
@@ -225,7 +271,7 @@
 
 
 
-    
+    </div>
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->

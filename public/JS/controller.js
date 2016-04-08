@@ -44,6 +44,7 @@ app.controller('profileGen', function($scope, $http) {
     //$scope.username = sessionStorage.getItem('username');
     $scope.formData = {'username': sessionStorage.getItem('username')}
     console.log("Username: " + sessionStorage.getItem('username'));
+    //Why does this function need to be in $scope?
     $scope.sub = function() {
       //API call to get user information
       $http.put('/user/get', $scope.formData).
@@ -55,27 +56,59 @@ app.controller('profileGen', function($scope, $http) {
               //console.log("" + ((data.bio!= null) ? data.bio : "No bio!"));
               //Clean possible null values from returned data.
               if(data.bio == null) data.bio = "You don't have a Bio :(";
+
+              $scope.username = data.username;  console.log("Username: " + $scope.username);
+              $scope.bio = data.bio;            console.log("User bio: " + $scope.bio);
               //The JSON to pass to the profile generator
-              var json = JSON.stringify(data);
+              //var json = JSON.stringify(data);
               //TEMP: Parse it back so I know what I am doing.
               //var obj = JSON.parse(json);   //parse the JSON into an object we can use to generate HTML
               //var string = obj.bio;         //temp, should give us a string.
+              /*
               $.getScript("JS/profileGen.js", function(){
                     console.log(json);
                     var html = generateProfile(json);
                     document.getElementById("profileGen").innerHTML = generateProfile(json);
               });
+              */
 
             }
             else {
               $scope.txt = "Error no user found!";
             }
+        //This is reached although .success is reached before...
         }).error(function(data){
-            $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
+            //$scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
             console.log('ERROR: Not sent to server.');
         });
+      $scope.formData = {'username': sessionStorage.getItem('username'), 'pass' : sessionStorage.getItem('pass')};
+      //TODO error 406? What am I not passing correctly in the request?
+      $http.put('/user/get/connections', $scope.formData).
+        success(function(data) {
+          console.log("User Connections GET Request sent to server successfully!");
+          if(Object.keys(data).length != 0)
+          {
+            //We have received connections from the DB here.
+          }
+          else {
+            console.log("No connectios for this user found.");
+          }
+        }).error(function(data) {
+          console.log("User connections GET request not sent to server!");
+        });
     }
-
+    //TODO not getting called?
+    $scope.addConnection = function(data) {
+      console.log("Attempting to add connection: " + data.addUsername);
+      var param = {'username':sessionStorage.getItem('username'), 'pass':sessionStorage.getItem('pass'), 'newuser':data.addUsername};
+      $http.put('/user/create/connection', param).
+        success(function(data) {
+          console.log("Request to add connection sent to server successfully!");
+        }).error(function(data) {
+          console.log("Error sending add connection request to server!");
+        });
+    }
+    //Call method to execute code above.
     $scope.sub();
 });
 

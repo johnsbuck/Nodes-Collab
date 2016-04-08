@@ -50,21 +50,10 @@ function generateProfile(data)
                               <li><a href="#"><span class="fa fa-star fa-lg"></span></a></li>
                             </ul>
                     </div><!--/col-->
-
-                    <div class="col-xs-12 col-sm-4">
-                        <h2><strong> `+ /*obj.profile[0].reward_points +*/ ` </strong></h2>
-                        <p><small>Reward Points</small></p>
-                        <button class="btn btn-success btn-block"><span class="fa fa-plus-circle"></span> <span class="glyphicon glyphicon-phone" aria-hidden="true"></span> Social Medias </button>
-                    </div><!--/col-->
                     <div class="col-xs-12 col-sm-4">
                         <h2><strong>`+/* obj.profile[0].no_connections*/ + `</strong></h2>
                         <p><small>Connections</small></p>
                         <button class="btn btn-info btn-block"><span class="fa fa-user"></span> <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add </button>
-                    </div><!--/col-->
-                    <div class="col-xs-12 col-sm-4">
-                        <h2><strong>`/*+ obj.profile[0].karma_points*/ + `</strong></h2>
-                        <p><small>Karma</small></p>
-                        <button class="btn btn-primary btn-block" type="button"><span class="fa fa-gear"></span> <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Contact </button>
                     </div><!--/col-->
               </div><!--/row-->
           </div><!--/panel-body-->

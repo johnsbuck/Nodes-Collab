@@ -178,7 +178,9 @@ router.put('/edit', function(req, res, next) {
     });
   });
 });
-
+/*
+Requires: current user username, pass, newuser
+*/
 router.put('/create/connection', function(req, res, next) {
   if(req.body.username === req.body.newuser) {
     res.sendStatus(406).end();
@@ -220,7 +222,7 @@ router.put('/create/connection', function(req, res, next) {
 /*
 Get all the connections for a user.
 **/
-router.delete('/get/connections', function(req, res, next) {
+router.put('/get/connections', function(req, res, next) {
   req.body = quoteFixer(req.body);
   pg.connect(connectionString, function(err, client, done) {
     client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
@@ -255,7 +257,7 @@ router.delete('/get/connections', function(req, res, next) {
   });
 });
 
-router.put('/delete/connection', function(req, res, next) {
+router.delete('/delete/connection', function(req, res, next) {
   req.body = quoteFixer(req.body);
   pg.connect(connectionString, function(err, client, done) {
     client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
