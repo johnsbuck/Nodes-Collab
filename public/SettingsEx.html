@@ -122,17 +122,22 @@
             <div id="General" class="tab-pane fade in active">
                 <p>PUT GENERAL SETTINGS HERE</p>
             </div>
-            <div id="privacy" class="tab-pane fade">
+            <div id="privacy" class="tab-pane fade" ng-controller="settingCtrl">
                 <br>
                 <form>
-                    <input type = "radio" name="privacy" value"private"> Private
-                    <input type = "radio" name="privacy" value"private"> Public
-                    <input type="submit" value="Submit">
+                    <input type = "radio" name="privacy" value="private" ng-model="formData.privacy"> Private
+                    <input type = "radio" name="privacy" value="public" ng-model="formData.privacy"> Public
+                    <input type="submit" value="Submit" ng-click="sub(formData)">
                 </form>
                 <br>
             </div>
-            <div id="blocked" class="tab-pane fade">
-                <h3>PUT BLOCKED SETTINGS HERE</h3>
+            <div id="blocked" class="tab-pane fade" ng-controller="blockedCtrl">
+                <label>Enter user to block:</label>
+                <input type = "textbox" id="user" ng-model="formData.blocked">
+                <button type="button" ng-click"sub(formData)"> Block </button>
+                <hr>
+                <h4>Blocked users:</h4>
+                BLOCK BLOCK BLOCK
             </div>
         </div>
 

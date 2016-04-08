@@ -243,16 +243,6 @@ app.controller('loginCtrl', function($scope, $http, $location) {
   }
 });
 
-app.controller('settingsCtrl', function($scope, $http) {
-  $scope.sub = function() {
-    $http.put('' , $scope.formData)
-    success(function(data) {
-      console.log('Sent to the server successfully.');
-    }).error(function(data) {
-      console.log('ERROR: Not sent to server.');
-    });
-  }
-});
 
 app.controller('navCtrl', function($scope, $http) {
   $scope.signout = function() {
@@ -269,6 +259,32 @@ app.controller('mainCtrl', function($scope, $http) {
 });
 
 
+app.controller('settingsCtrl', function($scope, $http) {
+  console.log("SETTINGS");
+  $scope.sub = function() {
+    console.log($scope.formData);
+    $http.put('' , $scope.formData)
+    success(function(data) {
+      console.log('Sent to the server successfully.');
+    }).error(function(data) {
+      console.log('ERROR: Not sent to server.');
+    });
+  }
+});
+
+app.controller('blockedCtrl', function($scope, $http) {
+  console.log("BlockedSettings");
+  $scope.sub = function() {
+    console.log($scope.formData);
+    $http.put('/settings/blocked' , $scope.formData)
+    success(function(data) {
+      console.log('Sent to the server successfully.');
+    }).error(function(data) {
+      console.log('ERROR: Not sent to server.');
+    });
+  }
+});
+
 app.controller('collabSettingsCtrl', function($scope, $http) {
     console.log("CollabSettings");
     $scope.sub = function() {
@@ -283,6 +299,7 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
       });
     }
   });
+
 
 function popError(msg) {
   if(!$('.popup-error').length) {
