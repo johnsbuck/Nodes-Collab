@@ -256,27 +256,19 @@ app.controller('viewPostCtrl', function($scope, $http) {
 //Submit a post for Q&A
 app.controller('qaPostCtrl', function($scope, $http, $location) {
   $scope.sub = function() {
-    console.log($scope.formData);
-    if($scope.formData && $scope.formData.email && $scope.formData.pass) {
-      $http.put('/qa-post/post', $scope.formData).
-      success(function(data) {
-        console.log($scope.formData);
-        $http.put('/user/get', $scope.formData).success(function(data) {
-          sessionStorage.setItem('username', data.username);
-          sessionStorage.setItem('email', $scope.formData.email);
-          sessionStorage.setItem('pass', $scope.formData.pass);
 
-          window.location.href = '/QandA.html';
-          console.log('Sent to sever successfully.');
-        }).error(function(data) {
-          console.log('Unable to receive user info.');
-          popError('Unable to receive user info');
-        });
+    $scope.formData['text'] = $('qa-post-area').val();
+    $scope.formData['username'] = sessionStorage.getItem('username');
+    $scope.formData['pass'] = sessionStorage.getItem('pass');
+    console.log($scope.formData);
+    $http.put('/qa-post/post', $scope.formData).
+      success(function(data) {
+        window.location.href = '/QandA.html';
+        console.log('Sent to sever successfully.');
       }).error(function(data){
           console.log('ERROR: Not sent to server.');
           popError('Username or password is not correct');
       });
-    }
   }
   });
 
