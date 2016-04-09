@@ -63,7 +63,15 @@ function singlePost(singleData)
                             <hr>
                             <section class="row">
                               <ul class="col-md-6">
-                              <li class="list-unstyled"><a href="ViewPost.html" onclick="storePostID(` + obj.post[0].id + `)"><i class="glyphicon glyphicon-comment"> </i> View Full Post</a>
+                              <li class="list-unstyled"><a href="View`;
+                              if(obj.post[0].type==0)//if the type is 0 then we will show this as a Q & A post, otherwise it is a freelance post
+                              {
+                                divBuilder += 'QA';
+                              }
+                              else {
+                                divBuilder += 'Freelance';
+                              }
+                              divBuilder += `Post.html" onclick="storePostID(` + obj.post[0].id + `, ` + obj.post[0].type + `)"><i class="glyphicon glyphicon-comment"> </i> View Full Post</a>
                             </section>
                         </section>
                        </section>
@@ -77,10 +85,11 @@ function singlePost(singleData)
 
 //Stores the post ID to the session when you view the post so the controller knows which post to show to the viewer
 //Id stored as: postID
-function storePostID(postID)
+function storePostID(postID, postType)
 {
-  console.log("Session Stored Post ID: " + postID);
+  console.log("Session Stored Post ID: " + postID + ", Session Stored Post Type: " + postType);
   sessionStorage.setItem('postID', postID);
+  sessionStorage.setItem('postType', postType);
 }
 //See the note @ function above
 //generate();

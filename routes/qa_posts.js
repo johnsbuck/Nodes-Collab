@@ -79,7 +79,7 @@ router.post('/post', function(req, res) {
 													'(\'' + req.body.username + '\', \'' + req.body.timestamp + '\', \'' + req.body.title + '\', ' +
 													'\'' + req.body.text + '\', \'0\');'
 						} else {
-							var sqlQuery = 'INSERT INTO posts (username, timestamp, title, text, type) VALUES ' +
+							var sqlQuery = 'INSERT INTO posts (username, title, text, type) VALUES ' +
 													'(\'' + req.body.username + '\', \'' + req.body.title + '\', ' +
 													'\'' + req.body.text + '\', \'0\');'
 						}

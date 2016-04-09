@@ -193,12 +193,56 @@ app.controller('groupPostGen', function($scope, $http) {
     $scope.init();
 });
 
+//Only shows Freelance posts
+//AngularJS to retrieve the data from the DB
+app.controller('freelancePostGen', function($scope, $http) {
+    $scope.txt = "";
+
+    $scope.sub = function() {
+      //API CALL -> qa_posts put (which is redefined as a get).
+      $http.put('/free-post/get').
+        success(function(data) {
+            console.log('Sent to sever successfully.');
+            //Apparently we need a directive to parse this data into a string -> use value.table_name
+            if(Object.keys(data).length != 0)
+            {
+                //$scope.txt = "Some data has been found, let's print it out!";
+                angular.forEach(data, function(value, key) {
+
+                  console.log("Key: " + key + ", Value: " + value.username + ", " + value.title + ", " + value.text + ", " + value.type);
+                  //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
+                  $.getScript("JS/tableGen.js", function(){
+                    param = '{ "post" : [' +
+                    '{ "username": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + "No Additional Tags Found." +
+                    '", "type":"' + value.type + '", "id":"' + value.id + '" }]}';
+                    console.log(param);
+                    document.getElementById("freelancePostGen").innerHTML += singlePost(param);
+                  });
+                });
+            }
+            else {
+              $scope.txt = "No posts have been found. Make a post to see some activity!";
+            }
+        }).error(function(data){
+            $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
+            console.log('ERROR: Not sent to server.');
+        });
+    }
+
+    $scope.sub();
+});
+
 app.controller('viewPostCtrl', function($scope, $http) {
     $scope.txt = "";
     $scope.init = function() {
       $scope.formData = { 'id': sessionStorage.getItem('postID')};//change this to be passed by jquery
+      var accessor = '/qa-post';
+      if(sessionStorage.getItem('postType')==1)
+      {
+          accessor = '/free-post';
+      }
       //First get the post
-      $http.put('/qa-post/get/post', $scope.formData)
+      $http.put(accessor + '/get/post', $scope.formData)
         .success(function(data) {
           console.log(data);
           console.log('Sent to sever successfully.');
@@ -258,21 +302,46 @@ app.controller('postCommentCtrl', function($scope, $http) {
                     $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
                     console.log('ERROR: Not sent to server.');
           });
-
-          var postComm = `<div class="panel panel-default">
-                    <div class="panel-body">
-                                  <h4> Post a comment: </h4>
-                                  <textarea style="width: 90%; height: 5%;" ng-model="formData.text"></textarea>
-                                  <br><br>
-                                  <button class="btn" class="form-control" ng-click="sub(formData)"><span class="glyphicon glyphicon-pushpin" type="submit" aria-hidden="true"></span> Post </button>
-                   </div>
-                 </div><hr>`;
-
-          document.getElementById("postCommentCtrl").innerHTML += postComm;
     }
 
     $scope.init();
 });
+
+//Submit a comment for a post
+app.controller('submitCommentCtrl', function($scope, $http, $location) {
+  $scope.sub = function() {
+    $scope.formData['username'] = sessionStorage.getItem('username');
+    $scope.formData['post_id'] = sessionStorage.getItem('postID');
+    $scope.formData['text'] = "temp";
+    $scope.formData['type'] = 0;
+    console.log($scope.formData);
+    $http.post('/comments/post', $scope.formData).
+      success(function(data) {
+        //location.reload();//refresh this page
+        console.log('Sent to sever successfully.');
+      }).error(function(data){
+          console.log('ERROR: Not sent to server.');
+          popError('Username or password is not correct');
+      });
+  }
+  });
+
+  //Submit a post for Freelancing
+  app.controller('freelancePostCtrl', function($scope, $http, $location) {
+    $scope.sub = function() {
+      $scope.formData['username'] = sessionStorage.getItem('username');
+      $scope.formData['pass'] = sessionStorage.getItem('pass');
+      console.log($scope.formData);
+      $http.post('/free-post/post', $scope.formData).
+        success(function(data) {
+          window.location.href = '/FreelanceEx.html';
+          console.log('Sent to sever successfully.');
+        }).error(function(data){
+            console.log('ERROR: Not sent to server.');
+            popError('Username or password is not correct');
+        });
+    }
+    });
 
 //Submit a post for Q&A
 app.controller('qaPostCtrl', function($scope, $http, $location) {

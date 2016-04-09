@@ -30,7 +30,7 @@ router.put('/get', function(req, res) {
 
 /* Posts a given comment connected to a post onto the database.
  */
-router.put('/create', function(req, res) {
+router.post('/post', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
 		client.query('INSERT INTO comments (username, post_id, text, type) VALUES (\'' +

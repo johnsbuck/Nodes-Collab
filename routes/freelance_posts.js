@@ -72,9 +72,16 @@ router.post('/post', function(req, res) {
           var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
           if(passHash.verify(req.body.pass, hashpass)) {
-						client.query('INSERT INTO posts (username, timestamp, title, text, type) VALUES ' +
-												'(\'' + req.body.username + '\', \'' + req.body.timestamp +'\', \'' + req.body.title + '\' ' +
-												'\'' + req.body.text + '\', \'1\');',
+							if(req.body.timestamp) {
+								var sqlQuery = 'INSERT INTO posts (username, timestamp, title, text, type) VALUES ' +
+														'(\'' + req.body.username + '\', \'' + req.body.timestamp + '\', \'' + req.body.title + '\', ' +
+														'\'' + req.body.text + '\', \'1\');'
+							} else {
+								var sqlQuery = 'INSERT INTO posts (username, title, text, type) VALUES ' +
+														'(\'' + req.body.username + '\', \'' + req.body.title + '\', ' +
+														'\'' + req.body.text + '\', \'1\');'
+							}
+							client.query(sqlQuery,
 						function(err, result) {
 							if(err) {
 								console.error(err);

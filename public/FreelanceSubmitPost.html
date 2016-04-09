@@ -23,7 +23,7 @@
     <script src="JS/controller.js"></script>
   </head>
 
-  <body ng-controllor="qaPostCtrl">
+  <body ng-controllor="freelancePostCtrl">
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
@@ -76,9 +76,9 @@
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
             <li><a href="main.html">Home <span class="sr-only">(current)</span></a></li>
-            <li class="active"><a href="QandA.html" class="QA" onclick="QA()">Q and A</a></li>
+            <li><a href="QandA.html" class="QA" onclick="QA()">Q and A</a></li>
             <li><a href="ProjectCollab.html">Project Collab</a></li>
-            <li><a href="FreelanceEx.html" class="Freelance" onclick="FreeLance()">Freelance Work</a></li>
+            <li class="active"><a href="FreelanceEx.html" class="Freelance" onclick="FreeLance()">Freelance Work</a></li>
           </ul>
           <ul class="nav nav-sidebar">
             <li><a href="TextEditorEx.html"  >Text Editor</a></li>
@@ -95,14 +95,13 @@
     </div>
 
     <div class="main col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
-      <div ng-controller="qaPostCtrl">
-        <h1>{{message}}</h1>
+      <div ng-controller="freelancePostCtrl">
         <form class="form-groupPost" role="form" method="post">
         <div class="row">
           <section class="panel panel-info">
             <header class="panel-heading">
               <div class="row">
-                <div class="col-xs-4"> <h4>Post a message </h4></div>
+                <div class="col-xs-4"> <h4>Create a Freelance Post </h4></div>
               </div>
             </header>
           <section class="row panel-body">
