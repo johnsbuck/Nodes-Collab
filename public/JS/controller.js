@@ -232,7 +232,9 @@ app.controller('postCommentCtrl', function($scope, $http) {
     $scope.init = function() {
       $scope.formData = { 'post_id' : sessionStorage.getItem('postID')};
 
-      $http.get('/comments/get', $scope.formData)
+      console.log($scope.formData);
+
+      $http.put('/comments/get', $scope.formData)
         .success(function(data) {
           console.log(data);
           console.log('Sent to sever successfully.');
@@ -240,12 +242,12 @@ app.controller('postCommentCtrl', function($scope, $http) {
           if(Object.keys(data).length != 0)
           {
                 angular.forEach(data, function(value, key) {
-                    $.getScript("JS/commentGen.js", function(){
-                      param = '{ "comment" : [' +
-                      '{ "username": "' + value.username + '", "text":"' + value.text + '", "timestamp":"' + value.timestamp + '" }]}';
-                      console.log(param);
-                      document.getElementById("postCommentCtrl").innerHTML += viewComment(param);
-                    });
+                  if(value.text) {
+                    param = '{ "comment" : [' +
+                    '{ "username": "' + value.username + '", "text":"' + value.text + '", "timestamp":"' + value.timestamp + '" }]}';
+                    console.log(param);
+                    document.getElementById("postCommentCtrl").innerHTML += viewComment(param);
+                  }
                 });
 
           }
@@ -275,12 +277,10 @@ app.controller('postCommentCtrl', function($scope, $http) {
 //Submit a post for Q&A
 app.controller('qaPostCtrl', function($scope, $http, $location) {
   $scope.sub = function() {
-
-    $scope.formData['text'] = $('qa-post-area').val();
     $scope.formData['username'] = sessionStorage.getItem('username');
     $scope.formData['pass'] = sessionStorage.getItem('pass');
     console.log($scope.formData);
-    $http.put('/qa-post/post', $scope.formData).
+    $http.post('/qa-post/post', $scope.formData).
       success(function(data) {
         window.location.href = '/QandA.html';
         console.log('Sent to sever successfully.');

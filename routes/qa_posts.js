@@ -74,10 +74,18 @@ router.post('/post', function(req, res) {
           var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
           if(passHash.verify(req.body.pass, hashpass)) {
-						client.query('INSERT INTO posts (username, timestamp, title, text, type) VALUES ' +
-												'(\'' + req.body.username + '\', \'' + req.body.timestamp +'\', \'' + req.body.title + '\' ' +
-												'\'' + req.body.text + '\', \'0\');',
+						if(req.body.timestamp) {
+							var sqlQuery = 'INSERT INTO posts (username, timestamp, title, text, type) VALUES ' +
+													'(\'' + req.body.username + '\', \'' + req.body.timestamp + '\', \'' + req.body.title + '\', ' +
+													'\'' + req.body.text + '\', \'0\');'
+						} else {
+							var sqlQuery = 'INSERT INTO posts (username, timestamp, title, text, type) VALUES ' +
+													'(\'' + req.body.username + '\', \'' + req.body.title + '\', ' +
+													'\'' + req.body.text + '\', \'0\');'
+						}
+						client.query(sqlQuery,
 						function(err, result) {
+							done();
 							if(err) {
 								console.error(err);
 								res.sendStatus(406).end();

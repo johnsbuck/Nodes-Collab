@@ -9,9 +9,10 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
 /* Returns the comment of the given post id and a 200 status code.
  * If no post exists, return a 204 status code.
  */
-router.get('/get', function(req, res) {
+router.put('/get', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
+		console.log(req.body);
 		client.query('SELECT * FROM comments WHERE post_id=\'' + req.body.post_id + '\';',
 		function(err, result) {
 			done();
@@ -19,7 +20,7 @@ router.get('/get', function(req, res) {
 				console.error(err);
 				res.sendStatus(406).end();
 			}else if(!result || result.rows.length == 0) {
-				res.sendStatus(203).end();
+				res.sendStatus(204).end();
 			}else {
 				res.status(200).send(result.rows).end();
 			}
