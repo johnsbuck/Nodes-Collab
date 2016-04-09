@@ -63,7 +63,7 @@ function singlePost(singleData)
                             <hr>
                             <section class="row">
                               <ul class="col-md-6">
-                              <li class="list-unstyled"><a href="ViewPost.html?id=` + obj.post[0].id + `"><i class="glyphicon glyphicon-comment"> </i> View Full Post</a>
+                              <li class="list-unstyled"><a href="ViewPost.html" onclick="storePostID(` + obj.post[0].id + `)"><i class="glyphicon glyphicon-comment"> </i> View Full Post</a>
                             </section>
                         </section>
                        </section>
@@ -73,6 +73,14 @@ function singlePost(singleData)
 
   return divBuilder;
 
+}
+
+//Stores the post ID to the session when you view the post so the controller knows which post to show to the viewer
+//Id stored as: postID
+function storePostID(postID)
+{
+  console.log("Session Stored Post ID: " + postID);
+  sessionStorage.setItem('postID', postID);
 }
 //See the note @ function above
 //generate();

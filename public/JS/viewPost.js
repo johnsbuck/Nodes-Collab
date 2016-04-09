@@ -8,16 +8,20 @@ function viewPost(singlePost)
   console.log(obj);
   //well just set the post type as a tag
   var type = obj.post[0].type;
+  var authorTag;
+
   if(type==0)//if the type is 0 then we will show this as a Q & A post, otherwise it is a freelance post
   {
     type = "Q & A";
+    authorTag = "Asked by: ";
   }
   else {
     type = "Freelance";
+    authorTag = "Proposed by: ";
   }
 
   var divBuilder = `<h1><u>` + obj.post[0].title + `</u></h1>
-                    <p>Asked by: `+ obj.post[0].author +`</p>
+                    <p>` + authorTag + obj.post[0].author +`</p>
                     <br>
                     <p>`+ obj.post[0].text +`</p>
                     <br>

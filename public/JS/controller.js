@@ -196,7 +196,7 @@ app.controller('groupPostGen', function($scope, $http) {
 app.controller('viewPostCtrl', function($scope, $http) {
     $scope.txt = "";
     $scope.init = function() {
-      $scope.formData = { 'id': '3'};//change this to be passed by jquery
+      $scope.formData = { 'id': sessionStorage.getItem('postID')};//change this to be passed by jquery
       //First get the post
       $http.put('/qa-post/get/post', $scope.formData)
         .success(function(data) {
@@ -212,34 +212,8 @@ app.controller('viewPostCtrl', function($scope, $http) {
                   console.log(param);
                   document.getElementById("viewPostCtrl").innerHTML += viewPost(param);
                 });
-                document.getElementById("viewPostCtrl").innerHTML += '<p ng-bind="commentTxt"></p>';
 
-                $scope.formData = { 'post_id' : 3};
-                console.log("--Sending Comment Data--");
-                $scope.commentTxt = "";
-                //Now we build the comment section
-                $http.get('/comments/get', $scope.formData)
-                  .success(function(data) {
-                    console.log('Sent to sever successfully.');
-                    //There should only be one object here
-                    if(Object.keys(data).length != 0)
-                    {
-                      angular.forEach(data, function(value, key) {
-                          $.getScript("JS/commentGen.js", function(){
-                            param = '{ "comment" : [' +
-                            '{ "username": "' + value.username + '", "text":"' + value.text + '", "timestamp":"' + value.timestamp + '" }]}';
-                            console.log(param);
-                            document.getElementById("viewPostCtrl").innerHTML += viewComment(param);
-                          });
-                      });
-                    }
-                    else {
-                      $scope.commentTxt = "No comments for this post have been made yet!";
-                    }
-                  }).error(function(data) {
-                    $scope.commentTxt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
-                    console.log('ERROR: Not sent to server.');
-                  });
+                document.getElementById("viewPostCtrl").innerHTML += '<p ng-bind="commentTxt"></p>';
           }
           else {
             $scope.txt = "No posts have been found. Make a post to see some activity!";
@@ -248,6 +222,51 @@ app.controller('viewPostCtrl', function($scope, $http) {
           $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
           console.log('ERROR: Not sent to server.');
         });
+    }
+
+    $scope.init();
+});
+
+app.controller('postCommentCtrl', function($scope, $http) {
+    $scope.txt = "";
+    $scope.init = function() {
+      $scope.formData = { 'post_id' : sessionStorage.getItem('postID')};
+
+      $http.get('/comments/get', $scope.formData)
+        .success(function(data) {
+          console.log(data);
+          console.log('Sent to sever successfully.');
+
+          if(Object.keys(data).length != 0)
+          {
+                angular.forEach(data, function(value, key) {
+                    $.getScript("JS/commentGen.js", function(){
+                      param = '{ "comment" : [' +
+                      '{ "username": "' + value.username + '", "text":"' + value.text + '", "timestamp":"' + value.timestamp + '" }]}';
+                      console.log(param);
+                      document.getElementById("postCommentCtrl").innerHTML += viewComment(param);
+                    });
+                });
+
+          }
+          else {
+                $scope.txt = "No comments for this post have been made yet!";
+          }
+          }).error(function(data) {
+                    $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
+                    console.log('ERROR: Not sent to server.');
+          });
+
+          var postComm = `<div class="panel panel-default">
+                    <div class="panel-body">
+                                  <h4> Post a comment: </h4>
+                                  <textarea style="width: 90%; height: 5%;" ng-model="formData.text"></textarea>
+                                  <br><br>
+                                  <button class="btn" class="form-control" ng-click="sub(formData)"><span class="glyphicon glyphicon-pushpin" type="submit" aria-hidden="true"></span> Post </button>
+                   </div>
+                 </div><hr>`;
+
+          document.getElementById("postCommentCtrl").innerHTML += postComm;
     }
 
     $scope.init();

@@ -7,11 +7,14 @@ function viewComment(singleComment)
   var obj = JSON.parse(singleComment);
   console.log(obj);
 
-  var divBuilder = `<div class="well well-sm">`+ obj.post[0].text +
-                    `<br>
+  var divBuilder = `<div class="panel panel-default">
+                    <div class="panel-body">
+                    ` + obj.post[0].text +
+                    `<hr>
                     <p>Written by: `+ obj.post[0].author +`</p>
                     <br>
                     <p><i class="glyphicon glyphicon-time"></i> ` + obj.post[0].timestamp + `</p>
+                    </div>
                     </div>`;
 
   return divBuilder;
