@@ -14,7 +14,7 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
 router.put('/get', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
-		client.query('SELECT * FROM tags WHERE post_id=\'' + req.body.id + '\';',
+		client.query('SELECT * FROM tags WHERE title=\'' + req.body.title + '\' AND type=\'' + req.body.type +'\';',
 		function(err, result) {
 			done();
 			if(err) {
@@ -37,7 +37,7 @@ router.put('/get', function(req, res) {
 router.put('/get/tag', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
-		client.query('SELECT * FROM tags WHERE post_id=\'' + req.body.id + '\' AND tag=\'' + req.body.tag + '\';',
+		client.query('SELECT * FROM tags WHERE post_id=\'' + req.body.title + '\' AND type=\'' + req.body.type + '\' AND tag=\'' + req.body.tag + '\';',
 		function(err, result) {
 			done();
 			if(err) {
@@ -60,7 +60,7 @@ router.put('/get/tag', function(req, res) {
 router.put('/create', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
-		client.query('INSERT INTO tags VALUES (\'' + req.body.id + '\', \'' + req.body.tag + '\');',
+		client.query('INSERT INTO tags (title, type, tag) VALUES (\'' + req.body.title + '\', \'' + req.body.type + '\', \'' + req.body.tag + '\');',
 		function(err, result) {
 			done();
 			if(err) {
@@ -94,7 +94,7 @@ router.delete('/delete', function(req, res) {
 				 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
 				 if(passHash.verify(req.body.pass, hashpass)) {
-					client.query('DELETE FROM tags WHERE post_id=\'' + req.body.id + '\';',
+					client.query('DELETE FROM tags WHERE title=\'' + req.body.title + '\' AND type =\'' + req.body.type + '\';',
 					function(err, result) {
 						done();
 						if(err) {
@@ -133,7 +133,7 @@ router.delete('/delete/tag', function(req, res) {
 				 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
 				 if(passHash.verify(req.body.pass, hashpass)) {
-					client.query('DELETE FROM tags WHERE post_id=\'' + req.body.id + '\' AND tag=\'' + req.body.tag + '\';',
+					client.query('DELETE FROM tags WHERE title=\'' + req.body.title + '\' AND type=\'' + req.body.type + '\' AND tag=\'' + req.body.tag + '\';',
 					function(err, result) {
 						done();
 						if(err) {
@@ -172,7 +172,7 @@ router.put('/edit/tag', function(req, res) {
 				 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
 				 if(passHash.verify(req.body.pass, hashpass)) {
-					client.query('UPDATE FROM tags SET tag=\''+ req.body.new.tag + '\' WHERE post_id=\'' + req.body.id + '\' AND tag=\'' + req.body.tag + '\';',
+					client.query('UPDATE FROM tags SET tag=\''+ req.body.new.tag + '\' WHERE title=\'' + req.body.title + '\' AND type=\'' + req.body.type + '\' AND tag=\'' + req.body.tag + '\';',
  					function(err, result) {
  						done();
  						if(err) {
