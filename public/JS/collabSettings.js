@@ -18,7 +18,7 @@ function addMember(singleData)
   var obj = JSON.parse(singleData);
 
   var divBuilder = `<br>
-                    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#my` + obj.post[0].username +`Modal"></button> ` + obj.post[0].username + `
+                    <button type="button" data-toggle="modal" data-target="#my` + obj.post[0].username +`Modal">` + obj.post[0].username + `</button>
                     <div id="my` + obj.post[0].username + `Modal" class="modal fade" role="dialog">
                     <div class="modal-dialog">
 
