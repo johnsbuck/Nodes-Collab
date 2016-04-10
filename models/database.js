@@ -24,12 +24,13 @@ var user_group_perms = 'CREATE TABLE user_group_perms (username VARCHAR(40) REFE
                                     'perms INTEGER NOT NULL DEFAULT 2, ' +
                                     'PRIMARY KEY (username, groupname));';
 
-var basic_post = 'CREATE TABLE posts (id SERIAL PRIMARY KEY, ' +
+var basic_post = 'CREATE TABLE posts (' +
                                 'username VARCHAR(40) REFERENCES users (username), ' +
                                 'timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, ' +
                                 'title VARCHAR(64) NOT NULL, ' +
                                 'text VARCHAR(63206) NOT NULL, ' +
-                                'type INTEGER NOT NULL);';
+                                'type INTEGER NOT NULL, ' +
+                                'PRIMARY KEY (title, type));';
 
 var comment = 'CREATE TABLE comments (id SERIAL NOT NULL, ' +
                                     'username VARCHAR(40) REFERENCES users (username), ' +
@@ -39,7 +40,8 @@ var comment = 'CREATE TABLE comments (id SERIAL NOT NULL, ' +
                                     'type INTEGER NOT NULL, ' +
                                     'PRIMARY KEY (id, post_id));';
 
-var tag = 'CREATE TABLE tags (post_id INTEGER NOT NULL REFERENCES posts (id) ON DELETE CASCADE, ' +
+var tag = 'CREATE TABLE tags (title VARCHAR(64) NOT NULL REFERENCES posts (title) ON DELETE CASCADE, ' +
+                              'type INTEGER NOT NULL REFERENCES posts (type) ON DELETE CASCADE, ' +
                               'tag VARCHAR(40) NOT NULL, ' +
                               'PRIMARY KEY (post_id, tag));';
 

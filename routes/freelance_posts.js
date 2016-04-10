@@ -11,7 +11,7 @@ var router = express();
 /* /get
  * Method: PUT (Should be GET)
  *
- * Returns all qa_posts.
+ * Returns all freelance_posts.
  */
 router.put('/get', function(req, res) {
 	req.body = quoteFixer(req.body);
@@ -33,7 +33,7 @@ router.put('/get', function(req, res) {
 /* /get/post
  * Method: PUT (Should be GET)
  *
- * Returns a single Q&A post.
+ * Returns a single Freelance post.
  */
 router.put('/get/post', function(req, res) {
 	req.body = quoteFixer(req.body);
@@ -55,54 +55,64 @@ router.put('/get/post', function(req, res) {
 /* /post
  * Method: POST
  *
- * Submits a single Q&A POST. Requires username and password.
+ * Submits a single FREELANCE POST. Requires username and password.
  */
-router.post('/post', function(req, res) {
-	req.body = quoteFixer(req.body);
-	pg.connect(connectionString, function(err, client, done) {
-     client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
-      function(err, result) {
-        if(err) {
-          console.error(err);
-          res.sendStatus(406).end();
-        }else if(!result || result.rows.length === 0) {
-          done();
-          res.sendStatus(404).end();
-        }else {
-          var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
+ router.post('/post', function(req, res) {
+ 	req.body = quoteFixer(req.body);
+ 	pg.connect(connectionString, function(err, client, done) {
+      client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
+       function(err, result) {
+ 				done();
+         if(err) {
+           console.error(err);
+           res.sendStatus(406).end();
+         }else if(!result || result.rows.length === 0) {
+           done();
+           res.sendStatus(404).end();
+         }else {
+           var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
-          if(passHash.verify(req.body.pass, hashpass)) {
-							if(req.body.timestamp) {
-								var sqlQuery = 'INSERT INTO posts (username, timestamp, title, text, type) VALUES ' +
-														'(\'' + req.body.username + '\', \'' + req.body.timestamp + '\', \'' + req.body.title + '\', ' +
-														'\'' + req.body.text + '\', \'1\');'
-							} else {
-								var sqlQuery = 'INSERT INTO posts (username, title, text, type) VALUES ' +
-														'(\'' + req.body.username + '\', \'' + req.body.title + '\', ' +
-														'\'' + req.body.text + '\', \'1\');'
-							}
-							client.query(sqlQuery,
-						function(err, result) {
-							if(err) {
-								console.error(err);
-								res.sendStatus(406).end();
-							} else {
-								res.sendStatus(206).end();
-							}
-						});
-					}else {
-						done();
-            res.sendStatus(403).end();
-          }
-				}
-			});
- 	});
-});
+           if(passHash.verify(req.body.pass, hashpass)) {
+ 						if(req.body.timestamp) {
+ 							var sqlQuery = 'INSERT INTO posts (username, timestamp, title, text, type) VALUES ' +
+ 													'(\'' + req.body.username + '\', \'' + req.body.timestamp + '\', \'' + req.body.title + '\', ' +
+ 													'\'' + req.body.text + '\', \'1\');'
+ 						} else {
+ 							var sqlQuery = 'INSERT INTO posts (username, title, text, type) VALUES ' +
+ 													'(\'' + req.body.username + '\', \'' + req.body.title + '\', ' +
+ 													'\'' + req.body.text + '\', \'1\');'
+ 						}
+ 						client.query(sqlQuery,
+ 						function(err, result) {
+ 							if(err) {
+ 								console.error(err);
+ 								res.sendStatus(406).end();
+ 							} else {
+ 								req.body.tags.forEach(tag) {
+ 									client.query(' INSERT INTO tags (title, type, tag) VALUES (\'' + req.body.title + '\', \'1\', \'' + tag + '\');',
+ 									function(err, result) {
+ 										if(err) {
+ 											done();
+ 											res.sendStatus(406).end();
+ 										}
+ 									});
+ 								}
+ 								done();
+ 								res.sendStatus(206).end();
+ 							}
+ 						});
+ 					}else {
+             res.sendStatus(406).end();
+           }
+ 				}
+ 			});
+  	});
+ });
 
 /* /delete
  * Method: DELETE
  *
- * Deletes a single Q&A post. Requires username and password.
+ * Deletes a single Freelance post. Requires username and password.
  */
 router.delete('/delete', function(req, res) {
 	req.body = quoteFixer(req.body);
@@ -154,7 +164,7 @@ router.put('/edit', function(req, res) {
  	pg.connect(connectionString, function(err, client, done) {
  		req.body = quoteFixer(req.body);
  		client.query('SELECT pass, salt FROM users INNER JOIN posts WHERE ' +
- 			'posts.username = \'' + req.body.username +'\' AND posts.post_id = \'' + req.body.post_id + '\' AND posts.type=\'1\';',
+ 			'posts.username = \'' + req.body.username +'\' AND posts.title = \'' + req.body.title + '\' AND posts.type=\'1\';',
  		 function(err, result) {
  			 if(err) {
  				 console.error(err);

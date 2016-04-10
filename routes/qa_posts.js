@@ -85,11 +85,20 @@ router.post('/post', function(req, res) {
 						}
 						client.query(sqlQuery,
 						function(err, result) {
-							done();
 							if(err) {
 								console.error(err);
 								res.sendStatus(406).end();
 							} else {
+								req.body.tags.forEach(tag) {
+									client.query(' INSERT INTO tags (title, type, tag) VALUES (\'' + req.body.title + '\', \'0\', \'' + tag + '\');',
+									function(err, result) {
+										if(err) {
+											done();
+											res.sendStatus(406).end();
+										}
+									});
+								}
+								done();
 								res.sendStatus(206).end();
 							}
 						});
@@ -157,7 +166,7 @@ router.put('/edit', function(req, res) {
 	pg.connect(connectionString, function(err, client, done) {
 		req.body = quoteFixer(req.body);
 		client.query('SELECT pass, salt FROM users INNER JOIN posts WHERE ' +
-			'posts.username = \'' + req.body.username +'\' AND posts.post_id = \'' + req.body.post_id + '\' AND posts.type=\'0\';',
+			'posts.username = \'' + req.body.username +'\' AND posts.title = \'' + req.body.title + '\' AND posts.type=\'0\';',
 		 function(err, result) {
 			 if(err) {
 				 console.error(err);
