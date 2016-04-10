@@ -205,7 +205,8 @@ app.controller('loginCtrl', function($scope, $http, $location) {
           sessionStorage.setItem('username', data.username);
           sessionStorage.setItem('email', $scope.formData.email);
           sessionStorage.setItem('pass', $scope.formData.pass);
-
+          sessionStorage.setItem('first_name', data.first_name);
+          sessionStorage.setItem('last_name', data.last_name);
           window.location.href = '/main.html';
           console.log('Sent to sever successfully.');
         }).error(function(data) {
@@ -255,6 +256,12 @@ app.controller('mainCtrl', function($scope, $http) {
     window.location.href = '/index.html';
   }
   $scope.message = "Welcome back, " + sessionStorage.getItem('username');
+});
+
+app.controller('generalCtrl', function($scope, $http) {
+  $scope.message = "Username: " + sessionStorage.getItem('username');
+  $scope.messageName = "Name: " + sessionStorage.getItem('first_name') + " " + sessionStorage.getItem('last_name');
+  $scope.messageEmail = "Email: " + sessionStorage.getItem('email');
 });
 
 

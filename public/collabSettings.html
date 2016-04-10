@@ -26,7 +26,7 @@
 
   <body>
 
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav class="navbar navbar-inverse navbar-fixed-top" ng-controller="navCtrl">
       <div class="container-fluid" ng-controller="collabSettingsCtrl">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -43,7 +43,7 @@
             <li><a href="#">Settings</a></li>
             <li><a href="ProfileEx.html">Profile</a></li>
             <li><a href="Help.html">Help</a></li>
-            <li><a ng-click="signout()">Sign Out</a></li>
+            <li><a href ="#" ng-click="signout()">Sign Out</a></li>
           </ul>
           <form class="navbar-form navbar-right">
             <input type="text" class="form-control" placeholder="Search...">
@@ -123,7 +123,7 @@
                 <textarea rows= "1" ng-model= "formData.groupname"> </textarea>
                 <label><input type="radio" ng-model="formData.privacy" value= 1 name="privacyradio"> Private </label>
                 <label><input type="radio" ng-model="formData.privacy" value= 0 name="privacyradio"> Public </label>
-                <button type"button" ng-click="createGroup(formData)">Create Group</button>
+                <button type"button" href="#" ng-click="createGroup(formData)">Create Group</button>
                 <hr>
                 <div id="Groups" class="tab-pane fade in active" ng-controller= "collabSettingsCtrl">
                     <p ng-init="showGroups()">Groups you are a part of:</p>
