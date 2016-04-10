@@ -316,7 +316,7 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
         if(Object.keys(data).length != 0)
         {
             this._data = data;
-            console.log(data.length);
+            console.log(data);
             console.log($scope.count);
             data.forEach(function(dataElement)  {
               console.log("Value: " + dataElement.groupname);
