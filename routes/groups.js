@@ -9,12 +9,12 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
 /* /get
  * METHOD: PUT (Should be GET)
  *
- * Used to retrieve information on a group. Requires access for private group.
+ * Used to retrieve information based on a group and it's members based on groupname. Requires authorization.
  */
-router.put('/get', function(req, res) {
+router.put('/get/group', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
-		client.query('SELECT * FROM groups INNER JOIN user_group_perms AS ugp ON ugp.groupname=\'' + req.body.groupname + '\';',
+		client.query('SELECT username, perms FROM groups INNER JOIN user_group_perms AS ugp ON ugp.groupname=\'' + req.body.groupname + '\';',
 		function(err, result) {
 			if(err) {
 				res.sendStatus(400).end();
@@ -68,23 +68,43 @@ router.put('/get', function(req, res) {
 /* /get/user
  * METHOD: PUT (Should be GET)
  *
- * Used to retrieve information on a group. Requires access for private group.
+ * Used to retrieve information on a specific user's group based on req.body.search.username. Requires authorization.
  */
-router.put('/get/groups', function(req, res) {
+router.put('/get/user', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
-		client.query('SELECT * FROM groups INNER JOIN user_group_perms AS ugp ON ugp.username=\'' + req.body.username + '\';',
-		function(err, result) {
-			if(err) {
-				console.log(err);
-				res.sendStatus(400).end();
-			} else if (!result) {
-				res.sendStatus(406).end();
-			} else if (result.rows.length === 0) {
-				res.sendStatus(204);
-			} else {
-				done();
-				res.status(200).send(result.rows).end();
+		//Authorization
+		client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username + '\';',
+		 function(err, result) {
+			 if(err) {
+				 done();
+				 console.error(err);
+				 res.sendStatus(406).end();
+			 }else if(!result || result.rows.length === 0) {
+				 done();
+				 res.sendStatus(404).end();
+			 }else {
+				 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
+
+				 if(passHash.verify(req.body.pass, hashpass)) {
+					client.query('SELECT group, privacy, perms FROM groups INNER JOIN user_group_perms AS ugp ON ugp.username=\'' + req.body.search.username + '\' AND (groups.privacy =\'0\'' + +
+					' OR (ugp.username =\'' + req.body.username + '\' AND ugp.perms =\'1\'));',
+					function(err, result) {
+						if(err) {
+							console.log(err);
+							res.sendStatus(400).end();
+						} else if (!result) {
+							res.sendStatus(406).end();
+						} else if (result.rows.length === 0) {
+							res.sendStatus(204);
+						} else {
+							done();
+							res.status(200).send(result.rows).end();
+						}
+					});
+				} else {
+					res.sendStatus(403).end();
+				}
 			}
 		});
 	});
