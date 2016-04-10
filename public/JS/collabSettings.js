@@ -17,7 +17,28 @@ function addMember(singleData)
 {
   var obj = JSON.parse(singleData);
 
-  var divBuilder = `<label><button class="glyphicon glyphicon-remove"></button> ` + obj.post[0].username + `</label>`;
+  var divBuilder = `<br>
+                    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#my` + obj.post[0].username +`Modal"></button> ` + obj.post[0].username + `
+                    <div id="my` + obj.post[0].username + `Modal" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                    <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">` + obj.post[0].username + `</h4>
+                    </div>
+                    <div class="modal-body">
+                    <p>Some text in the modal.</p>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                    </div>
+
+                    </div>
+                    </div>
+                    <br>`;
 
 return divBuilder;
 }
