@@ -88,7 +88,8 @@ router.put('/get/post', function(req, res) {
  								console.error(err);
  								res.sendStatus(406).end();
  							} else {
- 								req.body.tags.forEach(tag) {
+ 								req.body.tags.forEach(function (tag) 
+								{
  									client.query(' INSERT INTO tags (title, type, tag) VALUES (\'' + req.body.title + '\', \'1\', \'' + tag + '\');',
  									function(err, result) {
  										if(err) {
@@ -97,6 +98,7 @@ router.put('/get/post', function(req, res) {
  										}
  									});
  								}
+								);
  								done();
  								res.sendStatus(206).end();
  							}
