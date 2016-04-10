@@ -52,14 +52,34 @@ app.controller('QAPostGen', function($scope, $http) {
             //Apparently we need a directive to parse this data into a string -> use value.table_name
             if(Object.keys(data).length != 0)
             {
-                //$scope.txt = "Some data has been found, let's print it out!";
+                //for each post returned
                 angular.forEach(data, function(value, key) {
+                  $scope.formData = {'id': value.id};
+                  var tagBuilder = "notag";
+                  //get the tags for this posts
+                  $http.put('/tag/get', $scope.formData).
+                    success(function(dataTag) {
+                        console.log('Sent to sever successfully.');
+                        if(Object.keys(dataTag).length != 0)
+                        {
+                            //for each tag returned
+                            tagBuilder = "";
+                            angular.forEach(dataTag, function(valueTag, keyTag) {
+                                tagBuilder = valueTag.tag + ";";
+                              });
+                              console.log(tagBuilder);
+                        }
+                        else {
+                            console.log(tagBuilder);
+                        }
+                    }).error(function(dataTag){
+                        //db error
+                        console.log('ERROR: Tag data not sent to server.');
+                    });
 
-                  console.log("Key: " + key + ", Value: " + value.username + ", " + value.title + ", " + value.text + ", " + value.type);
-                  //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
                   $.getScript("JS/tableGen.js", function(){
                     param = '{ "post" : [' +
-                    '{ "username": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + "No Additional Tags Found." +
+                    '{ "username": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + tagBuilder +
                     '", "type":"' + value.type + '", "id":"' + value.id + '" }]}';
                     console.log(param);
                     document.getElementById("QAPostGen").innerHTML += singlePost(param);
