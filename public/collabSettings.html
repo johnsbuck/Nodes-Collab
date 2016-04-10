@@ -121,17 +121,26 @@
             <div id="General" class="tab-pane fade in active" ng-controller= "collabSettingsCtrl">
                 <p>PUT groups here</p>
                 <textarea rows= "1" ng-model= "formData.groupname"> </textarea>
-                <label><input type="radio" ng-model="formData.privacy" value= 0 name="privacyradio"> Private </label>
-                <label><input type="radio" ng-model="formData.privacy" value= 1 name="privacyradio"> Public </label>
-                <button class="btn" class="form-control" ng-click="sub(formData)">Create Group</button>
-            </div>
-            <div id="privacy" class="tab-pane fade">
-                <label>Add user to group:</label>
-                <input type = "textbox" id="user">
-                <button type="button"> Add </button>
+                <label><input type="radio" ng-model="formData.privacy" value= 1 name="privacyradio"> Private </label>
+                <label><input type="radio" ng-model="formData.privacy" value= 0 name="privacyradio"> Public </label>
+                <button type"button" ng-click="createGroup(formData)">Create Group</button>
                 <hr>
-                <h4>Current members:</h4>
-                <label><button class="glyphicon glyphicon-remove"></button> Sir user person</label>
+                <div id="Groups" class="tab-pane fade in active" ng-controller= "collabSettingsCtrl">
+                    <p ng-init="showGroups()">Groups you are a part of:</p>
+                </div>
+            </div>
+            <div id="privacy" class="tab-pane fade" ng-controller="collabSettingsCtrl">
+                <label>Add user to group:</label>
+                <input type = "textbox" id="user" ng-model="formData.new.user">
+                <br>
+                <label>Select permission type:</label>
+                <label><input type="radio" ng-model="formData.perms" value= 1 name="privacyradio"> Admin </label>
+                <label><input type="radio" ng-model="formData.perms" value= 0 name="privacyradio"> Member </label>
+                <button type="button" ng-click="addMembers(formData)"> Add </button>
+                <hr>
+                <div id="Members" class="tab-pane fade in active" ng-controller= "collabSettingsCtrl">
+                  <h4 ng-init="showMembers()">Current members:</h4>
+                </div>
             </div>
         </div>
 

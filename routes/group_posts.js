@@ -54,6 +54,7 @@ router.put('/get', function(req, res) {
 					client.query('SELECT perms FROM user_group_perms WHERE groupname=\'' +
 						req.body.groupname + '\' AND username =\'' + req.body.username + '\';',
 					function(err, result) {
+													console.log(result);
 						// If error, send client error
 						if(err) {
 							done();

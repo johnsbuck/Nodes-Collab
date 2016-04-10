@@ -126,7 +126,6 @@ app.controller('groupPostCtrl', function($scope, $http) {
                 this._data = data;
                 console.log(data.length);
                 console.log($scope.count);
-                //for(var i = $scope.count; i < data.length; i++) {
                 var i = 0;
                 var dataSliced = data.slice($scope.count, data.length);
                 dataSliced.forEach(function(dataElement)  {
@@ -287,12 +286,80 @@ app.controller('blockedCtrl', function($scope, $http) {
 
 app.controller('collabSettingsCtrl', function($scope, $http) {
     console.log("CollabSettings");
-    $scope.sub = function() {
+  $scope.formData = {'username': sessionStorage.getItem('username'),
+                      'pass': sessionStorage.getItem('pass')};
+    $scope.createGroup = function() {
       console.log($scope.formData);
-      $scope.formData.username = sessionStorage.getItem('username');
       $http.put('/group/create', $scope.formData).
       success(function(data) {
         sessionStorage.groupname = $scope.formData.groupname;
+        console.log('Sent to the server successfully.');
+      }).error(function(data) {
+        console.log('ERROR: Not sent to server.');
+      });
+    }
+
+    $scope.showGroups = function() {
+      console.log("Show Groups");
+      console.log($scope.formData);
+      $http.put('/group/get/groups', $scope.formData).
+      success(function(data) {
+        console.log('Sent to the server successfully.');
+        console.log(data);
+        if(Object.keys(data).length != 0)
+        {
+            this._data = data;
+            console.log(data.length);
+            console.log($scope.count);
+            data.forEach(function(dataElement)  {
+              console.log("Value: " + dataElement.groupname);
+              $.getScript("JS/collabSettings.js", function(){
+                param = '{ "post" : [' +
+                '{ "groupname": "' + dataElement.groupname + '" }]}';
+                console.log(param);
+                document.getElementById("Groups").innerHTML += addGroup(param);
+              });
+            });
+          }
+      }).error(function(data) {
+        console.log('ERROR: Not sent to server.');
+      });
+    }
+
+    $scope.showMembers = function() {
+      console.log("Show Members");
+      console.log($scope.formData);
+      $scope.formData.groupname = sessionStorage.getItem('groupname');
+      $http.put('/group/get', $scope.formData).
+      success(function(data) {
+        console.log('Sent to the server successfully.');
+        console.log(data);
+        if(Object.keys(data).length != 0)
+        {
+            this._data = data;
+            console.log(data.length);
+            console.log($scope.count);
+            data.forEach(function(dataElement)  {
+              console.log("Value: " + dataElement.username);
+              $.getScript("JS/collabSettings.js", function(){
+                param = '{ "post" : [' +
+                '{ "username": "' + dataElement.username + '" }]}';
+                console.log(param);
+                document.getElementById("Members").innerHTML += addMember(param);
+              });
+            });
+          }
+      }).error(function(data) {
+        console.log('ERROR: Not sent to server.');
+      });
+    }
+
+    $scope.addMembers = function() {
+      console.log("Add Members");
+      $scope.formData.groupname = sessionStorage.getItem('groupname');
+      console.log($scope.formData);
+      $http.put('/group/add/user', $scope.formData).
+      success(function(data) {
         console.log('Sent to the server successfully.');
       }).error(function(data) {
         console.log('ERROR: Not sent to server.');

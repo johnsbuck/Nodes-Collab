@@ -14,7 +14,7 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
 router.put('/get', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
-		client.query('SELECT * FROM group, user_group_perms WHERE groupname=\'' + req.body.groupname + '\';',
+		client.query('SELECT * FROM groups INNER JOIN user_group_perms AS ugp ON ugp.groupname=\'' + req.body.groupname + '\';',
 		function(err, result) {
 			if(err) {
 				res.sendStatus(400).end();
@@ -70,16 +70,17 @@ router.put('/get', function(req, res) {
  *
  * Used to retrieve information on a group. Requires access for private group.
  */
-router.put('/get', function(req, res) {
+router.put('/get/groups', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
-		client.query('SELECT * FROM group, user_group_perms AS ugp WHERE ugp.username=\'' + req.body.username + '\';',
+		client.query('SELECT * FROM groups INNER JOIN user_group_perms AS ugp ON ugp.username=\'' + req.body.username + '\';',
 		function(err, result) {
 			if(err) {
+				console.log(err);
 				res.sendStatus(400).end();
 			} else if (!result) {
 				res.sendStatus(406).end();
-			} else if (results.rows.length === 0) {
+			} else if (result.rows.length === 0) {
 				res.sendStatus(204);
 			} else {
 				done();
@@ -158,8 +159,9 @@ router.put('/delete', function(req, res) {
  */
 router.put('/add/user', function(req, res) {
 	req.body = quoteFixer(req.body);
+	console.log(req.body);
 	pg.connect(connectionString, function(err, client, done) {
-		client.query('SELECT pass, salt FROM user_group_perms INNER JOIN users ON ' +
+		client.query('SELECT pass, salt FROM users INNER JOIN user_group_perms AS ugp ON ' +
 			'ugp.username = \'' + req.body.username +'\' AND ugp.perms = 0 AND ' +
 			'ugp.groupname=\'' + req.body.groupname + '\';',
 		 function(err, result) {
@@ -175,7 +177,7 @@ router.put('/add/user', function(req, res) {
 
 				if(passHash.verify(req.body.pass, hashpass)) {
 					client.query('INSERT INTO user_group_perms (username, groupname, perms) VALUES (\'' +
- 						req.body.new.user + '\', \'' + req.body.groupname + '\', \'' + req.body.perms + ');',
+ 						req.body.new.user + '\', \'' + req.body.groupname + '\', \'' + req.body.perms + '\');',
  					function(err, request) {
  						done();
  						if(err)
