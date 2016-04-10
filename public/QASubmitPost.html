@@ -111,11 +111,34 @@
                <script type="text/javascript">document.getElementById("author").innerHTML = "<p>Author: " + sessionStorage.getItem('username') + "</p>";</script>
               </div>
               <h4> Title: </h4>
-              <input type="text" ng-model="formData.title">
+              <input style="width: 300px;" type="text" ng-model="formData.title">
               <h4> Post: </h4>
               <textarea rows = "15" cols = "150" ng-model="formData.text"></textarea>
+              <br>
+              <h4><div id="userTags"> Tags: </div></h4>
+              <input style="width: 300px;" placeholder="End your tag with a semicolon ';' Ex. 'Jquery;'" id="tagBox" type="text" onkeyup="clearInput(event)" onkeydown="createTag(event)" />
+              <script type="text/javascript">
+              //TODO make tags deletable after they are created
+              var tagBuilder = "";
+              sessionStorage.setItem('postTags', tagBuilder);
+
+              function createTag(e) { //onkeydown two not include our delimiter
+                      if (e.which == 59 || e.keyCode == 59) {
+                          var tb = document.getElementById("tagBox").value;
+                          document.getElementById("userTags").innerHTML += '<span class="label label-info tags">' + tb + '</span>' + " ";
+                          tagBuilder = sessionStorage.getItem('postTags');
+                          sessionStorage.setItem('postTags', tagBuilder + tb + ";");
+                          console.log(sessionStorage.getItem('postTags'));
+                      }
+                  }
+              function clearInput(e){
+                if (e.which == 59 || e.keyCode == 59) {
+                    document.getElementById("tagBox").value = '';
+                }
+              }
+              </script>
               <!--LEFT for timestamp. Delete Later-->
-              <class="form-control" ng-model="formData.timestamp"> <br>
+              <class="form-control" ng-model="formData.timestamp"> <br><br>
               <button class="btn" class="form-control" ng-click="sub(formData)"><span class="glyphicon glyphicon-pushpin" type="submit" aria-hidden="true"></span> Post </button>
           </section>
          </section>

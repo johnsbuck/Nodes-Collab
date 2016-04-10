@@ -232,6 +232,7 @@ app.controller('freelancePostGen', function($scope, $http) {
     $scope.sub();
 });
 
+//view a post based on the given postID (Stored in session)
 app.controller('viewPostCtrl', function($scope, $http) {
     $scope.txt = "";
     $scope.init = function() {
@@ -271,6 +272,7 @@ app.controller('viewPostCtrl', function($scope, $http) {
     $scope.init();
 });
 
+//generate comments for a specified post ID
 app.controller('postCommentCtrl', function($scope, $http) {
     $scope.txt = "";
     $scope.init = function() {
@@ -351,6 +353,8 @@ app.controller('qaPostCtrl', function($scope, $http, $location) {
     console.log($scope.formData);
     $http.post('/qa-post/post', $scope.formData).
       success(function(data) {
+        //we need to retrieve the post id and then submit the tags
+
         window.location.href = '/QandA.html';
         console.log('Sent to sever successfully.');
       }).error(function(data){
