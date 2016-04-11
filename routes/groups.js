@@ -87,7 +87,7 @@ router.put('/get/user', function(req, res) {
 				 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
 				 if(passHash.verify(req.body.pass, hashpass)) {
-					client.query('SELECT group, privacy, perms FROM groups INNER JOIN user_group_perms AS ugp ON ugp.username=\'' + req.body.search.username + '\' AND (groups.privacy =\'0\'' + +
+					client.query('SELECT groupname, privacy, perms FROM groups INNER JOIN user_group_perms AS ugp ON ugp.username=\'' + req.body.search.username + '\' AND (groups.privacy =\'0\'' + +
 					' OR (ugp.username =\'' + req.body.username + '\' AND ugp.perms =\'1\'));',
 					function(err, result) {
 						if(err) {
