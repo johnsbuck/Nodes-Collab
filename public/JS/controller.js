@@ -284,9 +284,11 @@ app.controller('blockedCtrl', function($scope, $http) {
 });
 
 app.controller('collabSettingsCtrl', function($scope, $http) {
+  $scope.groupname = sessionStorage.getItem('groupname');
   $scope.formData = {'username': sessionStorage.getItem('username'),
                       'pass': sessionStorage.getItem('pass')};
     $scope.createGroup = function() {
+      $scope.formData.groupname = $scope.formData.groupnameNew;
       $http.put('/group/create', $scope.formData).
       success(function(data) {
         sessionStorage.groupname = $scope.formData.groupname;
@@ -298,7 +300,7 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
     }
 
     $scope.deleteGroup = function() {
-      $scope.formData.groupname = $scope.formData.groupnames;
+      $scope.formData.groupname = $scope.formData.groupnameDelete;
       console.log($scope.formData);
       $http.put('/group/delete', $scope.formData).
       success(function(data) {
@@ -378,6 +380,11 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
       }).error(function(data) {
         console.log('ERROR: Not sent to server.');
       });
+    }
+
+    $scope.switchGroup = function() {
+      sessionStorage.groupname = $scope.formData.groupnameSwitch;
+      document.getElementById('groupSwitchForm').value="";
     }
   });
 

@@ -24,7 +24,7 @@
     <script src="JS/controller.js"></script>
   </head>
 
-  <body>
+  <body ng-controller="collabSettingsCtrl">
 
     <nav class="navbar navbar-inverse navbar-fixed-top" ng-controller="navCtrl">
       <div class="container-fluid" ng-controller="collabSettingsCtrl">
@@ -107,7 +107,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand">Settings</a>
+                    <a class="navbar-brand">Settings for {{groupname}}</a>
                 </div>
 
                 <!-- Collect the nav links, forms, and other content for toggling -->
@@ -117,17 +117,21 @@
                         <li><a data-toggle="tab" href="#privacy">People</a></li>
                     </ul>
 
-      <div class="tab-content" ng-controller="collabSettingsCtrl">
+      <div class="tab-content">
             <div id="General" class="tab-pane fade in active">
                 <p>Create a group here:</p>
-                <textarea id="groupCreateForm" rows= "1" ng-model= "formData.groupname"> </textarea>
+                <textarea id="groupCreateForm" rows= "1" ng-model= "formData.groupnameNew"> </textarea>
                 <label><input type="radio" ng-model="formData.privacy" value= 1 name="privacyradio"> Private </label>
                 <label><input type="radio" ng-model="formData.privacy" value= 0 name="privacyradio"> Public </label>
                 <button type="button submit" ng-click="createGroup(formData)">Create Group</button>
                 <hr>
                 <p>Enter group name you wish to delete:</p>
-                <textarea id="groupDeleteForm" rows= "1" ng-model= "formData.groupnames"> </textarea>
+                <textarea id="groupDeleteForm" rows= "1" ng-model= "formData.groupnameDelete"> </textarea>
                 <button type="button submit" ng-click="deleteGroup(formData)">Delete Group</button>
+                <hr>
+                <p>Enter group name you wish to switch to:</p>
+                <textarea id="groupSwitchForm" rows= "1" ng-model= "formData.groupnameSwitch"> </textarea>
+                <button type="button submit" ng-click="switchGroup(formData)">Switch</button>
                 <hr>
                 <div id="Groups" class="tab-pane fade in active">
                     <p ng-init="showGroups()">Groups you are a part of:</p>
