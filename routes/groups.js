@@ -9,12 +9,16 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
 /* /get
  * METHOD: PUT (Should be GET)
  *
- * Used to retrieve information based on a group and it's members based on groupname. Requires authorization.
+ * Used to retrieve the members inside of a given group. Requires authorization.
  */
-router.put('/get/group', function(req, res) {
+router.put('/get/members', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
-		client.query('SELECT username, perms FROM groups INNER JOIN user_group_perms AS ugp ON ugp.groupname=\'' + req.body.groupname + '\';',
+		//client.query('SELECT username, email, perms FROM groups INNER JOIN user_group_perms AS ugp ON ugp.groupname=\'' + req.body.groupname + '\';',
+		client.query('SELECT username, email, perms ' +
+									'FROM users ' +
+									'JOIN user_group_perms USING (username) ' +
+									'WHERE groupname =\'' + req.body.groupname + '\';',
 		function(err, result) {
 			if(err) {
 				res.sendStatus(400).end();
@@ -68,9 +72,9 @@ router.put('/get/group', function(req, res) {
 /* /get/user
  * METHOD: PUT (Should be GET)
  *
- * Used to retrieve information on a specific user's group based on req.body.search.username. Requires authorization.
+ * Used to retrieve the groups that a particular user is a part of. Requires authorization.
  */
-router.put('/get/user', function(req, res) {
+router.put('/get/groups', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
 		//Authorization
@@ -87,11 +91,16 @@ router.put('/get/user', function(req, res) {
 				 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
 				 if(passHash.verify(req.body.pass, hashpass)) {
-					client.query('SELECT groupname, privacy, perms FROM groups INNER JOIN user_group_perms AS ugp ON ugp.username=\'' + req.body.search.username + '\' AND (groups.privacy =\'0\'' + +
-					' OR (ugp.username =\'' + req.body.username + '\' AND ugp.perms =\'1\'));',
+					// client.query('SELECT groupname, privacy, perms FROM groups INNER JOIN user_group_perms AS ugp ON ugp.username=\'' + req.body.username + '\' AND (groups.privacy =\'0\'' + +
+ 					//' OR (ugp.username =\'' + req.body.username + '\' AND ugp.perms =\'1\'));',
+					client.query('SELECT groupname, privacy, perms ' +
+					'FROM groups ' +
+					'JOIN user_group_perms USING (groupname) ' +
+					'WHERE username=\'' + req.body.username + '\';',
 					function(err, result) {
 						if(err) {
 							console.log(err);
+							console.log("Breaks here");
 							res.sendStatus(400).end();
 						} else if (!result) {
 							res.sendStatus(406).end();
@@ -142,8 +151,8 @@ router.put('/create', function(req, res) {
 router.put('/delete', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client,done) {
-		client.query('SELECT pass, salt FROM user_group_perms INNER JOIN users ON ' +
-			'ugp.username = \'' + req.body.username +'\' AND ugp.perms = 0 AND ' +
+		client.query('SELECT pass, salt FROM user_group_perms AS ugp INNER JOIN users ON ' +
+			'users.username = \'' + req.body.username +'\' AND ugp.perms = 0 AND ' +
 			'ugp.groupname=\'' + req.body.groupname + '\';',
 		 function(err, result) {
 			 if(err) {
@@ -179,10 +188,9 @@ router.put('/delete', function(req, res) {
  */
 router.put('/add/user', function(req, res) {
 	req.body = quoteFixer(req.body);
-	console.log(req.body);
 	pg.connect(connectionString, function(err, client, done) {
-		client.query('SELECT pass, salt FROM users INNER JOIN user_group_perms AS ugp ON ' +
-			'ugp.username = \'' + req.body.username +'\' AND ugp.perms = 0 AND ' +
+		client.query('SELECT * FROM user_group_perms AS ugp INNER JOIN users ON ' +
+			'users.username = \'' + req.body.username +'\' AND ugp.perms = 0 AND ' +
 			'ugp.groupname=\'' + req.body.groupname + '\';',
 		 function(err, result) {
 			 if(err) {
@@ -193,9 +201,12 @@ router.put('/add/user', function(req, res) {
 				 done();
 				 res.sendStatus(404).end();
 			}else {
+				console.log(result.rows);
 				var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
-
+				console.log("Get's here");
+				console.log(passHash.verify(req.body.pass, hashpass));
 				if(passHash.verify(req.body.pass, hashpass)) {
+					console.log("Damn");
 					client.query('INSERT INTO user_group_perms (username, groupname, perms) VALUES (\'' +
  						req.body.new.user + '\', \'' + req.body.groupname + '\', \'' + req.body.perms + '\');',
  					function(err, request) {
@@ -209,6 +220,7 @@ router.put('/add/user', function(req, res) {
  						}
  					});
 				}else {
+					console.log("Doesn't pass");
 					done();
 					res.sendStatus(403).end();
 				}
@@ -219,12 +231,13 @@ router.put('/add/user', function(req, res) {
 
 /* Deletes a user from group onto the database.
  */
-router.delete('/delete/user', function(req, res) {
+router.put('/delete/user', function(req, res) {
 	req.body = quoteFixer(req.body);
+	console.log(req.body);
 	pg.connect(connectionString, function(err, client, done) {
-		client.query('SELECT pass, salt FROM user_group_perms INNER JOIN users ON ' +
+		client.query('SELECT pass, salt FROM user_group_perms AS ugp INNER JOIN users ON ' +
 			'ugp.username = \'' + req.body.username +'\' AND (ugp.perms = 0 OR ugp.username = \'' + req.body.deluser +
-			'\') AND ugp.groupname=\'' + req.body.groupname + '\';',
+			'\') AND ugp.groupname=\'' + req.body.groupname + '\' AND users.username = \'' + req.body.username +'\' ;',
 		 function(err, result) {
 			 if(err) {
 				 done();
@@ -235,10 +248,9 @@ router.delete('/delete/user', function(req, res) {
 				 res.sendStatus(404).end();
 			 }else {
 				 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
-
 				if(passHash.verify(req.body.pass, hashpass)) {
 					client.query('DELETE FROM user_group_perms WHERE username=\'' + req.body.deluser +
- 					 		'\' AND WHERE groupname=\'' + req.body.groupname + '; ' +
+ 					 		'\' AND groupname=\'' + req.body.groupname + '\'; ' +
 							'DELETE FROM groups WHERE NOT EXISTS(SELECT groupname FROM user_group_perms);',
  				 	function(err, request) {
 						done();
@@ -251,6 +263,7 @@ router.delete('/delete/user', function(req, res) {
  				 	});
 				}else {
 					done();
+					console.log(result);
           res.sendStatus(403).end();
         }
 			}

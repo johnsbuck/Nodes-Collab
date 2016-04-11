@@ -117,28 +117,36 @@
                         <li><a data-toggle="tab" href="#privacy">People</a></li>
                     </ul>
 
-      <div class="tab-content">
-            <div id="General" class="tab-pane fade in active" ng-controller= "collabSettingsCtrl">
-                <p>PUT groups here</p>
-                <textarea rows= "1" ng-model= "formData.groupname"> </textarea>
+      <div class="tab-content" ng-controller="collabSettingsCtrl">
+            <div id="General" class="tab-pane fade in active">
+                <p>Create a group here:</p>
+                <textarea id="groupCreateForm" rows= "1" ng-model= "formData.groupname"> </textarea>
                 <label><input type="radio" ng-model="formData.privacy" value= 1 name="privacyradio"> Private </label>
                 <label><input type="radio" ng-model="formData.privacy" value= 0 name="privacyradio"> Public </label>
-                <button type="button" ng-click="createGroup(formData)">Create Group</button>
+                <button type="button submit" ng-click="createGroup(formData)">Create Group</button>
                 <hr>
-                <div id="Groups" class="tab-pane fade in active" ng-controller= "collabSettingsCtrl">
+                <p>Enter group name you wish to delete:</p>
+                <textarea id="groupDeleteForm" rows= "1" ng-model= "formData.groupnames"> </textarea>
+                <button type="button submit" ng-click="deleteGroup(formData)">Delete Group</button>
+                <hr>
+                <div id="Groups" class="tab-pane fade in active">
                     <p ng-init="showGroups()">Groups you are a part of:</p>
                 </div>
             </div>
-            <div id="privacy" class="tab-pane fade" ng-controller="collabSettingsCtrl">
+            <div id="privacy" class="tab-pane fade">
                 <label>Add user to group:</label>
-                <input type = "textbox" id="user" ng-model="formData.new.user">
+                <input type="textbox" id="userAdd" ng-model="formData.new.user"></input>
                 <br>
                 <label>Select permission type:</label>
                 <label><input type="radio" ng-model="formData.perms" value= 1 name="privacyradio"> Admin </label>
                 <label><input type="radio" ng-model="formData.perms" value= 0 name="privacyradio"> Member </label>
-                <button type="button" ng-click="addMembers(formData)"> Add </button>
+                <button type="button submit" ng-click="addMember(formData)"> Add </button>
                 <hr>
-                <div id="Members" class="tab-pane fade in active" ng-controller= "collabSettingsCtrl">
+                <label>Remove user from group:</label>
+                <input type = "textbox" id="userRemove" ng-model="formData.deluser"></input>
+                <button type="button submit" ng-click="removeMember(formData)"> Remove </button>
+                <hr>
+                <div id="Members" class="tab-pane fade in active">
                   <h4 ng-init="showMembers()">Current members:</h4>
                 </div>
             </div>

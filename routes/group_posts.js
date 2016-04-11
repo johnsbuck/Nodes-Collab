@@ -18,7 +18,6 @@ router.put('/get', function(req, res) {
 	// Connect to postgreSQL
 	pg.connect(connectionString, function(err, client, done) {
 		// Query group to get privacy
-		console.log(req.body);
 		client.query('SELECT * FROM groups WHERE groupname=\'' +
 			req.body.groupname + '\';', function(err, result) {
 				// If error, send client error
@@ -54,7 +53,6 @@ router.put('/get', function(req, res) {
 					client.query('SELECT perms FROM user_group_perms WHERE groupname=\'' +
 						req.body.groupname + '\' AND username =\'' + req.body.username + '\';',
 					function(err, result) {
-													console.log(result);
 						// If error, send client error
 						if(err) {
 							done();
