@@ -123,7 +123,34 @@
               <br>
                 {{message}}
                 <hr>
-                {{messageName}}
+                {{messageName}} <a href="#" data-toggle="modal" data-target="#editName">Edit</a>
+
+                <div class="modal fade" id="editName" role="dialog">
+                  <div class="modal-dialog">
+    
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Change Name:</h4>
+                      </div>
+                    <div class="modal-body">
+                      <label>First name:</label>
+                      <input type="text" id="first"  ng-model="formData.first" required>
+                      <br>
+                      <label>Last name:</label>
+                      <input type="text" id="last"  ng-model="formData.last" required>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-default" data-dismiss="modal" ng-click="changeName(formData)">Submit</button>
+                    </div>
+                  </div>
+      
+                </div>
+              </div>
+
+
+
                 <hr>
                 {{messageEmail}}
                 <hr>

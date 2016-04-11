@@ -254,6 +254,23 @@ app.controller('generalCtrl', function($scope, $http) {
   $scope.message = "Username: " + sessionStorage.getItem('username');
   $scope.messageName = "Name: " + sessionStorage.getItem('first_name') + " " + sessionStorage.getItem('last_name');
   $scope.messageEmail = "Email: " + sessionStorage.getItem('email');
+  $scope.first = sessionStorage.getItem('first_name');
+  $scope.last = sessionStorage.getItem('last_name');
+
+  $scope.changeName = function() {
+      console.log("Change Name");
+      $http.put('/user/get', $scope.formData).success(function(data) {
+        console.log(data);
+        if(typeof $scope.formData.first !== 'undefined'){
+      sessionStorage.setItem('first_name', $scope.formData.first);
+      }
+      if(typeof $scope.formData.last !== 'undefined'){
+      sessionStorage.setItem('last_name', $scope.formData.last);
+      }
+      }).error(function(data) {
+        console.log('ERROR: Not sent to server.');
+      });
+  }
 });
 
 
@@ -387,6 +404,7 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
       document.getElementById('groupSwitchForm').value="";
     }
   });
+
 
 
 function popError(msg) {
