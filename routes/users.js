@@ -221,6 +221,8 @@ router.put('/create/connection', function(req, res, next) {
 });
 /*
 Get all the connections for a user.
+
+Method: PUT (should be GET)
 **/
 router.put('/get/connections', function(req, res, next) {
   req.body = quoteFixer(req.body);
@@ -238,7 +240,7 @@ router.put('/get/connections', function(req, res, next) {
          var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
          console.log(passHash.verify(req.body.pass, hashpass));
          if(passHash.verify(req.body.pass, hashpass)) {
-          client.query('SELECT FROM connections WHERE first_user = \'' + req.body.username + '\';',
+          client.query('SELECT * FROM connections WHERE first_user = \''+ req.body.username +'\';',
           function(err, result) {
             done();
             if(err) {

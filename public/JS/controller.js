@@ -40,12 +40,25 @@ app.controller('tableGen', function($scope, $http) {
 
 //Controller for the user profile
 app.controller('profileGen', function($scope, $http) {
-    $scope.txt = "";
+    //$scope.txt = "";
     //$scope.username = sessionStorage.getItem('username');
-    $scope.formData = {'username': sessionStorage.getItem('username')}
-    console.log("Username: " + sessionStorage.getItem('username'));
+    //console.log("Username: " + sessionStorage.getItem('username'));
+    //Adds a connection. Requires username, password, newuser
+    $scope.addConnection = function(formData) {
+      $scope.formData['username'] = sessionStorage.getItem('username');
+      $scope.formData['pass'] = sessionStorage.getItem('pass');
+      $http.put('/create/connection', formData).
+        success(function(data) {
+          console.log("Connection added successfully!");
+        }).error(function(data) {
+          console.log("Error in connection create request!");
+        });
+    }
     //Why does this function need to be in $scope?
     $scope.sub = function() {
+      $scope.formData = {};
+      $scope.formData['username'] = sessionStorage.getItem('username');
+      $scope.formData['pass'] = sessionStorage.getItem('pass');
       //API call to get user information
       $http.put('/user/get', $scope.formData).
         success(function(data) {
@@ -81,9 +94,9 @@ app.controller('profileGen', function($scope, $http) {
             //$scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
             console.log('ERROR: Not sent to server.');
         });
-      $scope.formData = {'username': sessionStorage.getItem('username'), 'pass' : sessionStorage.getItem('pass')};
+      var formData = {username: sessionStorage.getItem('username'), pass : sessionStorage.getItem('pass')};
       //TODO error 406? What am I not passing correctly in the request?
-      $http.put('/user/get/connections', $scope.formData).
+      $http.put('/user/get/connections', formData).
         success(function(data) {
           console.log("User Connections GET Request sent to server successfully!");
           if(Object.keys(data).length != 0)
@@ -91,26 +104,28 @@ app.controller('profileGen', function($scope, $http) {
             //We have received connections from the DB here.
           }
           else {
-            console.log("No connectios for this user found.");
+            console.log("No connections for this user found.");
           }
         }).error(function(data) {
           console.log("User connections GET request not sent to server!");
         });
     }
-    //TODO not getting called?
-    $scope.addConnection = function(data) {
-      console.log("Attempting to add connection: " + data.addUsername);
-      var param = {'username':sessionStorage.getItem('username'), 'pass':sessionStorage.getItem('pass'), 'newuser':data.addUsername};
-      $http.put('/user/create/connection', param).
-        success(function(data) {
-          console.log("Request to add connection sent to server successfully!");
-        }).error(function(data) {
-          console.log("Error sending add connection request to server!");
-        });
-    }
     //Call method to execute code above.
     $scope.sub();
 });
+/*
+app.controller('addConnection', function($scope, $http) {
+  console.log("Attempting to add connection: " + data.addUsername);
+  var param = {'username':sessionStorage.getItem('username'), 'pass':sessionStorage.getItem('pass'), 'newuser':data.addUsername};
+  $http.put('/user/create/connection', param).
+    success(function(data) {
+      console.log("Request to add connection sent to server successfully!");
+
+    }).error(function(data) {
+      console.log("Error sending add connection request to server!");
+    });
+});
+*/
 
 //Used to control generating a user's profile
 //AngularJS to retrieve the data from the DB
