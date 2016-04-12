@@ -32,10 +32,34 @@ router.put('/get', function(req, res) {
 
 /* /get/post
  * Method: PUT (Should be GET)
+ * UPDATED FOR NEW PK of posts: title, type
  *
  * Returns a single Q&A post.
  */
 router.put('/get/post', function(req, res) {
+	req.body = quoteFixer(req.body);
+	pg.connect(connectionString, function(err, client, done) {
+		client.query('SELECT * FROM posts WHERE title = \'' + req.body.title + '\' AND type=\'0\';',
+		function(err, result) {
+			done();
+			if(err) {
+				console.error(err);
+				res.sendStatus(406).end();
+			}else if(!result || result.rows.length === 0) {
+				res.sendStatus(204).end();
+			}else {
+				res.status(202).send(result.rows[0]).end();
+			}
+		});
+	});
+});
+
+/* /get/post
+ * Method: PUT (Should be GET)
+ *
+ * Returns a single Q&A post.
+ */
+router.put('/get/post/old', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
 		client.query('SELECT * FROM posts WHERE id = \'' + req.body.id + '\' AND type=\'0\';',
@@ -89,16 +113,21 @@ router.post('/post', function(req, res) {
 								console.error(err);
 								res.sendStatus(406).end();
 							} else {
-								req.body.tags.forEach(function (tag) {
-									client.query(' INSERT INTO tags (title, type, tag) VALUES (\'' + req.body.title + '\', \'0\', \'' + tag + '\');',
-									function(err, result) {
-										if(err) {
-											done();
-											res.sendStatus(406).end();
+								if(req.body.tags) {
+									req.body.tags.forEach(function (tag) {
+										if(tag != "")
+										{
+											client.query(' INSERT INTO tags (title, type, tag) VALUES (\'' + req.body.title + '\', \'0\', \'' + tag + '\');',
+											function(err, result) {
+												if(err) {
+													done();
+													res.sendStatus(406).end();
+												}
+											});
 										}
-									});
-								}
-								);
+								});
+							}
+
 								done();
 								res.sendStatus(206).end();
 							}

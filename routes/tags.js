@@ -23,7 +23,7 @@ router.put('/get', function(req, res) {
 			}else if(!result || result.rows.length === 0) {
 				res.sendStatus(204).end();
 			}else {
-				res.status(202).send(result.rows[0]).end();
+				res.status(202).send(result.rows).end();
 			}
 		});
 	});

@@ -78,7 +78,7 @@ function singlePost(singleData)
                               else {
                                 divBuilder += 'Freelance';
                               }
-                              divBuilder += `Post.html" onclick="storePostID(` + obj.post[0].id + `, ` + obj.post[0].type + `)"><i class="glyphicon glyphicon-comment"> </i> View Full Post</a>
+                              divBuilder += `Post.html" onclick="storePostID(` + obj.post[0].post_title + `, ` + obj.post[0].type + `)"><i class="glyphicon glyphicon-comment"> </i> View Full Post</a>
                             </section>
                         </section>
                        </section>
@@ -91,11 +91,12 @@ function singlePost(singleData)
 }
 
 //Stores the post ID to the session when you view the post so the controller knows which post to show to the viewer
+//UPDATED FOR NEW POST PK(title, type)
 //Id stored as: postID
-function storePostID(postID, postType)
+function storePostID(postTitle, postType)
 {
-  console.log("Session Stored Post ID: " + postID + ", Session Stored Post Type: " + postType);
-  sessionStorage.setItem('postID', postID);
+  console.log("Session Stored Post Title: " + postTitle + ", Session Stored Post Type: " + postType);
+  sessionStorage.setItem('postTitle', postTitle);
   sessionStorage.setItem('postType', postType);
 }
 //See the note @ function above

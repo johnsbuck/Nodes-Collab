@@ -6,34 +6,7 @@ app.controller('allPostsGen', function($scope, $http) {
     $scope.txt = "";
 
     $scope.sub = function() {
-      //API CALL -> qa_posts put (which is redefined as a get).
-      $http.put('/qa-post/get').
-        success(function(data) {
-            console.log('Sent to sever successfully.');
-            //Apparently we need a directive to parse this data into a string -> use value.table_name
-            if(Object.keys(data).length != 0)
-            {
-                //$scope.txt = "Some data has been found, let's print it out!";
-                angular.forEach(data, function(value, key) {
-
-                  console.log("Key: " + key + ", Value: " + value.username + ", " + value.title + ", " + value.text);
-                  //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
-                  $.getScript("JS/tableGen.js", function(){
-                    param = '{ "post" : [' +
-                    '{ "username": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + "No Additional Tags Found." +
-                    '", "type":"' + value.type + '", "id":"' + value.id + '" }]}';
-                    console.log(param);
-                    document.getElementById("allPostsGen").innerHTML += singlePost(param);
-                  });
-                });
-            }
-            else {
-              $scope.txt = "No posts have been found. Make a post to see some activity!";
-            }
-        }).error(function(data){
-            $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
-            console.log('ERROR: Not sent to server.');
-        });
+      $scope.txt = "This will soon show only your posts.";
     }
 
     $scope.sub();
@@ -54,7 +27,11 @@ app.controller('QAPostGen', function($scope, $http) {
             {
                 //for each post returned
                 angular.forEach(data, function(value, key) {
-                  $scope.formData = {'id': value.id};
+
+                  console.log("Retrieving tag data for: " + value.title + ", " + value.type);
+                  $scope.formData = {'title': value.title,
+                                    'type' : value.type};
+
                   var tagBuilder = "notag";
                   //get the tags for this posts
                   $http.put('/tag/get', $scope.formData).
@@ -62,27 +39,29 @@ app.controller('QAPostGen', function($scope, $http) {
                         console.log('Sent to sever successfully.');
                         if(Object.keys(dataTag).length != 0)
                         {
+                            console.log(dataTag);
                             //for each tag returned
                             tagBuilder = "";
                             angular.forEach(dataTag, function(valueTag, keyTag) {
-                                tagBuilder = valueTag.tag + ";";
+                                tagBuilder += valueTag.tag + ";";
                               });
-                              console.log(tagBuilder);
+                              console.log("TagBuilder: " + tagBuilder);
                         }
                         else {
-                            console.log(tagBuilder);
+                            console.log("TagBuilder: Didn't find any tags for this post.");
                         }
+
+                        $.getScript("JS/tableGen.js", function(){
+                          param = '{ "post" : [' +
+                          '{ "username": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + tagBuilder +
+                          '", "type":"' + value.type + '", "id":"' + value.id + '" }]}';
+                          console.log(param);
+                          document.getElementById("QAPostGen").innerHTML += singlePost(param);
+
                     }).error(function(dataTag){
                         //db error
                         console.log('ERROR: Tag data not sent to server.');
                     });
-
-                  $.getScript("JS/tableGen.js", function(){
-                    param = '{ "post" : [' +
-                    '{ "username": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + tagBuilder +
-                    '", "type":"' + value.type + '", "id":"' + value.id + '" }]}';
-                    console.log(param);
-                    document.getElementById("QAPostGen").innerHTML += singlePost(param);
                   });
                 });
             }
@@ -229,14 +208,40 @@ app.controller('freelancePostGen', function($scope, $http) {
                 //$scope.txt = "Some data has been found, let's print it out!";
                 angular.forEach(data, function(value, key) {
 
-                  console.log("Key: " + key + ", Value: " + value.username + ", " + value.title + ", " + value.text + ", " + value.type);
-                  //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
-                  $.getScript("JS/tableGen.js", function(){
-                    param = '{ "post" : [' +
-                    '{ "username": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + "No Additional Tags Found." +
-                    '", "type":"' + value.type + '", "id":"' + value.id + '" }]}';
-                    console.log(param);
-                    document.getElementById("freelancePostGen").innerHTML += singlePost(param);
+                  console.log("Retrieving tag data for: " + value.title + ", " + value.type);
+                  $scope.formData = {'title': value.title,
+                                    'type' : value.type};
+
+                  var tagBuilder = "notag";
+                  //get the tags for this posts
+                  $http.put('/tag/get', $scope.formData).
+                    success(function(dataTag) {
+                        console.log('Sent to sever successfully.');
+                        if(Object.keys(dataTag).length != 0)
+                        {
+                            console.log(dataTag);
+                            //for each tag returned
+                            tagBuilder = "";
+                            angular.forEach(dataTag, function(valueTag, keyTag) {
+                                tagBuilder += valueTag.tag + ";";
+                              });
+                              console.log("TagBuilder: " + tagBuilder);
+                        }
+                        else {
+                            console.log("TagBuilder: Didn't find any tags for this post.");
+                        }
+
+                        $.getScript("JS/tableGen.js", function(){
+                          param = '{ "post" : [' +
+                          '{ "username": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + tagBuilder +
+                          '", "type":"' + value.type + '", "id":"' + value.id + '" }]}';
+                          console.log(param);
+                          document.getElementById("freelancePostGen").innerHTML += singlePost(param);
+
+                    }).error(function(dataTag){
+                        //db error
+                        console.log('ERROR: Tag data not sent to server.');
+                    });
                   });
                 });
             }
@@ -256,7 +261,8 @@ app.controller('freelancePostGen', function($scope, $http) {
 app.controller('viewPostCtrl', function($scope, $http) {
     $scope.txt = "";
     $scope.init = function() {
-      $scope.formData = { 'id': sessionStorage.getItem('postID')};//change this to be passed by jquery
+      console.log("This post title: " + sessionStorage.getItem('postTitle'));
+      $scope.formData = { 'title': sessionStorage.getItem('postTitle')};//change this to be passed by jquery
       var accessor = '/qa-post';
       if(sessionStorage.getItem('postType')==1)
       {
@@ -277,8 +283,6 @@ app.controller('viewPostCtrl', function($scope, $http) {
                   console.log(param);
                   document.getElementById("viewPostCtrl").innerHTML += viewPost(param);
                 });
-
-                document.getElementById("viewPostCtrl").innerHTML += '<p ng-bind="commentTxt"></p>';
           }
           else {
             $scope.txt = "No posts have been found. Make a post to see some activity!";
@@ -353,6 +357,7 @@ app.controller('submitCommentCtrl', function($scope, $http, $location) {
     $scope.sub = function() {
       $scope.formData['username'] = sessionStorage.getItem('username');
       $scope.formData['pass'] = sessionStorage.getItem('pass');
+      $scope.formData['tags'] = sessionStorage.getItem('postTags').split(';');//tgs are submitted as an object array
       console.log($scope.formData);
       $http.post('/free-post/post', $scope.formData).
         success(function(data) {
@@ -370,11 +375,10 @@ app.controller('qaPostCtrl', function($scope, $http, $location) {
   $scope.sub = function() {
     $scope.formData['username'] = sessionStorage.getItem('username');
     $scope.formData['pass'] = sessionStorage.getItem('pass');
+    $scope.formData['tags'] = sessionStorage.getItem('postTags').split(';');//tgs are submitted as an object array
     console.log($scope.formData);
     $http.post('/qa-post/post', $scope.formData).
       success(function(data) {
-        //we need to retrieve the post id and then submit the tags
-
         window.location.href = '/QandA.html';
         console.log('Sent to sever successfully.');
       }).error(function(data){

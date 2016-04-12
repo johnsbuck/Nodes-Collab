@@ -110,7 +110,7 @@
                <script type="text/javascript">document.getElementById("author").innerHTML = "<p>Author: " + sessionStorage.getItem('username') + "</p>";</script>
               </div>
               <h4> Title: </h4>
-              <input "width: 300px;" type="text" ng-model="formData.title">
+              <input style="width: 300px;" type="text" ng-model="formData.title">
               <h4> Post: </h4>
               <textarea rows = "15" cols = "150" ng-model="formData.text"></textarea>
               <br>
@@ -137,7 +137,7 @@
               }
               </script>
               <!--LEFT for timestamp. Delete Later-->
-              <class="form-control" ng-model="formData.timestamp"> <br>
+              <class="form-control" ng-model="formData.timestamp"> <br><br>
               <button class="btn" class="form-control" ng-click="sub(formData)"><span class="glyphicon glyphicon-pushpin" type="submit" aria-hidden="true"></span> Post </button>
           </section>
          </section>
