@@ -14,7 +14,7 @@ var user = 'CREATE TABLE users (username VARCHAR(40) PRIMARY KEY, ' +
 
 var connections = 'CREATE TABLE connections (first_user VARCHAR(40) REFERENCES users (username) ON DELETE CASCADE, ' +
                                             'second_user VARCHAR(40) REFERENCES users (username) ON DELETE CASCADE, ' +
-                                            'PRIMARY KEY (first_user, last_user))';
+                                            'PRIMARY KEY (first_user, second_user));';
 
 var group = 'CREATE TABLE groups (groupname VARCHAR(40) PRIMARY KEY, ' +
                                   'privacy INTEGER NOT NULL);';

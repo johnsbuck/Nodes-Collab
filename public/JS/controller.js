@@ -45,9 +45,10 @@ app.controller('profileGen', function($scope, $http) {
     //console.log("Username: " + sessionStorage.getItem('username'));
     //Adds a connection. Requires username, password, newuser
     $scope.addConnection = function(formData) {
+      console.log("Reached addConnection()");
       $scope.formData['username'] = sessionStorage.getItem('username');
       $scope.formData['pass'] = sessionStorage.getItem('pass');
-      $http.put('/create/connection', formData).
+      $http.put('/user/create/connection', formData).
         success(function(data) {
           console.log("Connection added successfully!");
         }).error(function(data) {
@@ -84,7 +85,6 @@ app.controller('profileGen', function($scope, $http) {
                     document.getElementById("profileGen").innerHTML = generateProfile(json);
               });
               */
-
             }
             else {
               $scope.txt = "Error no user found!";

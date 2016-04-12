@@ -182,18 +182,23 @@ router.put('/edit', function(req, res, next) {
 Requires: current user username, pass, newuser
 */
 router.put('/create/connection', function(req, res, next) {
+  console.log("Entered create connection!");
   if(req.body.username === req.body.newuser) {
     res.sendStatus(406).end();
   }
   req.body = quoteFixer(req.body);
   pg.connect(connectionString, function(err, client, done) {
+    console.log(req.body);
     client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
      function(err, result) {
+        console.log("result");
+       console.log(result);
        if(err) {
          done();
          console.error(err);
          res.sendStatus(406).end();
        }else if(!result || result.rows.length === 0) {
+         console.log(result);
          done();
          res.sendStatus(404).end();
        }else {
@@ -201,10 +206,11 @@ router.put('/create/connection', function(req, res, next) {
          console.log(passHash.verify(req.body.pass, hashpass));
          if(passHash.verify(req.body.pass, hashpass)) {
           client.query('INSERT INTO connections (first_user, second_user) VALUES (\'' +
-            req.body.username + '\', \'' + req.body.connect_user + ');',
+            req.body.username + '\', \'' + req.body.newuser + '\');',
           function(err, result) {
             done();
             if(err) {
+              console.log("HERE!");
               console.error(err);
               res.sendStatus(406).end();
             } else {
