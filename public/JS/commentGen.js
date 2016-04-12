@@ -9,11 +9,10 @@ function viewComment(singleComment)
 
   var divBuilder = `<div class="panel panel-default">
                     <div class="panel-body">
-                    ` + obj.post[0].text +
+                    ` + obj.comment[0].text +
                     `<hr>
-                    <p>Written by: `+ obj.post[0].author +`</p>
-                    <br>
-                    <p><i class="glyphicon glyphicon-time"></i> ` + obj.post[0].timestamp + `</p>
+                    <p>Written by: `+ obj.comment[0].author +`</p>
+                    <p><i class="glyphicon glyphicon-time"></i> ` + obj.comment[0].timestamp + `</p>
                     </div>
                     </div>`;
 

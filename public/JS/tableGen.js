@@ -29,6 +29,7 @@ function singlePost(singleData)
   //document.getElementById("tableGen").innerHTML= singleData;
   var obj = JSON.parse(singleData);
   console.log(obj);
+  var postTitle = obj.post[0].post_title;
   //well just set the post type as a tag
   var type = obj.post[0].type;
   if(type==0)//if the type is 0 then we will show this as a Q & A post, otherwise it is a freelance post
@@ -55,7 +56,7 @@ function singlePost(singleData)
                         </header>
                         <section class="row panel-body">
                           <section class="col-md-6">
-                            <h3><u>` + obj.post[0].post_title + `</u></h3>
+                            <h3><u>` + postTitle + `</u></h3>
                             <p>Tags:
                             <a href=#><span class="label label-info tags">` + type + `</span></a> `;
                             if(obj.post[0].post_tags!="notag")
@@ -78,7 +79,7 @@ function singlePost(singleData)
                               else {
                                 divBuilder += 'Freelance';
                               }
-                              divBuilder += `Post.html" onclick="storePostID(` + obj.post[0].post_title + `, ` + obj.post[0].type + `)"><i class="glyphicon glyphicon-comment"> </i> View Full Post</a>
+                              divBuilder += `Post.html" onclick="storePostID('` + postTitle + "', '" + obj.post[0].type +`')"><i class="glyphicon glyphicon-comment"> </i> View Full Post</a>
                             </section>
                         </section>
                        </section>

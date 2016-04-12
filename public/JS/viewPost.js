@@ -26,9 +26,16 @@ function viewPost(singlePost)
                     <p>`+ obj.post[0].text +`</p>
                     <br>
                     <p>Tags:
-                    <a href=#><span class="label label-info tags">` + type + `</span></a>
-                    <a href=#><span class="label label-info tags">` + obj.post[0].post_tags + `</span></a></p>
-                    <p><i class="glyphicon glyphicon-time"></i> ` + obj.post[0].timestamp + `</p>
+                    <a href=#><span class="label label-info tags">` + type + `</span></a> `;
+                    if(obj.post[0].post_tags!="notag")
+                    {
+                      var tags = obj.post[0].post_tags.split(";");
+                      for(i=0; i<tags.length; i++)
+                      {
+                        divBuilder += `<a href=#><span class="label label-info tags">` + tags[i] + `</span></a> `;
+                      }
+                    }
+                    divBuilder += `<p><i class="glyphicon glyphicon-time"></i> ` + obj.post[0].timestamp + `</p>
                     <hr>`;
 
   return divBuilder;

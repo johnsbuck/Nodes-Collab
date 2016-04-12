@@ -13,7 +13,7 @@ router.put('/get', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
 		console.log(req.body);
-		client.query('SELECT * FROM comments WHERE post_id=\'' + req.body.post_id + '\';',
+		client.query('SELECT * FROM comments WHERE title=\'' + req.body.title + '\' AND type=\'' + req.body.type + '\';',
 		function(err, result) {
 			done();
 			if(err) {
@@ -33,8 +33,8 @@ router.put('/get', function(req, res) {
 router.post('/post', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
-		client.query('INSERT INTO comments (username, post_id, text, type) VALUES (\'' +
-			req.body.username + '\', \'' + req.body.post_id +
+		client.query('INSERT INTO comments (username, title, text, type) VALUES (\'' +
+			req.body.username + '\', \'' + req.body.title +
 			'\', \'' + req.body.text + '\', \'' + req.body.type + '\');',
 		function(err, result) {
 			done();

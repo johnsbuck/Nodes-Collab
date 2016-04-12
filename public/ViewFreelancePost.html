@@ -21,8 +21,6 @@
     <link href="../CSS/main.css" rel="stylesheet">
 
     <script src="JS/commentGen.js"></script>
-    <script src="http://js.nicedit.com/nicEdit-latest.js" type="text/javascript"></script>
-    <script type="text/javascript">bkLib.onDomLoaded(nicEditors.allTextAreas);</script>
     <script src="JS/angular.min.js"></script>
     <script src="JS/controller.js"></script>
   </head>
@@ -113,7 +111,8 @@
                      <div class="panel panel-default">
                        <div class="panel-body">
                          <h4> Make a comment: </h4>
-                         <textarea rows = "3" cols = "220" ng-model = "formData.text"></textarea><br>
+                         <textarea rows = "3" cols = "150" ng-model="formData.text"></textarea>
+                         <br><br>
                          <button class="btn" class="form-control" ng-click="sub(formData)"><span class="glyphicon glyphicon-pushpin" type="submit" aria-hidden="true"></span> Post </button>
                        </div>
                      </div><hr>

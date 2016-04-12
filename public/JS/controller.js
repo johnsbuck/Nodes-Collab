@@ -261,7 +261,6 @@ app.controller('freelancePostGen', function($scope, $http) {
 app.controller('viewPostCtrl', function($scope, $http) {
     $scope.txt = "";
     $scope.init = function() {
-      console.log("This post title: " + sessionStorage.getItem('postTitle'));
       $scope.formData = { 'title': sessionStorage.getItem('postTitle')};//change this to be passed by jquery
       var accessor = '/qa-post';
       if(sessionStorage.getItem('postType')==1)
@@ -276,13 +275,41 @@ app.controller('viewPostCtrl', function($scope, $http) {
           //There should only be one object here
           if(Object.keys(data).length != 0)
           {
-                $.getScript("JS/viewPost.js", function(){
-                  param = '{ "post" : [' +
-                  '{ "author": "' + data.username + '", "text":"' + data.text + '", "timestamp":"' + data.timestamp + '", "title":"' + data.title +
-                  '", "type":"' + data.type + '", "id":"' + data.id + '" }]}';
-                  console.log(param);
-                  document.getElementById("viewPostCtrl").innerHTML += viewPost(param);
-                });
+            console.log("Retrieving tag data for: " + sessionStorage.getItem('postTitle') + ", " + sessionStorage.getItem('postType'));
+            $scope.formData = {'title': sessionStorage.getItem('postTitle'),
+                              'type' : sessionStorage.getItem('postType')};
+
+            var tagBuilder = "notag";
+            //get the tags for this posts
+            $http.put('/tag/get', $scope.formData).
+              success(function(dataTag) {
+                  console.log('Sent to sever successfully.');
+                  if(Object.keys(dataTag).length != 0)
+                  {
+                      console.log(dataTag);
+                      //for each tag returned
+                      tagBuilder = "";
+                      angular.forEach(dataTag, function(valueTag, keyTag) {
+                          tagBuilder += valueTag.tag + ";";
+                        });
+                        console.log("TagBuilder: " + tagBuilder);
+                  }
+                  else {
+                      console.log("TagBuilder: Didn't find any tags for this post.");
+                  }
+
+                  $.getScript("JS/viewPost.js", function(){
+                    param = '{ "post" : [' +
+                    '{ "author": "' + data.username + '", "text":"' + data.text + '", "timestamp":"' + data.timestamp + '", "title":"' + data.title + '", "post_tags":"' + tagBuilder +
+                    '", "type":"' + data.type + '", "id":"' + data.id + '" }]}';
+                    console.log(param);
+                    document.getElementById("viewPostCtrl").innerHTML += viewPost(param);
+                  });
+
+              }).error(function(dataTag){
+                  //db error
+                  console.log('ERROR: Tag data not sent to server.');
+              });
           }
           else {
             $scope.txt = "No posts have been found. Make a post to see some activity!";
@@ -300,7 +327,8 @@ app.controller('viewPostCtrl', function($scope, $http) {
 app.controller('postCommentCtrl', function($scope, $http) {
     $scope.txt = "";
     $scope.init = function() {
-      $scope.formData = { 'post_id' : sessionStorage.getItem('postID')};
+      $scope.formData = {'title': sessionStorage.getItem('postTitle'),
+                        'type' : sessionStorage.getItem('postType')};
 
       console.log($scope.formData);
 
@@ -314,7 +342,7 @@ app.controller('postCommentCtrl', function($scope, $http) {
                 angular.forEach(data, function(value, key) {
                   if(value.text) {
                     param = '{ "comment" : [' +
-                    '{ "username": "' + value.username + '", "text":"' + value.text + '", "timestamp":"' + value.timestamp + '" }]}';
+                    '{ "author": "' + value.username + '", "text":"' + value.text + '", "timestamp":"' + value.timestamp + '" }]}';
                     console.log(param);
                     document.getElementById("postCommentCtrl").innerHTML += viewComment(param);
                   }
@@ -337,13 +365,12 @@ app.controller('postCommentCtrl', function($scope, $http) {
 app.controller('submitCommentCtrl', function($scope, $http, $location) {
   $scope.sub = function() {
     $scope.formData['username'] = sessionStorage.getItem('username');
-    $scope.formData['post_id'] = sessionStorage.getItem('postID');
-    $scope.formData['text'] = "temp";
-    $scope.formData['type'] = 0;
+    $scope.formData['title'] = sessionStorage.getItem('postTitle');
+    $scope.formData['type'] = sessionStorage.getItem('postType');
     console.log($scope.formData);
     $http.post('/comments/post', $scope.formData).
       success(function(data) {
-        //location.reload();//refresh this page
+        location.reload();//refresh this page
         console.log('Sent to sever successfully.');
       }).error(function(data){
           console.log('ERROR: Not sent to server.');
@@ -357,7 +384,7 @@ app.controller('submitCommentCtrl', function($scope, $http, $location) {
     $scope.sub = function() {
       $scope.formData['username'] = sessionStorage.getItem('username');
       $scope.formData['pass'] = sessionStorage.getItem('pass');
-      $scope.formData['tags'] = sessionStorage.getItem('postTags').split(';');//tgs are submitted as an object array
+      $scope.formData['tags'] = sessionStorage.getItem('postTags').split(';');//tags are submitted as an object array
       console.log($scope.formData);
       $http.post('/free-post/post', $scope.formData).
         success(function(data) {
