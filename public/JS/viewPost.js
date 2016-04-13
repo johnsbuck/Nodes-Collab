@@ -19,8 +19,20 @@ function viewPost(singlePost)
     type = "Freelance";
     authorTag = "Proposed by: ";
   }
+  var dateOptions = {
+    weekday: "long", year: "numeric", month: "short",
+    day: "numeric", hour: "2-digit", minute: "2-digit"
+   };
+  var date = new Date(obj.post[0].timestamp);
+  var formatDate = date.toLocaleTimeString("en-us", dateOptions)
+  var divBuilder = "";
+  if(sessionStorage.getItem('username') == obj.post[0].author)
+  {
+    divBuilder += `<div class="alert alert-info alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><i class="glyphicon glyphicon-wrench"></i> This is your post. You will have additional functionality to edit or delete it.</div>`;
+  }
 
-  var divBuilder = `<h1><u>` + obj.post[0].title + `</u></h1>
+  divBuilder += `<h1><u>` + obj.post[0].title + `</u></h1>
                     <p>` + authorTag + obj.post[0].author +`</p>
                     <br>
                     <p>`+ obj.post[0].text +`</p>
@@ -35,7 +47,7 @@ function viewPost(singlePost)
                         divBuilder += `<a href=#><span class="label label-info tags">` + tags[i] + `</span></a> `;
                       }
                     }
-                    divBuilder += `<p><i class="glyphicon glyphicon-time"></i> ` + obj.post[0].timestamp + `</p>
+                    divBuilder += `<p><i class="glyphicon glyphicon-time"></i> ` + formatDate + `</p>
                     <hr>`;
 
   return divBuilder;

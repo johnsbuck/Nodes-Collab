@@ -33,9 +33,9 @@ router.put('/get', function(req, res) {
 router.post('/post', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
-		client.query('INSERT INTO comments (username, title, text, type) VALUES (\'' +
+		client.query('INSERT INTO comments (username, title, text, type, timestamp) VALUES (\'' +
 			req.body.username + '\', \'' + req.body.title +
-			'\', \'' + req.body.text + '\', \'' + req.body.type + '\');',
+			'\', \'' + req.body.text + '\', \'' + req.body.type + '\', \'' + req.body.timestamp + '\');',
 		function(err, result) {
 			done();
 			if(err) {

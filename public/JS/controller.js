@@ -367,6 +367,10 @@ app.controller('submitCommentCtrl', function($scope, $http, $location) {
     $scope.formData['username'] = sessionStorage.getItem('username');
     $scope.formData['title'] = sessionStorage.getItem('postTitle');
     $scope.formData['type'] = sessionStorage.getItem('postType');
+    var date = new Date();
+    var timezone = date.getTimezoneOffset();//timezone difference convert to seconds
+    var dateOffset = new Date(date.getTime() - (timezone*60*1000));
+    $scope.formData['timestamp'] = dateOffset;
     console.log($scope.formData);
     $http.post('/comments/post', $scope.formData).
       success(function(data) {
@@ -374,7 +378,6 @@ app.controller('submitCommentCtrl', function($scope, $http, $location) {
         console.log('Sent to sever successfully.');
       }).error(function(data){
           console.log('ERROR: Not sent to server.');
-          popError('Username or password is not correct');
       });
   }
   });
@@ -385,6 +388,10 @@ app.controller('submitCommentCtrl', function($scope, $http, $location) {
       $scope.formData['username'] = sessionStorage.getItem('username');
       $scope.formData['pass'] = sessionStorage.getItem('pass');
       $scope.formData['tags'] = sessionStorage.getItem('postTags').split(';');//tags are submitted as an object array
+      var date = new Date();
+      var timezone = date.getTimezoneOffset();//timezone difference convert to seconds
+      var dateOffset = new Date(date.getTime() - (timezone*60*1000));
+      $scope.formData['timestamp'] = dateOffset;
       console.log($scope.formData);
       $http.post('/free-post/post', $scope.formData).
         success(function(data) {
@@ -392,7 +399,7 @@ app.controller('submitCommentCtrl', function($scope, $http, $location) {
           console.log('Sent to sever successfully.');
         }).error(function(data){
             console.log('ERROR: Not sent to server.');
-            popError('Username or password is not correct');
+            popError('A post in Freelancing was already found with the given title. Please submit with a unique title or checkout that post!');
         });
     }
     });
@@ -403,6 +410,10 @@ app.controller('qaPostCtrl', function($scope, $http, $location) {
     $scope.formData['username'] = sessionStorage.getItem('username');
     $scope.formData['pass'] = sessionStorage.getItem('pass');
     $scope.formData['tags'] = sessionStorage.getItem('postTags').split(';');//tgs are submitted as an object array
+    var date = new Date();
+    var timezone = date.getTimezoneOffset();//timezone difference convert to seconds
+    var dateOffset = new Date(date.getTime() - (timezone*60*1000));
+    $scope.formData['timestamp'] = dateOffset;
     console.log($scope.formData);
     $http.post('/qa-post/post', $scope.formData).
       success(function(data) {
@@ -410,7 +421,7 @@ app.controller('qaPostCtrl', function($scope, $http, $location) {
         console.log('Sent to sever successfully.');
       }).error(function(data){
           console.log('ERROR: Not sent to server.');
-          popError('Username or password is not correct');
+          popError('A post in Q&A was already found with the given title. Please submit with a unique title or checkout that post!');
       });
   }
   });

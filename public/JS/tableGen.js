@@ -39,6 +39,13 @@ function singlePost(singleData)
   else {
     type = "Freelance";
   }
+  var dateOptions = {
+    weekday: "long", year: "numeric", month: "short",
+    day: "numeric", hour: "2-digit", minute: "2-digit"
+   };
+  var date = new Date(obj.post[0].timestamp);
+  var formatDate = date.toLocaleTimeString("en-us", dateOptions)
+
 
   var divBuilder = `<div class="container">
 	                   <div class="row">
@@ -67,7 +74,7 @@ function singlePost(singleData)
                                 divBuilder += `<a href=#><span class="label label-info tags">` + tags[i] + `</span></a> `;
                               }
                             }
-                            divBuilder += `<p><i class="glyphicon glyphicon-time"></i> ` + obj.post[0].timestamp + `</p>
+                            divBuilder += `<p><i class="glyphicon glyphicon-time"></i> ` + formatDate + `</p>
                             <hr>
                             <section class="row">
                               <ul class="col-md-6">
