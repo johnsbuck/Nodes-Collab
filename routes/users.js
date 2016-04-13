@@ -252,4 +252,26 @@ router.delete('/delete/connection', function(req, res, next) {
   });
 });
 
+/* /get/posts
+ * Method: PUT (Should be GET)
+ *
+ * Returns all posts by a specific user
+ */
+router.put('/get/posts', function(req, res) {
+	req.body = quoteFixer(req.body);
+	pg.connect(connectionString, function(err, client, done) {
+		client.query('SELECT * FROM posts WHERE username = \'' + req.body.username + '\';',
+		function(err, result) {
+			if(err) {
+				console.error(err);
+				res.sendStatus(406).end();
+			}else if(!result || result.rows.length === 0) {
+				res.sendStatus(204).end();
+			}else {
+				res.status(202).send(result.rows).end();
+			}
+		});
+	});
+});
+
 module.exports = router;

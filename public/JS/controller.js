@@ -2,11 +2,69 @@ var app = angular.module('nodesConnect', []);
 
 //Seperate this controller per post generating pages i.e. Q&A, Freelance
 //AngularJS to retrieve the data from the DB
-app.controller('allPostsGen', function($scope, $http) {
+app.controller('userPostsGen', function($scope, $http) {
     $scope.txt = "";
 
     $scope.sub = function() {
-      $scope.txt = "This will soon show only your posts.";
+      $scope.formData = {'username': sessionStorage.getItem('username')};
+
+      $http.put('/user/get/posts', $scope.formData).
+        success(function(data) {
+          console.log(data);
+            console.log('Sent to sever successfully.');
+            //Apparently we need a directive to parse this data into a string -> use value.table_name
+            if(Object.keys(data).length != 0)
+            {
+                //we want to build this reverse order to retrieve the most recent posts first
+                //for each post returned
+                data.reverse();
+                angular.forEach(data, function(value, key) {
+
+                  console.log("Retrieving tag data for: " + value.title + ", " + value.type);
+                  $scope.formData = {'title': value.title,
+                                    'type' : value.type};
+
+                  var tagBuilder = "notag";
+                  //get the tags for this posts
+                  $http.put('/tag/get', $scope.formData).
+                    success(function(dataTag) {
+                        console.log('Sent to sever successfully.');
+                        if(Object.keys(dataTag).length != 0)
+                        {
+                            console.log(dataTag);
+                            //for each tag returned
+                            tagBuilder = "";
+                            angular.forEach(dataTag, function(valueTag, keyTag) {
+                                tagBuilder += valueTag.tag + ";";
+                              });
+                              console.log("TagBuilder: " + tagBuilder);
+                        }
+                        else {
+                            console.log("TagBuilder: Didn't find any tags for this post.");
+                        }
+
+                        $.getScript("JS/tableGen.js", function(){
+                          param = '{ "post" : [' +
+                          '{ "username": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + tagBuilder +
+                          '", "type":"' + value.type + '", "id":"' + value.id + '" }]}';
+                          console.log(param);
+                          document.getElementById("allPostsGen").innerHTML += singlePost(param);
+
+                    }).error(function(dataTag){
+                        //db error
+                        console.log('ERROR: Tag data not sent to server.');
+                    });
+                  });
+                });
+
+            }
+            else {
+              $scope.txt = "No posts have been found. Make a post to see some activity!";
+            }
+        }).error(function(data){
+            $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
+            console.log('ERROR: Not sent to server.');
+        });
     }
 
     $scope.sub();
@@ -25,7 +83,9 @@ app.controller('QAPostGen', function($scope, $http) {
             //Apparently we need a directive to parse this data into a string -> use value.table_name
             if(Object.keys(data).length != 0)
             {
+                //we want to build this reverse order to retrieve the most recent posts first
                 //for each post returned
+                data.reverse();
                 angular.forEach(data, function(value, key) {
 
                   console.log("Retrieving tag data for: " + value.title + ", " + value.type);
@@ -64,6 +124,7 @@ app.controller('QAPostGen', function($scope, $http) {
                     });
                   });
                 });
+
             }
             else {
               $scope.txt = "No posts have been found. Make a post to see some activity!";
@@ -203,8 +264,10 @@ app.controller('freelancePostGen', function($scope, $http) {
         success(function(data) {
             console.log('Sent to sever successfully.');
             //Apparently we need a directive to parse this data into a string -> use value.table_name
+
             if(Object.keys(data).length != 0)
             {
+                data.reverse();
                 //$scope.txt = "Some data has been found, let's print it out!";
                 angular.forEach(data, function(value, key) {
 
