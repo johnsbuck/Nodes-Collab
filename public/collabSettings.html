@@ -142,8 +142,8 @@
                 <input type="textbox" id="userAdd" ng-model="formData.new.user"></input>
                 <br>
                 <label>Select permission type:</label>
-                <label><input type="radio" ng-model="formData.perms" value= 1 name="privacyradio"> Admin </label>
-                <label><input type="radio" ng-model="formData.perms" value= 0 name="privacyradio"> Member </label>
+                <label><input type="radio" ng-model="formData.perms" value= 0 name="privacyradio"> Admin </label>
+                <label><input type="radio" ng-model="formData.perms" value= 1 name="privacyradio"> Member </label>
                 <button type="button submit" ng-click="addMember(formData)"> Add </button>
                 <hr>
                 <label>Remove user from group:</label>
