@@ -15,10 +15,10 @@ router.put('/get/members', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
 		//client.query('SELECT username, email, perms FROM groups INNER JOIN user_group_perms AS ugp ON ugp.groupname=\'' + req.body.groupname + '\';',
-		client.query('SELECT username, email, perms ' +
-									'FROM users ' +
-									'JOIN user_group_perms USING (username) ' +
-									'WHERE groupname =\'' + req.body.groupname + '\';',
+		client.query('SELECT privacy ' +
+									'FROM groups ' +
+									'JOIN user_group_perms AS ugp ' +
+									'ON groups.groupname =\'' + req.body.groupname + '\' AND ugp.groupname =\'' + req.body.groupname + '\';',
 		function(err, result) {
 			if(err) {
 				res.sendStatus(400).end();
@@ -26,9 +26,6 @@ router.put('/get/members', function(req, res) {
 				res.sendStatus(406).end();
 			} else {
 				if (result.rows[0].privacy === 1) {
-					//store results
-					var groupInfo = result.rows;
-
 					//Authorization
 					client.query('SELECT pass, salt FROM users INNER JOIN user_group_perms AS ugp ON users.username = \'' + req.body.username +
 						'\' AND ugp.groupname = \'' + req.body.groupname + '\';',
@@ -44,7 +41,7 @@ router.put('/get/members', function(req, res) {
 							 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
 							 if(passHash.verify(req.body.pass, hashpass)) {
-								client.query(sqlQuery,
+								client.query('SELECT username, emails, perms FROM users JOIN user_group_perms USING (username) WHERE groupname=\'' + req.body.groupname + '\';',
 									function(err, result) {
 										done();
 										if(err) {
@@ -61,8 +58,16 @@ router.put('/get/members', function(req, res) {
 							}
 						});
 				}else {
-					done();
-					res.status(200).send(result.rows).end();
+					client.query('SELECT username, emails, perms FROM users JOIN user_group_perms USING (username) WHERE groupname=\'' + req.body.groupname + '\';',
+						function(err, result) {
+							done();
+							if(err) {
+								console.error(err);
+								res.sendStatus(406).end();
+							} else {
+								res.status(206).send(groupInfo).end();
+							}
+					});
 				}
 			}
 		});
