@@ -40,12 +40,17 @@ app.controller('tableGen', function($scope, $http) {
 });
 
 //Controller for the user profile
+//TODO list connections of a user
+//TODO when viewing another user's profile, the "Add" button should add them to that user's profile.
 app.controller('profileGen', function($scope, $http) {
   var viewingCurrentUser = true;    //Are we viewing the current user's profile or another person's profile? TODO integreate this better
+    $scope.viewContactsBtn_Click = function() {
+      console.log("View contacts button clicked!")
+    }
     $scope.contactBtn_Click = function() {
       console.log("Mailto button clicked!");
       //TODO something better than opening in a new tab/window?
-      window.open("mailto::" + sessionStorage.getItem('email'));
+      window.open("mailto:" + sessionStorage.getItem('email'));
     }
     //Adds a connection. Requires username, password, newuser
     $scope.addConnection = function(formData) {
@@ -125,9 +130,22 @@ app.controller('profileGen', function($scope, $http) {
           if(Object.keys(data).length != 0)
           {
             $scope.no_connections = Object.keys(data).length;
-            console.log(data);
+            //Initialize table as string first
+            var userTable =
+             "<table class='table table-striped' width='100%'> " +
+                "<thead><tr><th>Username</th><th>View Profile</th></tr></thead>" +
+                "<tbody>";
+            data.forEach(function(value) {
+            userTable += "<tr><td>" + value.second_user + "</td><td>" + "Link" + "</td></tr>";
+            });
+            userTable += "</tbody></table>";
+            //Finally set the table to the innerHTML
+            document.getElementById('viewConnectionsGen').innerHTML = userTable;
+            console.log(document.getElementById('viewConnectionsGen').innerHTML);
           }
           else {
+            $scope.no_connections = 0;
+            $scope.viewConnectionsGen.innerHTML = "<p>No connections!</p>"
             console.log("No connections for this user found.");
           }
         }).error(function(data) {
