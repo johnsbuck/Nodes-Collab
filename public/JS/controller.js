@@ -85,7 +85,12 @@ app.controller('userProfile', function($scope, $http) {
 
 app.controller('groupPostCtrl', function($scope, $http) {
     $scope.txt = "";
+
+    if(sessionStorage.getItem('currentgroup') == "null")
+      $scope.group = "None; Join or create one!";
+  else
     $scope.group = sessionStorage.getItem('currentgroup');
+
     $scope.count = 0;
     $scope.formData = {'username': sessionStorage.getItem('username'),
                         'groupname': sessionStorage.getItem('currentgroup'),
@@ -382,7 +387,11 @@ app.controller('blockedCtrl', function($scope, $http) {
 });
 
 app.controller('collabSettingsCtrl', function($scope, $http) {
-  $scope.groupname = sessionStorage.getItem('currentgroup');
+   if(sessionStorage.getItem('currentgroup') == "null")
+      $scope.groupname = "(No Group)";
+  else
+      $scope.groupname = sessionStorage.getItem('currentgroup');
+
   $scope.formData = {'username': sessionStorage.getItem('username'),
                       'pass': sessionStorage.getItem('pass')};
 
