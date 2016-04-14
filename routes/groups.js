@@ -218,7 +218,7 @@ router.put('/add/user', function(req, res) {
 				if(passHash.verify(req.body.pass, hashpass)) {
 					console.log("Damn");
 					client.query('INSERT INTO user_group_perms (username, groupname, perms) VALUES (\'' +
- 						req.body.new.user + '\', \'' + req.body.groupname + '\', \'' + req.body.perms + '\');',
+ 						req.body.newuser + '\', \'' + req.body.groupname + '\', \'' + req.body.perms + '\');',
  					function(err, request) {
  						done();
  						if(err)

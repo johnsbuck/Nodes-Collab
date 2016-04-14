@@ -3,8 +3,8 @@ function addGroup(singleData)
   var obj = JSON.parse(singleData);
 
   var divBuilder = `<br>
-                    <button type="button" data-toggle="modal" data-target="#my` + obj.post[0].groupname +`Modal">` + obj.post[0].groupname + `</button>
-                    <div id="my` + obj.post[0].groupname + `Modal" class="modal fade" role="dialog">
+                    <button type="button" data-toggle="modal" data-target="#my` + obj.post[0].groupname +`GroupModal">` + obj.post[0].groupname + `</button>
+                    <div id="my` + obj.post[0].groupname + `GroupModal" class="modal fade" role="dialog">
                     <div class="modal-dialog">
 
                     <!-- Modal content-->
@@ -34,8 +34,8 @@ function addMember(singleData)
   var obj = JSON.parse(singleData);
 
   var divBuilder = `<br>
-                    <button type="button" data-toggle="modal" data-target="#my` + obj.post[0].username +`Modal">` + obj.post[0].username + `</button>
-                    <div id="my` + obj.post[0].username + `Modal" class="modal fade" role="dialog">
+                    <button type="button" data-toggle="modal" data-target="#my` + obj.post[0].username +`UserModal">` + obj.post[0].username + `</button>
+                    <div id="my` + obj.post[0].username + `UserModal" class="modal fade" role="dialog">
                     <div class="modal-dialog">
 
                     <!-- Modal content-->
