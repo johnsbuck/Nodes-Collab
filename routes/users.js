@@ -23,7 +23,7 @@ router.put('/get', function(req, res, next) {
       where_clause = 'email = \'' + req.body.email + '\'';
     }
 
-    client.query('SELECT first_name, last_name, username, email, gender ' +
+    client.query('SELECT bio, facebook, linkedin, first_name, last_name, username, email, gender ' +
       'FROM users WHERE ' + where_clause + ';',
       function(err, result) {
         done();
@@ -149,7 +149,7 @@ router.put('/edit', function(req, res, next) {
              if(key in columns) {
                sqlQuery += ' ' + key + '=\'' + req.body.new[key] + '\',';
              } else {
-               console.err('INVALID COLUMN GIVEN');
+               console.error('INVALID COLUMN GIVEN');
                res.sendStatus(406).end();
              }
            }

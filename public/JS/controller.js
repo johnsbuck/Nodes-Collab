@@ -194,6 +194,9 @@ app.controller('loginCtrl', function($scope, $http, $location) {
       success(function(data) {
         console.log($scope.formData);
         $http.put('/user/get', $scope.formData).success(function(data) {
+          sessionStorage.setItem('linkedin', data.linkedin);
+          sessionStorage.setItem('facebook', data.facebook);
+          sessionStorage.setItem('bio', data.bio);
           sessionStorage.setItem('username', data.username);
           sessionStorage.setItem('email', $scope.formData.email);
           sessionStorage.setItem('pass', $scope.formData.pass);
@@ -251,26 +254,83 @@ app.controller('mainCtrl', function($scope, $http) {
 });
 
 app.controller('generalCtrl', function($scope, $http) {
+  $scope.bio = sessionStorage.getItem('bio');
   $scope.message = "Username: " + sessionStorage.getItem('username');
   $scope.messageName = "Name: " + sessionStorage.getItem('first_name') + " " + sessionStorage.getItem('last_name');
   $scope.messageEmail = "Email: " + sessionStorage.getItem('email');
-  $scope.first = sessionStorage.getItem('first_name');
-  $scope.last = sessionStorage.getItem('last_name');
+  $scope.facebook = sessionStorage.getItem('facebook');
+  $scope.linkedin = sessionStorage.getItem('linkedin');
+  $scope.formData = {};
+  $scope.formData.new = {};
 
   $scope.changeName = function() {
       console.log("Change Name");
-      $http.put('/user/get', $scope.formData).success(function(data) {
-        console.log(data);
-        if(typeof $scope.formData.first !== 'undefined'){
-      sessionStorage.setItem('first_name', $scope.formData.first);
-      }
-      if(typeof $scope.formData.last !== 'undefined'){
-      sessionStorage.setItem('last_name', $scope.formData.last);
-      }
+      $scope.formData.username = sessionStorage.getItem('username');
+      $scope.formData.pass = sessionStorage.getItem('pass');
+      $http.put('/user/edit', $scope.formData).success(function(data) {
+        console.log('Sent to the server successfully.');
+
+        $http.put('/user/get', $scope.formData).success(function(data) {
+          console.log(data);
+          if(typeof $scope.formData.new.first_name !== 'undefined'){
+            sessionStorage.setItem('first_name', $scope.formData.new.first_name);
+          }
+
+          if(typeof $scope.formData.new.last_name !== 'undefined'){
+            sessionStorage.setItem('last_name', $scope.formData.new.last_name);
+          }
+            $scope.messageName = "Name: " + sessionStorage.getItem('first_name') + " " + sessionStorage.getItem('last_name');
+        }).error(function(data) {
+          console.log('ERROR');
+        });
       }).error(function(data) {
         console.log('ERROR: Not sent to server.');
       });
   }
+
+  $scope.updateBio = function(){
+    console.log("Update Bio");
+     $scope.formData.username = sessionStorage.getItem('username');
+     $scope.formData.pass = sessionStorage.getItem('pass');
+
+     $http.put('/user/edit', $scope.formData).success(function(data) {
+      console.log(data);
+      if(typeof $scope.formData.new.bio !== 'undefined'){
+        sessionStorage.setItem('bio', $scope.formData.new.bio);
+      }
+        $scope.bio = sessionStorage.getItem('bio');
+     }).error(function(data) {
+        console.log('ERROR: Not sent to server.');
+      });
+  }
+
+$scope.changeMedia = function() {
+      console.log("Change Links");
+      $scope.formData.username = sessionStorage.getItem('username');
+      $scope.formData.pass = sessionStorage.getItem('pass');
+      $http.put('/user/edit', $scope.formData).success(function(data) {
+        console.log('Sent to the server successfully.');
+
+        $http.put('/user/get', $scope.formData).success(function(data) {
+          console.log(data);
+          if(typeof $scope.formData.new.facebook !== 'undefined'){
+            sessionStorage.setItem('facebook', $scope.formData.new.facebook);
+          }
+
+          if(typeof $scope.formData.new.linkedin !== 'undefined'){
+            sessionStorage.setItem('linkedin', $scope.formData.new.linkedin);
+          }
+            $scope.facebook = sessionStorage.getItem('facebook');
+            $scope.linkedin = sessionStorage.getItem('linkedin');
+        }).error(function(data) {
+          console.log('ERROR');
+        });
+      }).error(function(data) {
+        console.log('ERROR: Not sent to server.');
+      });
+  }
+
+
 });
 
 
