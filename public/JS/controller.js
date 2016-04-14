@@ -255,12 +255,29 @@ app.controller('mainCtrl', function($scope, $http) {
 });
 
 app.controller('generalCtrl', function($scope, $http) {
-  $scope.bio = sessionStorage.getItem('bio');
+  if(sessionStorage.getItem('bio') == "null")
+    $scope.bio = "No current bio."; 
+  else 
+    $scope.bio = sessionStorage.getItem('bio');
   $scope.message = "Username: " + sessionStorage.getItem('username');
   $scope.messageName = "Name: " + sessionStorage.getItem('first_name') + " " + sessionStorage.getItem('last_name');
   $scope.messageEmail = "Email: " + sessionStorage.getItem('email');
-  $scope.facebook = sessionStorage.getItem('facebook');
-  $scope.linkedin = sessionStorage.getItem('linkedin');
+
+  if(sessionStorage.getItem('facebook') == "null")
+    $scope.facebook = "No Facebook linked.";
+  else
+  {
+    $scope.facebook = sessionStorage.getItem('facebook');
+    document.getElementById("fblink").innerHTML = $scope.facebook.link(sessionStorage.getItem('facebook'));
+  }
+
+  if(sessionStorage.getItem('linkedin') == "null")
+    $scope.linkedin = "No LinkedIn linked.";
+  else
+  {
+    $scope.linkedin = sessionStorage.getItem('linkedin');
+    document.getElementById("lilink").innerHTML = $scope.linkedin.link(sessionStorage.getItem('linkedin'));
+  }
   $scope.formData = {};
   $scope.formData.new = {};
 
@@ -300,6 +317,7 @@ app.controller('generalCtrl', function($scope, $http) {
         sessionStorage.setItem('bio', $scope.formData.new.bio);
       }
         $scope.bio = sessionStorage.getItem('bio');
+        document.getElementById('bioSetting').value=$scope.bio;
      }).error(function(data) {
         console.log('ERROR: Not sent to server.');
       });
@@ -316,13 +334,15 @@ $scope.changeMedia = function() {
           console.log(data);
           if(typeof $scope.formData.new.facebook !== 'undefined'){
             sessionStorage.setItem('facebook', $scope.formData.new.facebook);
+             $scope.facebook = sessionStorage.getItem('facebook');
+            document.getElementById("fblink").innerHTML = $scope.facebook.link(sessionStorage.getItem('facebook'));
           }
 
           if(typeof $scope.formData.new.linkedin !== 'undefined'){
             sessionStorage.setItem('linkedin', $scope.formData.new.linkedin);
-          }
-            $scope.facebook = sessionStorage.getItem('facebook');
             $scope.linkedin = sessionStorage.getItem('linkedin');
+            document.getElementById("lilink").innerHTML = $scope.linkedin.link(sessionStorage.getItem('linkedin'));
+          }
         }).error(function(data) {
           console.log('ERROR');
         });

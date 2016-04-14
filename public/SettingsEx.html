@@ -24,7 +24,7 @@
     <script src="JS/controller.js"></script>
   </head>
 
-  <body ng-controller="generalCtrl">
+  <body ng-controller="generalCtrl" ng-init="initBio(formdata)">
 
     <nav class="navbar navbar-inverse navbar-fixed-top" ng-controller="navCtrl">
       <div class="container-fluid" ng-controller="settingsCtrl">
@@ -151,14 +151,16 @@
                 <hr>
                 {{messageEmail}}
                 <hr>
-                Bio:
+                Bio: 
                 <br> 
+                {{bio}}
+                <br>
                 <textarea type="text" id="bioSetting" style="width: 100%; height: 250px;" ng-model="formData.new.bio">  </textarea>
                 <button type="button" ng-click="updateBio(formData)">Update</button>
                 <hr>
                 Social Medias:<br>
-                Facebook: <a href={{facebook}}>{{facebook}}</a><br>
-                LinkedIn: <a href={{linkedin}}>{{linkedin}}</a><br>
+                Facebook: <label id="fblink">{{facebook}}</label><br>
+                LinkedIn: <label id="lilink">{{linkedin}}</label><br>
                 <a href="#" data-toggle="modal" data-target="#editMedia">Edit</a>
 
                 <div class="modal fade" id="editMedia" role="dialog">
