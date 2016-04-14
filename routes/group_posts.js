@@ -14,12 +14,14 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
  * If not authorized, return 403 status code.
  */
 router.put('/get', function(req, res) {
+	console.log(req.body);
 	req.body = quoteFixer(req.body);
 	// Connect to postgreSQL
 	pg.connect(connectionString, function(err, client, done) {
 		// Query group to get privacy
 		client.query('SELECT * FROM groups WHERE groupname=\'' +
 			req.body.groupname + '\';', function(err, result) {
+			  console.log(result);
 				// If error, send client error
 				if(err) {
 					done();
@@ -28,6 +30,7 @@ router.put('/get', function(req, res) {
 				// If empty, send Not Found
 				}else if(!result || result.rows.length === 0) {
 					done();
+					console.log("Well then");
 					res.sendStatus(404).end();
 				// If not private, send rows
 			}else if(result.rows[0].privacy !== 1){
@@ -72,6 +75,7 @@ router.put('/get', function(req, res) {
 									 res.sendStatus(406).end();
 								 }else if(!result || result.rows.length === 0) {
 									 done();
+									 console.log("THIS IS IT");
 									 res.sendStatus(404).end();
 								 }else {
 									 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;

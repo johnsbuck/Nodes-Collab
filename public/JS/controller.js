@@ -88,7 +88,7 @@ app.controller('groupPostCtrl', function($scope, $http) {
     $scope.group = sessionStorage.getItem('currentgroup');
     $scope.count = 0;
     $scope.formData = {'username': sessionStorage.getItem('username'),
-                        'groupname': sessionStorage.getItem('groupname'),
+                        'groupname': sessionStorage.getItem('currentgroup'),
                         'pass': sessionStorage.getItem('pass')};
     $scope.init = function() {
       $http.put('/group-post/get', $scope.formData)
@@ -412,6 +412,7 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
         if(Object.keys(data).length != 0)
         {
             data.forEach(function(dataElement)  {
+              console.log(dataElement);
               $.getScript("JS/collabSettings.js", function(){
                 param = '{ "post" : [' +
                 '{ "groupname": "' + dataElement.groupname + '" }]}';
@@ -435,6 +436,7 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
         if(Object.keys(data).length != 0)
         {
             data.forEach(function(dataElement)  {
+              console.log(dataElement);
               $.getScript("JS/collabSettings.js", function(){
                 param = '{ "post" : [' +
                 '{ "username": "' + dataElement.username + '" }]}';
@@ -449,9 +451,6 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
 
     $scope.addMember = function() {
       console.log("Add Members");
-      $scope.formData.groupname = sessionStorage.getItem('currentgroup');
-      $scope.formData.pass = sessionStorage.getItem('pass');
-      $scope.formData.groupname = sessionStorage.getItem('currentgroup');
       console.log($scope.formData);
       $http.put('/group/add/user', $scope.formData).
       success(function(data) {
@@ -465,9 +464,6 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
 
     $scope.removeMember = function() {
       console.log("Remove Members");
-      $scope.formData.groupname = sessionStorage.getItem('groupname');
-      $scope.formData.pass = sessionStorage.getItem('pass');
-      $scope.formData.groupname = sessionStorage.getItem('currentgroup');
       console.log($scope.formData);
       $http.put('/group/delete/user', $scope.formData).
       success(function(data) {
@@ -503,8 +499,6 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
     }
 
     $scope.switchGroup= function(){
-      $scope.formData.username = sessionStorage.getItem('username');
-      $scope.formData.pass = sessionStorage.getItem('pass');
       $http.put('/group/get/groups', $scope.formData).
       success(function(data) {
         console.log("groups found");
