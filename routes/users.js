@@ -198,7 +198,7 @@ router.put('/create/connection', function(req, res, next) {
          console.error(err);
          res.sendStatus(406).end();
        }else if(!result || result.rows.length === 0) {
-         console.log(result);
+         //console.log(result);
          done();
          res.sendStatus(404).end();
        }else {
@@ -210,10 +210,12 @@ router.put('/create/connection', function(req, res, next) {
           function(err, result) {
             done();
             if(err) {
-              console.log("HERE!");
               console.error(err);
               res.sendStatus(406).end();
             } else {
+              //Query accepted and is returning stuff.
+              console.log("Printing connection results:");
+              console.log(result);
               res.sendStatus(202).end();
             }
           });
@@ -253,7 +255,7 @@ router.put('/get/connections', function(req, res, next) {
               console.error(err);
               res.sendStatus(406).end();
             } else {
-              res.sendStatus(202).end();
+              res.status(202).send(result.rows).end();
             }
           });
         }else {

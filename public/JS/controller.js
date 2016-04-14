@@ -45,21 +45,28 @@ app.controller('profileGen', function($scope, $http) {
     //console.log("Username: " + sessionStorage.getItem('username'));
     //Adds a connection. Requires username, password, newuser
     $scope.addConnection = function(formData) {
+      //consider popping message in modal.
       console.log("Reached addConnection()");
       $scope.formData['username'] = sessionStorage.getItem('username');
       $scope.formData['pass'] = sessionStorage.getItem('pass');
       $http.put('/user/create/connection', formData).
         success(function(data) {
           console.log("Connection added successfully!");
+          popMessage("Connection Added!");
         }).error(function(data) {
           console.log("Error in connection create request!");
+          popError("Error adding user!");
         });
     }
-    //Why does this function need to be in $scope?
     $scope.sub = function() {
       $scope.formData = {};
       $scope.formData['username'] = sessionStorage.getItem('username');
+      //If we are attempting to view a user other than ourselves, redefine 'username'.
+      //TODO Make sure this plays nice with adding connections, etc.
+      //TODO undo this at the end!
+      if(sessionStorage.getItem('viewuser') != null) $scope.formData['username'] = sessionStorage.getItem('viewuser');
       $scope.formData['pass'] = sessionStorage.getItem('pass');
+      //$http.put('/user/')
       //API call to get user information
       $http.put('/user/get', $scope.formData).
         success(function(data) {
@@ -102,6 +109,7 @@ app.controller('profileGen', function($scope, $http) {
           if(Object.keys(data).length != 0)
           {
             //We have received connections from the DB here.
+            console.log(data);
           }
           else {
             console.log("No connections for this user found.");
@@ -113,66 +121,6 @@ app.controller('profileGen', function($scope, $http) {
     //Call method to execute code above.
     $scope.sub();
 });
-/*
-app.controller('addConnection', function($scope, $http) {
-  console.log("Attempting to add connection: " + data.addUsername);
-  var param = {'username':sessionStorage.getItem('username'), 'pass':sessionStorage.getItem('pass'), 'newuser':data.addUsername};
-  $http.put('/user/create/connection', param).
-    success(function(data) {
-      console.log("Request to add connection sent to server successfully!");
-
-    }).error(function(data) {
-      console.log("Error sending add connection request to server!");
-    });
-});
-*/
-
-//Used to control generating a user's profile
-//AngularJS to retrieve the data from the DB
-//TEMPORARY: using a static value instead of sessionStorage to grab the user
-//DEPRECATED
-/*
-app.controller('userProfile', function($scope, $http) {
-    $scope.txt = "";
-
-    $scope.sub = function() {
-      //API CALL -> users put (which is redefined as a get).
-
-      var formData = new FormData();
-      formData.append('username', 'middle59');// must this be sent?
-      // /user/get needs to parse username data from req.body.username so we need to make some artificial web request
-
-      $http.put('/user/get', request).
-        success(function(data) {
-            console.log('Sent to sever successfully.');
-            //Apparently we need a directive to parse this data into a string -> use value.table_name
-            if(Object.keys(data).length != 0)
-            {
-                //we should only have one object here
-                angular.forEach(data, function(value, key) {
-
-                  console.log("Key: " + key + ", Value: " + value.username);
-                  //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
-                  $.getScript("JS/profileGen.js", function(){
-                    param = '{ "profile" : [' +
-                    '{ "username": "' + value.username + '" }]}';
-                    console.log(param);
-                    document.getElementById("userProfile").innerHTML += singleProfile(param);
-                  });
-                });
-            }
-            else {
-              $scope.txt = "This user does not seem to be in our database..";
-            }
-        }).error(function(data){
-            $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
-            console.log('ERROR: Not sent to server.');
-        });
-    }
-
-    $scope.sub();
-});
-*/
 
 app.controller('groupPostGen', function($scope, $http) {
     $scope.txt = "";
