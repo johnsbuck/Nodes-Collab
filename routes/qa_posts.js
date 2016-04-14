@@ -145,11 +145,14 @@ router.post('/post', function(req, res) {
  *
  * Deletes a single Q&A post. Requires username and password.
  */
-router.delete('/delete', function(req, res) {
+router.put('/delete', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
+		console.log("REQ!!!!!!!");
+		 console.log(req.body);
      client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
       function(err, result) {
+				console.log(result);
         if(err) {
           console.error(err);
           res.sendStatus(406).end();
@@ -160,8 +163,7 @@ router.delete('/delete', function(req, res) {
           var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
           if(passHash.verify(req.body.pass, hashpass)) {
-						client.query('DELETE FROM posts WHERE id = \'' + req.body.id + '\' AND username=\'' + req.body.username +
-							'\' AND type=\'0\';',
+						client.query('DELETE FROM posts WHERE title = \'' + req.body.title + '\' AND type=\'0\';',
 						function(err, result) {
 							done();
 							if(err) {

@@ -53,12 +53,7 @@ function singlePost(singleData)
                         <header class="panel-heading">
                           <div class="row">`+
                             //<div class="col-xs-4">` + obj.post[0].groupname + `</div>//uncomment when we have groups done
-                            `<div class="col-xs-4">` + "Temp-Group" + `</div>
-                            <div class="col-xs-8">
-                               <div class="row">
-                                     <div class="col-md-4 col-md-push-10">` + obj.post[0].username + `</div>
-                               </div>
-                              </div>
+                            `<div class="col-xs-4">` + obj.post[0].username + `</div>
                             </div>
                         </header>
                         <section class="row panel-body">

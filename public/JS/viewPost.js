@@ -26,7 +26,13 @@ function viewPost(singlePost)
   var date = new Date(obj.post[0].timestamp);
   var formatDate = date.toLocaleTimeString("en-us", dateOptions)
   var divBuilder = "";
+  var myPost = "false";
   if(sessionStorage.getItem('username') == obj.post[0].author)
+  {
+    myPost = "true";
+  }
+
+  if(myPost=="true")
   {
     divBuilder += `<div class="alert alert-info alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><i class="glyphicon glyphicon-wrench"></i> This is your post. You will have additional functionality to edit or delete it.</div>`;
@@ -47,9 +53,64 @@ function viewPost(singlePost)
                         divBuilder += `<a href=#><span class="label label-info tags">` + tags[i] + `</span></a> `;
                       }
                     }
-                    divBuilder += `<p><i class="glyphicon glyphicon-time"></i> ` + formatDate + `</p>
-                    <hr>`;
+                    divBuilder += `<p><i class="glyphicon glyphicon-time"></i> ` + formatDate;
+  if(myPost=="true")
+  {
+      divBuilder += `<button class="btn btn-primary pull-right" style="margin-left:5px" data-toggle="modal" data-target="#deleteModal" type="button"><i class="glyphicon glyphicon-trash"></i></button>`
+      divBuilder += `<button class="btn btn-primary pull-right" data-toggle="modal" data-target="#editModal" type="button">Edit</button>`;
+  }
+
+  divBuilder += `</p><hr>`;
+
+  if(myPost=="true")
+  {
+        //Delete Modal
+        divBuilder += `<div id="deleteModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Are you sure you would like to delete your post?</h4>
+            </div>
+            <div class="modal-body">
+              <button class="btn btn-primary" onclick="deletePost()" type="button">Delete</button>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+
+        </div>
+      </div>`;
+      //Edit Modal
+      divBuilder += `<div id="editModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Edit Your Post!</h4>
+          </div>
+          <div class="modal-body">
+            <p>Some text in the modal.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+
+      </div>
+    </div>`;
+  }
 
   return divBuilder;
 
+}
+
+
+function deletePost()
+{
+  var scope = angular.element(document.getElementById("viewPostCtrl")).scope();
+    scope.$apply(function () {
+    scope.delete();
+    });
 }

@@ -383,6 +383,29 @@ app.controller('viewPostCtrl', function($scope, $http) {
         });
     }
 
+    //delete a post
+    $scope.delete = function() {
+      $scope.formData = {'username': sessionStorage.getItem('username'),
+                        'pass' : sessionStorage.getItem('pass'),
+                        'title' : sessionStorage.getItem('postTitle')};
+      //console.log($scope.formData);
+      var accessor = '/qa-post';
+      var href = 'QandA.html';
+      if(sessionStorage.getItem('postType')==1)
+      {
+        accessor = '/free-post';
+        href = 'FreelanceEx.html';
+      }
+      console.log($scope.formData);
+      $http.put(accessor + '/delete', $scope.formData).
+          success(function(data) {
+              console.log('Sent to sever successfully.');
+              window.location.href = href;
+          }).error(function(data){
+              console.log('ERROR: Not sent to server.');
+          });
+      }
+
     $scope.init();
 });
 
@@ -448,44 +471,56 @@ app.controller('submitCommentCtrl', function($scope, $http, $location) {
   //Submit a post for Freelancing
   app.controller('freelancePostCtrl', function($scope, $http, $location) {
     $scope.sub = function() {
+      if($scope.formData != undefined && $scope.formData.text != "" && $scope.formData.title != "")
+      {
+        $scope.formData['username'] = sessionStorage.getItem('username');
+        $scope.formData['pass'] = sessionStorage.getItem('pass');
+        $scope.formData['tags'] = sessionStorage.getItem('postTags').split(';');//tags are submitted as an object array
+        var date = new Date();
+        var timezone = date.getTimezoneOffset();//timezone difference convert to seconds
+        var dateOffset = new Date(date.getTime() - (timezone*60*1000));
+        $scope.formData['timestamp'] = dateOffset;
+        console.log($scope.formData);
+        $http.post('/free-post/post', $scope.formData).
+          success(function(data) {
+            window.location.href = '/FreelanceEx.html';
+            console.log('Sent to sever successfully.');
+          }).error(function(data){
+              console.log('ERROR: Not sent to server.');
+              popError('A post in Freelancing was already found with the given title. Please submit with a unique title or checkout that post!');
+          });
+      }
+      else {
+          popError('A post may only be submitted if it has a title and text.');
+        }
+      }
+    });
+
+//SUBMIT a post for Q&A
+app.controller('qaPostCtrl', function($scope, $http, $location) {
+  $scope.sub = function() {
+    if($scope.formData != undefined && $scope.formData.text != "" && $scope.formData.title != "")
+    {
       $scope.formData['username'] = sessionStorage.getItem('username');
       $scope.formData['pass'] = sessionStorage.getItem('pass');
-      $scope.formData['tags'] = sessionStorage.getItem('postTags').split(';');//tags are submitted as an object array
+      $scope.formData['tags'] = sessionStorage.getItem('postTags').split(';');//tgs are submitted as an object array
       var date = new Date();
       var timezone = date.getTimezoneOffset();//timezone difference convert to seconds
       var dateOffset = new Date(date.getTime() - (timezone*60*1000));
       $scope.formData['timestamp'] = dateOffset;
       console.log($scope.formData);
-      $http.post('/free-post/post', $scope.formData).
+      $http.post('/qa-post/post', $scope.formData).
         success(function(data) {
-          window.location.href = '/FreelanceEx.html';
+          window.location.href = '/QandA.html';
           console.log('Sent to sever successfully.');
         }).error(function(data){
             console.log('ERROR: Not sent to server.');
-            popError('A post in Freelancing was already found with the given title. Please submit with a unique title or checkout that post!');
+            popError('A post in Q&A was already found with the given title. Please submit with a unique title or checkout that post!');
         });
     }
-    });
-
-//Submit a post for Q&A
-app.controller('qaPostCtrl', function($scope, $http, $location) {
-  $scope.sub = function() {
-    $scope.formData['username'] = sessionStorage.getItem('username');
-    $scope.formData['pass'] = sessionStorage.getItem('pass');
-    $scope.formData['tags'] = sessionStorage.getItem('postTags').split(';');//tgs are submitted as an object array
-    var date = new Date();
-    var timezone = date.getTimezoneOffset();//timezone difference convert to seconds
-    var dateOffset = new Date(date.getTime() - (timezone*60*1000));
-    $scope.formData['timestamp'] = dateOffset;
-    console.log($scope.formData);
-    $http.post('/qa-post/post', $scope.formData).
-      success(function(data) {
-        window.location.href = '/QandA.html';
-        console.log('Sent to sever successfully.');
-      }).error(function(data){
-          console.log('ERROR: Not sent to server.');
-          popError('A post in Q&A was already found with the given title. Please submit with a unique title or checkout that post!');
-      });
+    else {
+      popError('A post may only be submitted if it has a title and text.');
+    }
   }
   });
 

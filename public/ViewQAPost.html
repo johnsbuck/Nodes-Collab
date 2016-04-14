@@ -103,9 +103,6 @@
      </div>
       <!-- END OF -> Viewing Post -->
      <!-- START OF -> Viewing Comments -->
-     <div id="postCommentCtrl" ng-controller="postCommentCtrl"><p ng-bind="txt">
-      <!-- under this div multiple comments will be generated-->
-     </p>
      <div ng-controller="submitCommentCtrl">
                      <form class="form-comment" role="form" method="post">
                      <div class="panel panel-default">
@@ -118,6 +115,9 @@
                      </div><hr>
                      </form>
      </div>
+     <div id="postCommentCtrl" ng-controller="postCommentCtrl"><p ng-bind="txt">
+      <!-- under this div multiple comments will be generated-->
+     </p>
      </div>
      <!-- END OF -> Viewing Comments -->
 

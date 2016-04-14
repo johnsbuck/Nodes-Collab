@@ -102,22 +102,23 @@
      </p>
      </div>
       <!-- END OF -> Viewing Post -->
+      <div ng-controller="submitCommentCtrl">
+                      <form class="form-comment" role="form" method="post">
+                      <div class="panel panel-default">
+                        <div class="panel-body">
+                          <h4> Make a comment: </h4>
+                          <textarea rows = "3" cols = "150" ng-model="formData.text"></textarea>
+                          <br><br>
+                          <button class="btn" class="form-control" ng-click="sub(formData)"><span class="glyphicon glyphicon-pushpin" type="submit" aria-hidden="true"></span> Post </button>
+                        </div>
+                      </div><hr>
+                      </form>
+      </div>
      <!-- START OF -> Viewing Comments -->
      <div id="postCommentCtrl" ng-controller="postCommentCtrl"><p ng-bind="txt">
       <!-- under this div multiple comments will be generated-->
      </p>
-     <div ng-controller="submitCommentCtrl">
-                     <form class="form-comment" role="form" method="post">
-                     <div class="panel panel-default">
-                       <div class="panel-body">
-                         <h4> Make a comment: </h4>
-                         <textarea rows = "3" cols = "150" ng-model="formData.text"></textarea>
-                         <br><br>
-                         <button class="btn" class="form-control" ng-click="sub(formData)"><span class="glyphicon glyphicon-pushpin" type="submit" aria-hidden="true"></span> Post </button>
-                       </div>
-                     </div><hr>
-                     </form>
-     </div>
+
      </div>
      <!-- END OF -> Viewing Comments -->
 
