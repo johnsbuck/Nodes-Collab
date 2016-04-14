@@ -84,6 +84,7 @@ function viewPost(singlePost)
       </div>`;
       //Edit Modal
       divBuilder += `<div id="editModal" class="modal fade" role="dialog">
+      <form class="form-groupPost" role="form">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -91,14 +92,17 @@ function viewPost(singlePost)
             <h4 class="modal-title">Edit Your Post!</h4>
           </div>
           <div class="modal-body">
-            <p>Some text in the modal.</p>
+            <p><h3>Title:</h3> <input type="text" class="form-control" ng-model="formData.title" value="` + obj.post[0].title + `" id="title" disabled></p>
+            <p><h3>Text:</h3> <textarea rows = "10" cols = "85" ng-model="formData.text">` + obj.post[0].text +`</textarea></p>
+            <br>
+            <button class="btn btn-primary form-control" onclick="editPost(formData)" type="submit">Submit</button>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           </div>
         </div>
-
-      </div>
+        </div>
+        </form>
     </div>`;
   }
 
@@ -106,6 +110,15 @@ function viewPost(singlePost)
 
 }
 
+function editPost(formData)
+{
+  console.log("hello");
+  console.log(formData);
+  var scope = angular.element(document.getElementById("viewPostCtrl")).scope();
+    scope.$apply(function () {
+    //scope.update(formData);
+    });
+}
 
 function deletePost()
 {

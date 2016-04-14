@@ -385,6 +385,7 @@ app.controller('viewPostCtrl', function($scope, $http) {
 
     //delete a post
     $scope.delete = function() {
+      console.log("pass");
       $scope.formData = {'username': sessionStorage.getItem('username'),
                         'pass' : sessionStorage.getItem('pass'),
                         'title' : sessionStorage.getItem('postTitle')};
@@ -406,12 +407,35 @@ app.controller('viewPostCtrl', function($scope, $http) {
           });
       }
 
+      //update a post
+      $scope.update = function() {
+        $scope.formData['username'] = sessionStorage.getItem('username');
+        $scope.formData['pass'] = sessionStorage.getItem('pass');
+        $scope.formData['titlePrev'] = sessionStorage.getItem('postTitle');
+        var accessor = '/qa-post';
+        var href = 'QandA.html';
+        if(sessionStorage.getItem('postType')==1)
+        {
+          accessor = '/free-post';
+          href = 'FreelanceEx.html';
+        }
+        console.log($scope.formData);
+        /*$http.put(accessor + '/edit', $scope.formData).
+            success(function(data) {
+                console.log('Sent to sever successfully.');
+                window.location.href = href;
+            }).error(function(data){
+                console.log('ERROR: Not sent to server.');
+            });*/
+        }
+
     $scope.init();
 });
 
 //generate comments for a specified post ID
 app.controller('postCommentCtrl', function($scope, $http) {
     $scope.txt = "";
+
     $scope.init = function() {
       $scope.formData = {'title': sessionStorage.getItem('postTitle'),
                         'type' : sessionStorage.getItem('postType')};
@@ -425,10 +449,11 @@ app.controller('postCommentCtrl', function($scope, $http) {
 
           if(Object.keys(data).length != 0)
           {
+                data.reverse();
                 angular.forEach(data, function(value, key) {
                   if(value.text) {
                     param = '{ "comment" : [' +
-                    '{ "author": "' + value.username + '", "text":"' + value.text + '", "timestamp":"' + value.timestamp + '" }]}';
+                    '{ "author": "' + value.username + '", "text":"' + value.text + '", "timestamp":"' + value.timestamp + '", "id":"' + value.id + '" }]}';
                     console.log(param);
                     document.getElementById("postCommentCtrl").innerHTML += viewComment(param);
                   }
@@ -443,6 +468,21 @@ app.controller('postCommentCtrl', function($scope, $http) {
                     console.log('ERROR: Not sent to server.');
           });
     }
+
+    //delete a comment
+    $scope.delete = function() {
+      $scope.formData = {'username': sessionStorage.getItem('username'),
+                        'pass' : sessionStorage.getItem('pass'),
+                        'id' : sessionStorage.getItem('commentID')};
+      console.log($scope.formData);
+      $http.put('comments/delete', $scope.formData).
+          success(function(data) {
+              console.log('Sent to sever successfully.');
+              location.reload();
+          }).error(function(data){
+              console.log('ERROR: Not sent to server.');
+          });
+      }
 
     $scope.init();
 });

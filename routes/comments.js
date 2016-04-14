@@ -50,39 +50,39 @@ router.post('/post', function(req, res) {
 
 /* Deletes a given post onto the database.
  */
-router.delete('/delete', function(req, res) {
-	req.body = quoteFixer(req.body);
-	pg.connect(connectionString, function(req, res) {
-		client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
-		 function(err, result) {
-			 if(err) {
-				 console.error(err);
-				 res.sendStatus(406).end();
-			 }else if(!result || result.rows.length === 0) {
-				 done();
-				 res.sendStatus(404).end();
-			 }else {
-				 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
+ router.put('/delete', function(req, res) {
+ 	req.body = quoteFixer(req.body);
+ 	pg.connect(connectionString, function(err, client, done) {
+      client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
+       function(err, result) {
+ 				console.log(result);
+         if(err) {
+           console.error(err);
+           res.sendStatus(406).end();
+         }else if(!result || result.rows.length === 0) {
+           done();
+           res.sendStatus(404).end();
+         }else {
+           var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
-				 if(passHash.verify(req.body.pass, hashpass)) {
-					 client.query('DELETE FROM comments WHERE id=\'' + req.body.id +'\' AND post_id=\'' + req.body.post_id +
-					 	'\' AND username=\'' + req.body.username + '\';',
-					 function(err, result) {
-						done();
-						if(err) {
-							console.error(err);
-				 			res.sendStatus(406).end();
-						}else {
-			 				res.sendStatus(201).end();
-			 			}
-			 		});
-				 }else {
-					 done();
-					 res.sendStatus(403).end();
-				 }
-			 }
-		 });
-	});
-});
+           if(passHash.verify(req.body.pass, hashpass)) {
+ 						client.query('DELETE FROM comments WHERE id = \'' + req.body.id + '\';',
+ 						function(err, result) {
+ 							done();
+ 							if(err) {
+ 								console.error(err);
+ 								res.sendStatus(406).end();
+ 							} else {
+ 								res.sendStatus(202).end();
+ 							}
+ 						});
+ 					}else {
+ 						done();
+ 	          res.sendStatus(403).end();
+ 	        }
+ 				}
+ 		});
+ 	});
+ });
 
 module.exports = router;

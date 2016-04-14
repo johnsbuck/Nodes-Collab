@@ -148,8 +148,6 @@ router.post('/post', function(req, res) {
 router.put('/delete', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
-		console.log("REQ!!!!!!!");
-		 console.log(req.body);
      client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
       function(err, result) {
 				console.log(result);
@@ -189,16 +187,11 @@ router.put('/delete', function(req, res) {
  */
 router.put('/edit', function(req, res) {
 	// Nothing new to change
-  if(!req.body.new) {
-    res.sendStatus(406).end();
-  }
-
 	req.body = quoteFixer(req.body);
 
 	pg.connect(connectionString, function(err, client, done) {
 		req.body = quoteFixer(req.body);
-		client.query('SELECT pass, salt FROM users INNER JOIN posts WHERE ' +
-			'posts.username = \'' + req.body.username +'\' AND posts.title = \'' + req.body.title + '\' AND posts.type=\'0\';',
+		client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
 		 function(err, result) {
 			 if(err) {
 				 console.error(err);
@@ -211,21 +204,7 @@ router.put('/edit', function(req, res) {
 
 				 if(passHash.verify(req.body.pass, hashpass)) {
 					// Check what to UPDATE in user's row
- 					var sqlQuery = 'UPDATE posts SET';
- 					var columns = {'title': true, 'text': true};
- 					for(key in req.body.new) {
- 						if(key in columns) {
- 							sqlQuery += ' ' + key + '=\'' + req.body.new[key] + '\',';
- 						} else {
- 							console.err('INVALID COLUMN GIVEN');
- 							res.sendStatus(406).end();
- 						}
- 					}
-
- 					// Replace last ',' with end query.
- 					sqlQuery = sqlQuery.slice(0, -1) + 'WHERE username=\'' + req.body.username + '\';';
-
-					client.query(sqlQuery,
+					client.query('UPDATE posts SET text= \'' + req.body.text + '\' WHERE title=\'' + req.body.titlePrev + '\' AND type=\'0\';',
 						function(err, result) {
 							done();
 							if(err) {
