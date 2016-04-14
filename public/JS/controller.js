@@ -539,6 +539,7 @@ app.controller('submitCommentCtrl', function($scope, $http, $location) {
 //SUBMIT a post for Q&A
 app.controller('qaPostCtrl', function($scope, $http, $location) {
   $scope.sub = function() {
+    console.log($scope.formData);
     if($scope.formData != undefined && $scope.formData.text != "" && $scope.formData.title != "")
     {
       $scope.formData['username'] = sessionStorage.getItem('username');
@@ -551,6 +552,10 @@ app.controller('qaPostCtrl', function($scope, $http, $location) {
       console.log($scope.formData);
       $http.post('/qa-post/post', $scope.formData).
         success(function(data) {
+          if($scope.formData.collabedit == true)//true -- open a collab edit
+          {
+            window.open("http://collabedit.com/new");//*NOTE pop-ups must be enabled for this to work
+          }
           window.location.href = '/QandA.html';
           console.log('Sent to sever successfully.');
         }).error(function(data){
