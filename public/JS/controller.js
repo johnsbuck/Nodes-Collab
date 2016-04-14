@@ -41,14 +41,12 @@ app.controller('tableGen', function($scope, $http) {
 
 //Controller for the user profile
 app.controller('profileGen', function($scope, $http) {
+  var viewingCurrentUser = true;    //Are we viewing the current user's profile or another person's profile? TODO integreate this better
     $scope.contactBtn_Click = function() {
       console.log("Mailto button clicked!");
       //TODO something better than opening in a new tab/window?
       window.open("mailto::" + sessionStorage.getItem('email'));
     }
-    //$scope.txt = "";
-    //$scope.username = sessionStorage.getItem('username');
-    //console.log("Username: " + sessionStorage.getItem('username'));
     //Adds a connection. Requires username, password, newuser
     $scope.addConnection = function(formData) {
       //consider popping message in modal.
@@ -68,12 +66,13 @@ app.controller('profileGen', function($scope, $http) {
     $scope.sub = function() {
       $scope.formData = {};   //Init formData
       $scope.formData['username'] = sessionStorage.getItem('username');
-      //If we are attempting to view a user other than ourselves, redefine 'username'.
       //TODO Make sure this plays nice with adding connections, etc.
       //TODO undo this at the end!
-      if(sessionStorage.getItem('viewuser') != null) $scope.formData['username'] = sessionStorage.getItem('viewuser');
+      if(sessionStorage.getItem('viewuser') != null) {
+        viewingCurrentUser = false;
+        $scope.formData['username'] = sessionStorage.getItem('viewuser');       //If we are attempting to view a user other than ourselves, redefine 'username'.
+      }
       $scope.formData['pass'] = sessionStorage.getItem('pass');
-      //$http.put('/user/')
       //API call to get user information
       $http.put('/user/get', $scope.formData).
         success(function(data) {
@@ -84,35 +83,19 @@ app.controller('profileGen', function($scope, $http) {
               //Clean possible null values from returned data.
               if(data.bio == null) data.bio = "You don't have a Bio :(";
               if(data.linkedin != null) { $scope.linkedin = data.linkedin; $scope.isLinkedInVisible = true; }
-              if(data.facebook != null) { $scope.facebook = data.facebook; $scope.isLinkedInVisible = true; }
+              if(data.facebook != null) { $scope.facebook = data.facebook; $scope.isFacebookVisible = true; }
               if(data.linkedin == null && data.facebook == null) {
                 $scope.noSocialMediaWarning = "No Social Media links available for this user!";
                 $scope.isNoSocialMediaWarningVisible = true;
               }
-
               $scope.username = data.username;  console.log("Username: " + $scope.username);
               $scope.bio = data.bio;            console.log("User bio: " + $scope.bio);
               sessionStorage.setItem('email', data.email);
-
-              //The JSON to pass to the profile generator
-              //var json = JSON.stringify(data);
-              //TEMP: Parse it back so I know what I am doing.
-              //var obj = JSON.parse(json);   //parse the JSON into an object we can use to generate HTML
-              //var string = obj.bio;         //temp, should give us a string.
-              /*
-              $.getScript("JS/profileGen.js", function(){
-                    console.log(json);
-                    var html = generateProfile(json);
-                    document.getElementById("profileGen").innerHTML = generateProfile(json);
-              });
-              */
             }
             else {
               $scope.txt = "Error no user found!";
             }
-        //This is reached although .success is reached before...
         }).error(function(data){
-            //$scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
             console.log('ERROR: Not sent to server.');
         });
       //We also need to get the user's public groups they are part of.
@@ -125,20 +108,17 @@ app.controller('profileGen', function($scope, $http) {
             if(Object.keys(data).length != 0)
             {
                 data.forEach(function(value) {
-                  //TODO These should be links!
+                  //TODO These should be links, but to what?
                   if(value.privacy == 0) document.getElementById("currentProjectsGen").innerHTML += value.groupname + " ";
                 });
             }
             else {
               console.log("This user is not part of any groups!");
             }
-        //This is reached although .success is reached before...
         }).error(function(data){
-            //$scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
             console.log('ERROR: Not sent to server.');
         });
       var formData = {username: sessionStorage.getItem('username'), pass : sessionStorage.getItem('pass')};
-      //TODO error 406? What am I not passing correctly in the request?
       $http.put('/user/get/connections', formData).
         success(function(data) {
           console.log("User Connections GET Request sent to server successfully!");
