@@ -174,7 +174,7 @@ router.put('/edit', function(req, res) {
  					}
 
  					// Replace last ',' with end query.
- 					sqlQuery = sqlQuery.slice(0, -1) + 'WHERE username=\'' + req.body.username + '\';';
+ 					sqlQuery = sqlQuery.slice(0, -1) + ' WHERE username=\'' + req.body.username + '\';';
 
 					client.query(sqlQuery,
 						function(err, result) {

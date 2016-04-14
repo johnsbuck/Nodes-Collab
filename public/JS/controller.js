@@ -1,4 +1,5 @@
 var app = angular.module('nodesConnect', []);
+//var groupPost = require('./groupGen',[]);
 
 //Seperate this controller per post generating pages i.e. Q&A, Freelance
 //AngularJS to retrieve the data from the DB
@@ -122,33 +123,27 @@ app.controller('profileGen', function($scope, $http) {
     $scope.sub();
 });
 
-app.controller('groupPostGen', function($scope, $http) {
+app.controller('groupPostCtrl', function($scope, $http) {
     $scope.txt = "";
-    $scope.groupname = sessionStorage.getItem('groupname');
-    $scope.username = sessionStorage.getItem('username');
+    $scope.group = sessionStorage.getItem('groupname');
+    $scope.count = 0;
+    $scope.formData = {'username': sessionStorage.getItem('username'),
+                        'groupname': sessionStorage.getItem('groupname'),
+                        'pass': sessionStorage.getItem('pass')};
     $scope.init = function() {
-      $scope.formData = {'username': sessionStorage.getItem('username'),
-                          'groupname': sessionStorage.getItem('groupname'),
-                          'pass': sessionStorage.getItem('pass')};
       $http.put('/group-post/get', $scope.formData)
         .success(function(data) {
-          console.log(data);
           console.log('Sent to sever successfully.');
-          //Apparently we need a directive to parse this data into a string -> use value.table_name
-          if(Object.keys(data).length != 0)
-          {
-              //$scope.txt = "Some data has been found, let's print it out!";
-              angular.forEach(data, function(value, key) {
-
-                console.log("Key: " + key + ", Value: " + value.username + ", " + value.text + ", " + value.timestamp);
-                //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
+              data.forEach(function(value) {
+                $scope.count++;
                 $.getScript("JS/groupGen.js", function(){
                   param = '{ "post" : [' +
                   '{ "username": "' + value.username + '", "text":"' + value.text + '", "timestamp":"' + value.timestamp + '" }]}';
-                  console.log(param);
                   document.getElementById("groupGen").innerHTML += singlePost(param);
                 });
               });
+          if(Object.keys(data).length != 0)
+          {
           }
           else {
             $scope.txt = "No posts have been found. Make a post to see some activity!";
@@ -159,38 +154,54 @@ app.controller('groupPostGen', function($scope, $http) {
         });
     }
 
-    $scope.sub = function() {
-      console.log($scope.groupname);
-      console.log($scope.username);
+    $scope.update = function() {
       $http.put('/group-post/get', $scope.formData).
         success(function(data) {
             console.log('Sent to sever successfully.');
-            //Apparently we need a directive to parse this data into a string -> use value.table_name
             if(Object.keys(data).length != 0)
             {
-                //$scope.txt = "Some data has been found, let's print it out!";
-                angular.forEach(data, function(value, key) {
-
-                  console.log("Key: " + key + ", Value: " + value.username + ", " + value.text + ", " + value.timestamp);
-                  //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
+                var i = 0;
+                var dataSliced = data.slice($scope.count, data.length);
+                dataSliced.forEach(function(dataElement)  {
                   $.getScript("JS/groupGen.js", function(){
                     param = '{ "post" : [' +
-                    '{ "username": "' + value.username + '", "text":"' + value.text + '", "timestamp":"' + value.timestamp + '" }]}';
-                    console.log(param);
+                    '{ "username": "' + dataElement.username + '", "text":"' + dataElement.text + '", "timestamp":"' + dataElement.timestamp + '" }]}';
                     document.getElementById("groupGen").innerHTML += singlePost(param);
                   });
+                  i++;
                 });
-            }
-            else {
-              $scope.txt = "No posts have been found. Make a post to see some activity!";
-            }
-        }).error(function(data){
-            $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
+                  $scope.count += i;
+              }
+            }).error(function(data){
             console.log('ERROR: Not sent to server.');
         });
     }
 
+    $scope.post = function() {
+      console.log($scope.formData);
+      if($scope.formData != undefined) {
+      $scope.formData.username = sessionStorage.getItem('username');
+      $scope.formData.groupname = sessionStorage.getItem('groupname');
+      $scope.formData.timestamp = '4/16/2016';
+      $scope.formData.pass = sessionStorage.getItem('pass');
+      $http.put('/group-post/post', $scope.formData).
+      success(function(data) {
+        $scope.txt = '';
+        document.getElementById('groupPostForm').value="";
+        console.log('Sent to the server successfully.');
+      }).error(function(data) {
+        $scope.update();
+        console.log('ERROR: Not sent to server.');
+      });
+      }
+      else {
+        console.log("Please input data");
+      }
+    }
     $scope.init();
+    window.setInterval(function() {
+      $scope.update();
+    }, 5000)
 });
 
 app.controller('newUserCtrl', function($scope, $http) {
@@ -226,7 +237,8 @@ app.controller('loginCtrl', function($scope, $http, $location) {
           sessionStorage.setItem('username', data.username);
           sessionStorage.setItem('email', $scope.formData.email);
           sessionStorage.setItem('pass', $scope.formData.pass);
-
+          sessionStorage.setItem('first_name', data.first_name);
+          sessionStorage.setItem('last_name', data.last_name);
           window.location.href = '/main.html';
           console.log('Sent to sever successfully.');
         }).error(function(data) {
@@ -263,16 +275,6 @@ app.controller('loginCtrl', function($scope, $http, $location) {
   }
 });
 
-app.controller('settingsCtrl', function($scope, $http) {
-  $scope.sub = function() {
-    $http.put('' , $scope.formData)
-    success(function(data) {
-      console.log('Sent to the server successfully.');
-    }).error(function(data) {
-      console.log('ERROR: Not sent to server.');
-    });
-  }
-});
 
 app.controller('navCtrl', function($scope, $http) {
   $scope.signout = function() {
@@ -288,44 +290,162 @@ app.controller('mainCtrl', function($scope, $http) {
   $scope.message = "Welcome back, " + sessionStorage.getItem('username');
 });
 
-app.controller('groupPostCtrl', function($scope, $http) {
-  console.log("GROUPPOSTCTRL");
-  $scope.message = "This function works";
+app.controller('generalCtrl', function($scope, $http) {
+  $scope.message = "Username: " + sessionStorage.getItem('username');
+  $scope.messageName = "Name: " + sessionStorage.getItem('first_name') + " " + sessionStorage.getItem('last_name');
+  $scope.messageEmail = "Email: " + sessionStorage.getItem('email');
+  $scope.first = sessionStorage.getItem('first_name');
+  $scope.last = sessionStorage.getItem('last_name');
+
+  $scope.changeName = function() {
+      console.log("Change Name");
+      $http.put('/user/get', $scope.formData).success(function(data) {
+        console.log(data);
+        if(typeof $scope.formData.first !== 'undefined'){
+      sessionStorage.setItem('first_name', $scope.formData.first);
+      }
+      if(typeof $scope.formData.last !== 'undefined'){
+      sessionStorage.setItem('last_name', $scope.formData.last);
+      }
+      }).error(function(data) {
+        console.log('ERROR: Not sent to server.');
+      });
+  }
+});
+
+
+app.controller('settingsCtrl', function($scope, $http) {
+  console.log("SETTINGS");
   $scope.sub = function() {
     console.log($scope.formData);
-    if($scope.formData != undefined) {
-    $scope.formData.username = sessionStorage.getItem('username');
-    $scope.formData.groupname = sessionStorage.getItem('groupname');
-    $scope.formData.timestamp = '4/21/2016'
-    $scope.formData.pass = sessionStorage.getItem('pass');
-    console.log($http);
-    $http.put('/group-post/post', $scope.formData).
+    $http.put('' , $scope.formData)
     success(function(data) {
       console.log('Sent to the server successfully.');
     }).error(function(data) {
       console.log('ERROR: Not sent to server.');
     });
-    }
-    else {
-      console.log("Please input data");
-    }
+  }
+});
+
+app.controller('blockedCtrl', function($scope, $http) {
+  console.log("BlockedSettings");
+  $scope.sub = function() {
+    console.log($scope.formData);
+    $http.put('/settings/blocked' , $scope.formData)
+    success(function(data) {
+      console.log('Sent to the server successfully.');
+    }).error(function(data) {
+      console.log('ERROR: Not sent to server.');
+    });
   }
 });
 
 app.controller('collabSettingsCtrl', function($scope, $http) {
-    console.log("CollabSettings");
-    $scope.sub = function() {
-      console.log($scope.formData);
-      $scope.formData.username = sessionStorage.getItem('username');
+  $scope.groupname = sessionStorage.getItem('groupname');
+  $scope.formData = {'username': sessionStorage.getItem('username'),
+                      'pass': sessionStorage.getItem('pass')};
+    $scope.createGroup = function() {
+      $scope.formData.groupname = $scope.formData.groupnameNew;
       $http.put('/group/create', $scope.formData).
       success(function(data) {
         sessionStorage.groupname = $scope.formData.groupname;
+        document.getElementById('groupCreateForm').value="";
         console.log('Sent to the server successfully.');
       }).error(function(data) {
         console.log('ERROR: Not sent to server.');
       });
     }
+
+    $scope.deleteGroup = function() {
+      $scope.formData.groupname = $scope.formData.groupnameDelete;
+      console.log($scope.formData);
+      $http.put('/group/delete', $scope.formData).
+      success(function(data) {
+        if(sessionStorage.groupname == $scope.formData.groupname)
+        sessionStorage.groupname = "";
+        document.getElementById('groupDeleteForm').value="";
+        console.log('Sent to the server successfully.');
+      }).error(function(data) {
+        console.log('ERROR: Not sent to server.');
+      });
+    }
+
+    //Used to display the groups the user is a part of.
+    $scope.showGroups = function() {
+      $http.put('/group/get/groups', $scope.formData).
+      success(function(data) {
+        console.log('Sent to the server successfully.');
+        if(Object.keys(data).length != 0)
+        {
+            data.forEach(function(dataElement)  {
+              $.getScript("JS/collabSettings.js", function(){
+                param = '{ "post" : [' +
+                '{ "groupname": "' + dataElement.groupname + '" }]}';
+                document.getElementById("Groups").innerHTML += addGroup(param);
+              });
+            });
+          }
+      }).error(function(data) {
+        console.log('ERROR: Not sent to server.');
+      });
+    }
+
+    //Used to show the members of a particular group.
+    $scope.showMembers = function() {
+      $scope.formData.groupname = sessionStorage.getItem('groupname');
+      $http.put('/group/get/members', $scope.formData).
+      success(function(data) {
+        console.log('Sent to the server successfully.');
+        if(Object.keys(data).length != 0)
+        {
+            data.forEach(function(dataElement)  {
+              $.getScript("JS/collabSettings.js", function(){
+                param = '{ "post" : [' +
+                '{ "username": "' + dataElement.username + '" }]}';
+                document.getElementById("Members").innerHTML += addMember(param);
+              });
+            });
+          }
+      }).error(function(data) {
+        console.log('ERROR: Not sent to server.');
+      });
+    }
+
+    $scope.addMember = function() {
+      console.log("Add Members");
+      $scope.formData.groupname = sessionStorage.getItem('groupname');
+      $scope.formData.pass = sessionStorage.getItem('pass');
+      console.log($scope.formData);
+      $http.put('/group/add/user', $scope.formData).
+      success(function(data) {
+        document.getElementById('userAdd').value="";
+        console.log('Sent to the server successfully.');
+      }).error(function(data) {
+        console.log('ERROR: Not sent to server.');
+      });
+    }
+
+    $scope.removeMember = function() {
+      console.log("Remove Members");
+      $scope.formData.groupname = sessionStorage.getItem('groupname');
+      $scope.formData.pass = sessionStorage.getItem('pass');
+      console.log($scope.formData);
+      $http.put('/group/delete/user', $scope.formData).
+      success(function(data) {
+        document.getElementById('userRemove').value="";
+        console.log('Sent to the server successfully.');
+      }).error(function(data) {
+        console.log('ERROR: Not sent to server.');
+      });
+    }
+
+    $scope.switchGroup = function() {
+      sessionStorage.groupname = $scope.formData.groupnameSwitch;
+      document.getElementById('groupSwitchForm').value="";
+    }
   });
+
+
 
 function popError(msg) {
   if(!$('.popup-error').length) {

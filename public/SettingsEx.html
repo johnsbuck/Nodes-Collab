@@ -24,9 +24,9 @@
     <script src="JS/controller.js"></script>
   </head>
 
-  <body>
+  <body ng-controller="generalCtrl">
 
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav class="navbar navbar-inverse navbar-fixed-top" ng-controller="navCtrl">
       <div class="container-fluid" ng-controller="settingsCtrl">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -43,6 +43,7 @@
             <li><a href="#">Settings</a></li>
             <li><a href="Profile.html">Profile</a></li>
             <li><a href="Help.html">Help</a></li>
+            <li><a href ="#" ng-click="signout()">Sign Out</a></li>
           </ul>
           <form class="navbar-form navbar-right">
             <input type="text" class="form-control" placeholder="Search...">
@@ -83,7 +84,7 @@
           <ul class="nav nav-sidebar">
             <li><a href="TextEditorEx.html"  >Text Editor</a></li>
             <li><a href="MyProject.html">My Projects</a></li>
-            <li><a href="#" class="Messanger">Messaging</a></li>
+            <li><a href="Messenger.html" class="Messenger">Messaging</a></li>
           </ul>
           <ul class="nav nav-sidebar">
             <li><a href="SearchEx.html">Search</a></li>
@@ -119,13 +120,58 @@
 
       <div class="tab-content">
             <div id="General" class="tab-pane fade in active">
-                <p>PUT GENERAL SETTINGS HERE</p>
+              <br>
+                {{message}}
+                <hr>
+                {{messageName}} <a href="#" data-toggle="modal" data-target="#editName">Edit</a>
+
+                <div class="modal fade" id="editName" role="dialog">
+                  <div class="modal-dialog">
+    
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Change Name:</h4>
+                      </div>
+                    <div class="modal-body">
+                      <label>First name:</label>
+                      <input type="text" id="first"  ng-model="formData.first" required>
+                      <br>
+                      <label>Last name:</label>
+                      <input type="text" id="last"  ng-model="formData.last" required>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-default" data-dismiss="modal" ng-click="changeName(formData)">Submit</button>
+                    </div>
+                  </div>
+      
+                </div>
+              </div>
+
+
+
+                <hr>
+                {{messageEmail}}
+                <hr>
             </div>
-            <div id="privacy" class="tab-pane fade">
-                <h3>PUT PRIVACY SETTINGS HERE</h3>
+            <div id="privacy" class="tab-pane fade" ng-controller="settingCtrl">
+                <br>
+                <form>
+                    <input type = "radio" name="privacy" value="private" ng-model="formData.privacy"> Private
+                    <input type = "radio" name="privacy" value="public" ng-model="formData.privacy"> Public
+                    <input type="submit" value="Submit" ng-click="sub(formData)">
+                </form>
+                <br>
             </div>
-            <div id="blocked" class="tab-pane fade">
-                <h3>PUT BLOCKED SETTINGS HERE</h3>
+            <div id="blocked" class="tab-pane fade" ng-controller="blockedCtrl">
+                <br>
+                <label>Enter user to block:</label>
+                <input type = "textbox" id="user" ng-model="formData.blocked">
+                <button type="button" ng-click"sub(formData)"> Block </button>
+                <hr>
+                <h4>Blocked users:</h4>
+                <label class="glyphicon glyphicon-remove"> Username</label>
             </div>
         </div>
 
@@ -142,117 +188,13 @@
 
     </div>
 
-    <div class="messaging container" id="messaging" style="display:none;">
-        <div class="row">
-            <div class="col-md-5">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <span class="glyphicon glyphicon-comment"></span> Chat
-                        <div class="btn-group pull-right">
-                            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                                <span class="glyphicon glyphicon-chevron-down"></span>
-                            </button>
-                            <ul class="dropdown-menu slidedown">
-                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-refresh">
-                                </span>Refresh</a></li>
-                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-ok-sign">
-                                </span>Available</a></li>
-                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-remove">
-                                </span>Busy</a></li>
-                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-time"></span>
-                                    Away</a></li>
-                                <li class="divider"></li>
-                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-off"></span>
-                                    Sign Out</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="panel-body">
-                        <ul class="chat">
-                            <li class="left clearfix"><span class="chat-img pull-left">
-                                <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
-                            </span>
-                                <div class="chat-body clearfix">
-                                    <div class="header">
-                                        <strong class="primary-font">Jack Sparrow</strong> <small class="pull-right text-muted">
-                                            <span class="glyphicon glyphicon-time"></span>12 mins ago</small>
-                                    </div>
-                                    <p>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
-                                        dolor, quis ullamcorper ligula sodales.
-                                    </p>
-                                </div>
-                            </li>
-                            <li class="right clearfix"><span class="chat-img pull-right">
-                                <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" />
-                            </span>
-                                <div class="chat-body clearfix">
-                                    <div class="header">
-                                        <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>13 mins ago</small>
-                                        <strong class="pull-right primary-font">Bhaumik Patel</strong>
-                                    </div>
-                                    <p>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
-                                        dolor, quis ullamcorper ligula sodales.
-                                    </p>
-                                </div>
-                            </li>
-                            <li class="left clearfix"><span class="chat-img pull-left">
-                                <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
-                            </span>
-                                <div class="chat-body clearfix">
-                                    <div class="header">
-                                        <strong class="primary-font">Jack Sparrow</strong> <small class="pull-right text-muted">
-                                            <span class="glyphicon glyphicon-time"></span>14 mins ago</small>
-                                    </div>
-                                    <p>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
-                                        dolor, quis ullamcorper ligula sodales.
-                                    </p>
-                                </div>
-                            </li>
-                            <li class="right clearfix"><span class="chat-img pull-right">
-                                <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" />
-                            </span>
-                                <div class="chat-body clearfix">
-                                    <div class="header">
-                                        <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>15 mins ago</small>
-                                        <strong class="pull-right primary-font">Bhaumik Patel</strong>
-                                    </div>
-                                    <p>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
-                                        dolor, quis ullamcorper ligula sodales.
-                                    </p>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="panel-footer">
-                        <div class="input-group">
-                            <input id="btn-input" type="text" class="form-control input-sm" placeholder="Type your message here..." />
-                            <span class="input-group-btn">
-                                <button class="btn btn-warning btn-sm" id="btn-chat">
-                                    Send</button>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="../JS/FreeLance.js"></script>
-    <script>
-      $(document).ready(function() {
-        $('.Messanger').click(function() {
-          toggleContent($('.messaging'));
-        });
-      });
-    </script>
 
     <script type="text/javascript">
       function toggleContent(content) {

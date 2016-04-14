@@ -18,7 +18,6 @@ router.put('/get', function(req, res) {
 	// Connect to postgreSQL
 	pg.connect(connectionString, function(err, client, done) {
 		// Query group to get privacy
-		console.log(req.body);
 		client.query('SELECT * FROM groups WHERE groupname=\'' +
 			req.body.groupname + '\';', function(err, result) {
 				// If error, send client error
@@ -31,7 +30,7 @@ router.put('/get', function(req, res) {
 					done();
 					res.sendStatus(404).end();
 				// If not private, send rows
-				}else if(result.rows[0].privacy !== 2){
+			}else if(result.rows[0].privacy !== 1){
 					// Get group posts
 					client.query('SELECT username, text, timestamp FROM group_posts WHERE groupname = \'' + req.body.groupname + '\';',
 					function(err, result) {
@@ -274,7 +273,7 @@ router.put('/edit', function(req, res) {
 		           }
 
 		           // Replace last ',' with end query.
-		           sqlQuery = sqlQuery.slice(0, -1) + 'WHERE username=\'' + req.body.username + '\';';
+		           sqlQuery = sqlQuery.slice(0, -1) + ' WHERE username=\'' + req.body.username + '\';';
 
 							 client.query(sqlQuery,
 							 function(err, result) {
