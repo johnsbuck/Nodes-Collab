@@ -46,7 +46,6 @@ function singlePost(singleData)
   var date = new Date(obj.post[0].timestamp);
   var formatDate = date.toLocaleTimeString("en-us", dateOptions)
 
-
   var divBuilder = `<div class="container">
 	                   <div class="row">
   		                <section class="panel panel-info">

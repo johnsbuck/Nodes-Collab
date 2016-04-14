@@ -138,7 +138,10 @@
               }
               </script>
               <!--LEFT for timestamp. Delete Later-->
-              <class="form-control" ng-model="formData.timestamp"> <br><br>
+              <class="form-control" ng-model="formData.timestamp">
+              <div class="checkbox">
+                <label><input type="checkbox" ng-model="formData.collabedit" value="true">Open a CollabEdit.com page for this post.</label>
+              </div><br>
               <button class="btn" class="form-control" ng-click="sub(formData)"><span class="glyphicon glyphicon-pushpin" type="submit" aria-hidden="true"></span> Post </button>
           </section>
          </section>
