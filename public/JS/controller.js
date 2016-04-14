@@ -70,6 +70,7 @@ app.controller('userPostsGen', function($scope, $http) {
     $scope.sub();
 });
 
+
 //Only shows QA posts
 //AngularJS to retrieve the data from the DB
 app.controller('QAPostGen', function($scope, $http) {
@@ -696,6 +697,212 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
         console.log('ERROR: Not sent to server.');
       });
     }
+  });
+
+  app.controller('searchWebsiteCtrl', function($scope, $http) {
+      $scope.txt = "";
+      $scope.sub = function(formData) {
+        console.log(formData);
+        console.log("infunction");
+        var searchMethod = '';
+        if (formData.searchType == 0 || formData.type == 1)//posts search
+        {
+          searchMethod = 'forumSearch';
+        }
+        else if (formData.searchType == 2) //group search
+        {
+          searchMethod = 'groupSearch';
+        }
+        else//user search
+        {
+          searchMethod = 'userSearch';
+        }
+        $http.put('/search/'+searchMethod, formData).
+          success(function(data) {
+              console.log('Sent to sever successfully.' + data);
+              document.getElementById("searchResults").innerHTML = "";
+              //Apparently we need a directive to parse this data into a string -> use value.table_name
+              if(Object.keys(data).length != 0)
+              {
+                var map = {};
+                var prevKey = '';
+                switch (searchMethod)
+                {
+                  case 'forumSearch':
+                    //$scope.txt = "Some data has been found, let's print it out!";
+                    angular.forEach(data, function(value, key) {
+                      console.log("Key: " + key + ", Value: " + value.username + ", " + value.title + ", " + value.text);
+                      //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
+                      if(!value.title.equals(prevKey))
+                      {
+                        map[value.title] = value;
+                        map[value.title].count = 1;
+                        prevKey = value.title;
+
+                      }
+                      else {
+                        map[value.title].count++;
+                      }
+
+                    });
+                    Object.keys(map).forEach(function(key, value){
+
+                      var highestCount = -1;
+                      var mostReleventkey = "";
+                      Object.keys(map).forEach(function(key, value){
+                        if(value.count > highestCount)
+                        {
+                          highestCount = value.count;
+                          mostReleventkey = key;
+                        }
+                      });
+                      map[mostReleventkey].count = -1;
+                      var postData = map[mostReleventkey];
+                      $.getScript("JS/tableGen.js", function(){
+                        param = '{ "post" : [' +
+                        '{ "username": "' + postData.username + '", "timestamp":"' + postData.timestamp + '", "post_title":"' + postData.title + '", "post_tags":"' + "notag" +
+                        '", "type":"' + postData.type + '", "id":"' + postData.id + '" }]}';
+                        console.log(param);
+                        document.getElementById("searchResults").innerHTML += singlePost(param);
+                      });
+                    });
+                    break;
+                  case 'groupSearch':
+                  angular.forEach(data, function(value, key) {
+                    console.log("Key: " + key + ", Value: " + value.groupname +" privacy "+ value.privacy);
+                    //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
+                    if(value.privacy == 0)
+                    {
+                      if(!value.groupname.equals(prevKey))
+                      {
+                        map[value.groupname] = value;
+                        map[value.groupname].count = 1;
+                        prevKey = value.groupname;
+
+                      }
+                      else {
+                        map[value.groupname].count++;
+                      }
+                    }
+
+                  });
+                  Object.keys(map).forEach(function(key, value){
+
+                    var highestCount = -1;
+                    var mostReleventkey = "";
+                    Object.keys(map).forEach(function(key, value){
+                      if(value.count > highestCount)
+                      {
+                        highestCount = value.count;
+                        mostReleventkey = key;
+                      }
+                    });
+                    map[mostReleventkey].count = -1;
+                    var postData = map[mostReleventkey];
+                    var groupPriv = "public";
+                    if(postData.privacy == 1)
+                    {
+                      groupPriv = "private";
+                    }
+                    $.getScript("JS/groupSearchResultsBuilder.js", function(){
+                      param = '{ "group" : [' +
+                      '{ "groupname": "' + postData.groupname + '", "privacy":"' + groupPriv + '" }]}';
+                      console.log(param);
+                      document.getElementById("searchResults").innerHTML += singlePost(param);
+                    });
+                    });
+                    break;
+                  case 'userSearch':
+                    angular.forEach(data, function(value, key) {
+                      $.getScript("JS/profileSearchResultsBuilder.js", function(){
+                        param = '{ "user" : [' +
+                        '{ "username": "' + value.username + '", "email":"' + value.email + '" }]}';
+                        console.log(param);
+                        document.getElementById("searchResults").innerHTML += singlePost(param);
+                      });
+                    });
+                    break;
+                  default:
+                    //we should never get here
+                    break;
+                }
+              }
+              else {
+                $scope.txt = "No posts have been found. Try wording your search differently";
+              }
+          }).error(function(data){
+              $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
+              console.log('ERROR: Not sent to server.');
+          });
+      }
+  });
+
+  //Only shows QA posts
+  //AngularJS to retrieve the data from the DB
+  app.controller('QAPostGen', function($scope, $http) {
+      $scope.txt = "";
+
+      $scope.sub = function() {
+        //API CALL -> qa_posts put (which is redefined as a get).
+        $http.put('/qa-post/get').
+          success(function(data) {
+              console.log('Sent to sever successfully.');
+              //Apparently we need a directive to parse this data into a string -> use value.table_name
+              if(Object.keys(data).length != 0)
+              {
+                  //we want to build this reverse order to retrieve the most recent posts first
+                  //for each post returned
+                  data.reverse();
+                  angular.forEach(data, function(value, key) {
+
+                    console.log("Retrieving tag data for: " + value.title + ", " + value.type);
+                    $scope.formData = {'title': value.title,
+                                      'type' : value.type};
+
+                    var tagBuilder = "notag";
+                    //get the tags for this posts
+                    $http.put('/tag/get', $scope.formData).
+                      success(function(dataTag) {
+                          console.log('Sent to sever successfully.');
+                          if(Object.keys(dataTag).length != 0)
+                          {
+                              console.log(dataTag);
+                              //for each tag returned
+                              tagBuilder = "";
+                              angular.forEach(dataTag, function(valueTag, keyTag) {
+                                  tagBuilder += valueTag.tag + ";";
+                                });
+                                console.log("TagBuilder: " + tagBuilder);
+                          }
+                          else {
+                              console.log("TagBuilder: Didn't find any tags for this post.");
+                          }
+
+                          $.getScript("JS/tableGen.js", function(){
+                            param = '{ "post" : [' +
+                            '{ "username": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + tagBuilder +
+                            '", "type":"' + value.type + '", "id":"' + value.id + '" }]}';
+                            console.log(param);
+                            document.getElementById("QAPostGen").innerHTML += singlePost(param);
+
+                      }).error(function(dataTag){
+                          //db error
+                          console.log('ERROR: Tag data not sent to server.');
+                      });
+                    });
+                  });
+
+              }
+              else {
+                $scope.txt = "No posts have been found. Make a post to see some activity!";
+              }
+          }).error(function(data){
+              $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
+              console.log('ERROR: Not sent to server.');
+          });
+      }
+
+      $scope.sub();
   });
 
 function popError(msg) {

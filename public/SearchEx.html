@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="nodesConnect">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -19,6 +19,8 @@
 
     <!-- Custom styles for this template -->
     <link href="../CSS/main.css" rel="stylesheet">
+    <script src="JS/angular.min.js"></script>
+    <script src="JS/controller.js"></script>
 
   </head>
 
@@ -97,48 +99,39 @@
 
 
           <h2>Enter a Search</h2>
-          <div class = "row">
-          <div class = "col-lg-6">
-            <input type="text" class="form-control" placeholder="Search...">
+          <div class = "row" >
+          <div class = "col-lg-6" ng-controller="searchWebsiteCtrl">
+            <form class="form-search" role="form" method="put" >
+            <input type="text" class="form-control" placeholder="Search..." ng-model="formData.searchString">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></button>
+            <button type="submit" class="btn btn-primary" ng-click="sub(formData)"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
             <ul class="SearchPage dropdown-menu" style = "width: 200px">
               <li>
                 <div class="form-group" >
                   <label for="filter">Search in:</label>
-                  <select class="form-control">
-                    <option value="0" selected>All</option>
-                    <option value="1">Projects</option>
-                    <option value="2">Freelance Work</option>
-                    <option value="3">Q&A</option>
-                    <option value="4">People</option>
+                  <select ng-model="formData.searchType" ng-init="formData.searchType = '0'" class="form-control">
+                    <option value="0" ng-model="formData.searchType" >Questions and Answers</option>
+                    <option value="1" ng-model="formData.searchType">Freelance Work</option>
+                    <option value="2" ng-model="formData.searchType">Projects</option>
+                    <option value="3" ng-model="formData.searchType">People</option>
                   </select>
                 </div>
               </li> <label></label>
-             <li>
-              <label for="contain">Contains the words</label>
-              <input class="form-control" type="text" />
-            </li> <label></label>
-            <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-          </ul>
+            </ul>
+
+          </form>
         </div>
       </div>
 
             <p>Search Results:</p>
 
-            <ul>
-               <li>FILL ME</li>
-                <li>FILL ME</li>
-                <li>FILL ME</li>
-              </ul>
+            <div class = "search-results" ng-controller="searchResults">
 
-            <nav>
-            <ul class="pager">
-              <li><a href="#">Previous</a></li>
-              <li><a href="#">Next</a></li>
-            </ul>
-          </nav>
+            </div>
 
-    
+
+
+
 
     <footer class="blog-footer">
       <h6>Search page built for NodesConnect</h6>
@@ -148,7 +141,7 @@
     </footer>
 
     </div>
-    
+
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
