@@ -130,7 +130,7 @@
                 <button type="button submit" ng-click="deleteGroup(formData)">Delete Group</button>
                 <hr>
                 <p>Enter group name you wish to switch to:</p>
-                <textarea id="groupSwitchForm" rows= "1" ng-model= "formData.groupnameSwitch"> </textarea>
+                <textarea id="groupSwitchForm" rows= "1" ng-model= "formData.new.currentgroup"> </textarea>
                 <button type="button submit" ng-click="switchGroup(formData)">Switch</button>
                 <hr>
                 <div id="Groups" class="tab-pane fade in active">
@@ -138,8 +138,9 @@
                 </div>
             </div>
             <div id="privacy" class="tab-pane fade">
+              <br>
                 <label>Add user to group:</label>
-                <input type="textbox" id="userAdd" ng-model="formData.new.user"></input>
+                <input type="textbox" id="userAdd" ng-model="formData.newuser"></input>
                 <br>
                 <label>Select permission type:</label>
                 <label><input type="radio" ng-model="formData.perms" value= 0 name="privacyradio"> Admin </label>

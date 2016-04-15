@@ -24,7 +24,7 @@
     <script src="JS/controller.js"></script>
   </head>
 
-  <body ng-controller="generalCtrl">
+  <body ng-controller="generalCtrl" ng-init="initBio(formdata)">
 
     <nav class="navbar navbar-inverse navbar-fixed-top" ng-controller="navCtrl">
       <div class="container-fluid" ng-controller="settingsCtrl">
@@ -136,10 +136,10 @@
                       </div>
                     <div class="modal-body">
                       <label>First name:</label>
-                      <input type="text" id="first"  ng-model="formData.first" required>
+                      <input type="text" id="first" ng-model="formData.new.first_name" required>
                       <br>
                       <label>Last name:</label>
-                      <input type="text" id="last"  ng-model="formData.last" required>
+                      <input type="text" id="last"  ng-model="formData.new.last_name" required>
                     </div>
                     <div class="modal-footer">
                       <button type="submit" class="btn btn-default" data-dismiss="modal" ng-click="changeName(formData)">Submit</button>
@@ -148,11 +148,44 @@
       
                 </div>
               </div>
-
-
-
                 <hr>
                 {{messageEmail}}
+                <hr>
+                Bio: 
+                <br> 
+                {{bio}}
+                <br>
+                <textarea type="text" id="bioSetting" style="width: 100%; height: 250px;" ng-model="formData.new.bio">  </textarea>
+                <button type="button" ng-click="updateBio(formData)">Update</button>
+                <hr>
+                Social Medias:<br>
+                Facebook: <label id="fblink">{{facebook}}</label><br>
+                LinkedIn: <label id="lilink">{{linkedin}}</label><br>
+                <a href="#" data-toggle="modal" data-target="#editMedia">Edit</a>
+
+                <div class="modal fade" id="editMedia" role="dialog">
+                  <div class="modal-dialog">
+    
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Change Links:</h4>
+                      </div>
+                    <div class="modal-body">
+                      <label>Facebook:</label>
+                      <input type="text" id="fb" ng-model="formData.new.facebook" required>
+                      <br>
+                      <label>LinkedIn:</label>
+                      <input type="text" id="li"  ng-model="formData.new.linkedin" required>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-default" data-dismiss="modal" ng-click="changeMedia(formData)">Submit</button>
+                    </div>
+                  </div>
+      
+                </div>
+              </div>
                 <hr>
             </div>
             <div id="privacy" class="tab-pane fade" ng-controller="settingCtrl">

@@ -9,6 +9,7 @@ var user = 'CREATE TABLE users (username VARCHAR(40) PRIMARY KEY, ' +
                                 'email VARCHAR(40) UNIQUE NOT NULL, ' +
                                 'first_name VARCHAR(40) NOT NULL, last_name VARCHAR(40) NOT NULL, ' +
                                 'gender VARCHAR(40), ' +
+                                'currentgroup VARCHAR(40), ' +
                                 'bio VARCHAR(63206), ' +
                                 'facebook VARCHAR(80), linkedin VARCHAR(80));';
 
