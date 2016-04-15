@@ -39,47 +39,120 @@ app.controller('tableGen', function($scope, $http) {
     $scope.sub();
 });
 
-//Used to control generating a user's profile
-//AngularJS to retrieve the data from the DB
-//TEMPORARY: using a static value instead of sessionStorage to grab the user
-app.controller('userProfile', function($scope, $http) {
-    $scope.txt = "";
-
-    $scope.sub = function() {
-      //API CALL -> users put (which is redefined as a get).
-
-      var formData = new FormData();
-      formData.append('username', 'middle59');// must this be sent?
-      // /user/get needs to parse username data from req.body.username so we need to make some artificial web request
-
-      $http.put('/user/get', request).
+//Controller for the user profile
+//TODO list connections of a user
+//TODO when viewing another user's profile, the "Add" button should add them to that user's profile.
+app.controller('profileGen', function($scope, $http) {
+  var viewingCurrentUser = true;    //Are we viewing the current user's profile or another person's profile? TODO integreate this better
+    $scope.viewContactsBtn_Click = function() {
+      console.log("View contacts button clicked!")
+    }
+    $scope.contactBtn_Click = function() {
+      console.log("Mailto button clicked!");
+      //TODO something better than opening in a new tab/window?
+      window.open("mailto:" + sessionStorage.getItem('email'));
+    }
+    //Adds a connection. Requires username, password, newuser
+    $scope.addConnection = function(formData) {
+      //consider popping message in modal.
+      console.log("Reached addConnection()");
+      $scope.formData['username'] = sessionStorage.getItem('username');
+      $scope.formData['pass'] = sessionStorage.getItem('pass');
+      $http.put('/user/create/connection', formData).
         success(function(data) {
-            console.log('Sent to sever successfully.');
+          $scope.no_connections += 1;   //Does this work???
+          console.log("Connection added successfully!");
+          popMessage("Connection Added!");
+        }).error(function(data) {
+          console.log("Error in connection create request!");
+          popError("Error adding user!");
+        });
+    }
+    $scope.sub = function() {
+      $scope.formData = {};   //Init formData
+      $scope.formData['username'] = sessionStorage.getItem('username');
+      //TODO Make sure this plays nice with adding connections, etc.
+      //TODO undo this at the end!
+      if(sessionStorage.getItem('viewuser') != null) {
+        viewingCurrentUser = false;
+        $scope.formData['username'] = sessionStorage.getItem('viewuser');       //If we are attempting to view a user other than ourselves, redefine 'username'.
+      }
+      $scope.formData['pass'] = sessionStorage.getItem('pass');
+      //API call to get user information
+      $http.put('/user/get', $scope.formData).
+        success(function(data) {
+            console.log('User GET Request sent to sever successfully.');
             //Apparently we need a directive to parse this data into a string -> use value.table_name
             if(Object.keys(data).length != 0)
             {
-                //we should only have one object here
-                angular.forEach(data, function(value, key) {
-
-                  console.log("Key: " + key + ", Value: " + value.username);
-                  //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
-                  $.getScript("JS/profileGen.js", function(){
-                    param = '{ "profile" : [' +
-                    '{ "username": "' + value.username + '" }]}';
-                    console.log(param);
-                    document.getElementById("userProfile").innerHTML += singleProfile(param);
-                  });
+              //Clean possible null values from returned data.
+              if(data.bio == null) data.bio = "You don't have a Bio :(";
+              if(data.linkedin != null) { $scope.linkedin = data.linkedin; $scope.isLinkedInVisible = true; }
+              if(data.facebook != null) { $scope.facebook = data.facebook; $scope.isFacebookVisible = true; }
+              if(data.linkedin == null && data.facebook == null) {
+                $scope.noSocialMediaWarning = "No Social Media links available for this user!";
+                $scope.isNoSocialMediaWarningVisible = true;
+              }
+              $scope.username = data.username;  console.log("Username: " + $scope.username);
+              $scope.bio = data.bio;            console.log("User bio: " + $scope.bio);
+              sessionStorage.setItem('email', data.email);
+            }
+            else {
+              $scope.txt = "Error no user found!";
+            }
+        }).error(function(data){
+            console.log('ERROR: Not sent to server.');
+        });
+      //We also need to get the user's public groups they are part of.
+      //API call requires: username and password.
+      //TODO New API call to get all public groups ANY user is part of - no authentication required.
+      $http.put('/group/get/groups', $scope.formData).
+        success(function(data) {
+            console.log('Groups GET Request sent to sever successfully.');
+            //Apparently we need a directive to parse this data into a string -> use value.table_name
+            if(Object.keys(data).length != 0)
+            {
+                data.forEach(function(value) {
+                  //TODO These should be links, but to what?
+                  if(value.privacy == 0) document.getElementById("currentProjectsGen").innerHTML += value.groupname + " ";
                 });
             }
             else {
-              $scope.txt = "This user does not seem to be in our database..";
+              console.log("This user is not part of any groups!");
             }
         }).error(function(data){
-            $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
             console.log('ERROR: Not sent to server.');
         });
+      var formData = {username: sessionStorage.getItem('username'), pass : sessionStorage.getItem('pass')};
+      $http.put('/user/get/connections', formData).
+        success(function(data) {
+          console.log("User Connections GET Request sent to server successfully!");
+          if(Object.keys(data).length != 0)
+          {
+            $scope.no_connections = Object.keys(data).length;
+            //Initialize table as string first
+            var userTable =
+             "<table class='table table-striped' width='100%'> " +
+                "<thead><tr><th>Username</th><th>View Profile</th></tr></thead>" +
+                "<tbody>";
+            data.forEach(function(value) {
+            userTable += "<tr><td>" + value.second_user + "</td><td>" + "Link" + "</td></tr>";
+            });
+            userTable += "</tbody></table>";
+            //Finally set the table to the innerHTML
+            document.getElementById('viewConnectionsGen').innerHTML = userTable;
+            console.log(document.getElementById('viewConnectionsGen').innerHTML);
+          }
+          else {
+            $scope.no_connections = 0;
+            $scope.viewConnectionsGen.innerHTML = "<p>No connections!</p>"
+            console.log("No connections for this user found.");
+          }
+        }).error(function(data) {
+          console.log("User connections GET request not sent to server!");
+        });
     }
-
+    //Call method to execute code above.
     $scope.sub();
 });
 

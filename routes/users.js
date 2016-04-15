@@ -23,7 +23,11 @@ router.put('/get', function(req, res, next) {
       where_clause = 'email = \'' + req.body.email + '\'';
     }
 
+<<<<<<< HEAD
     client.query('SELECT currentgroup, bio, facebook, linkedin, first_name, last_name, username, email, gender ' +
+=======
+    client.query('SELECT first_name, last_name, username, email, gender, bio, facebook, linkedin ' +
+>>>>>>> profileImplementation
       'FROM users WHERE ' + where_clause + ';',
       function(err, result) {
         done();
@@ -89,6 +93,8 @@ router.delete('/delete', function(req, res, next) {
  *
  * Creates a new user. Requires their basic information that should match with
  * the 'NewUser.html' form.
+ *
+ * TODO Modify for new attributes!
  */
 router.put('/create', function(req, res, next) {
   req.body = quoteFixer(req.body);
@@ -177,11 +183,61 @@ router.put('/edit', function(req, res, next) {
     });
   });
 });
-
+/*
+Requires: current user username, pass, newuser
+*/
 router.put('/create/connection', function(req, res, next) {
+  console.log("Entered create connection!");
   if(req.body.username === req.body.newuser) {
     res.sendStatus(406).end();
   }
+  req.body = quoteFixer(req.body);
+  pg.connect(connectionString, function(err, client, done) {
+    console.log(req.body);
+    client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
+     function(err, result) {
+        console.log("result");
+       console.log(result);
+       if(err) {
+         done();
+         console.error(err);
+         res.sendStatus(406).end();
+       }else if(!result || result.rows.length === 0) {
+         //console.log(result);
+         done();
+         res.sendStatus(404).end();
+       }else {
+         var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
+         console.log(passHash.verify(req.body.pass, hashpass));
+         if(passHash.verify(req.body.pass, hashpass)) {
+          client.query('INSERT INTO connections (first_user, second_user) VALUES (\'' +
+            req.body.username + '\', \'' + req.body.newuser + '\');',
+          function(err, result) {
+            done();
+            if(err) {
+              console.error(err);
+              res.sendStatus(406).end();
+            } else {
+              //Query accepted and is returning stuff.
+              console.log("Printing connection results:");
+              console.log(result);
+              res.sendStatus(202).end();
+            }
+          });
+        }else {
+          done();
+          res.sendStatus(403).end();
+        }
+      }
+    });
+  });
+});
+/*
+Get all the connections for a user.
+
+Method: PUT (should be GET)
+**/
+router.put('/get/connections', function(req, res, next) {
   req.body = quoteFixer(req.body);
   pg.connect(connectionString, function(err, client, done) {
     client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
@@ -197,15 +253,14 @@ router.put('/create/connection', function(req, res, next) {
          var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
          console.log(passHash.verify(req.body.pass, hashpass));
          if(passHash.verify(req.body.pass, hashpass)) {
-          client.query('INSERT INTO connections (first_user, second_user) VALUES (\'' +
-            req.body.username + '\', \'' + req.body.connect_user + ');',
+          client.query('SELECT * FROM connections WHERE first_user = \''+ req.body.username +'\';',
           function(err, result) {
             done();
             if(err) {
               console.error(err);
               res.sendStatus(406).end();
             } else {
-              res.sendStatus(202).end();
+              res.status(202).send(result.rows).end();
             }
           });
         }else {
