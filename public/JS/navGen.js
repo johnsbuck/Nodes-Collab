@@ -58,7 +58,7 @@ function generateNav(){
           </ul>
           <ul class="nav nav-sidebar">
             <li><a href="TextEditorEx.html"  >Text Editor</a></li>
-            <li><a href="MyProject.html">My Projects</a></li>
+            
             <li><a href="Messenger.html" class="Messenger">Messaging</a></li>
           </ul>
           <ul class="nav nav-sidebar">
