@@ -173,11 +173,16 @@
                       </div>
                   </div><!--/col-->
                   <div class="col-xs-12 col-sm-4">
+                    <!--Select to remove a connection -->
+                    <select class="form-control" id="connectionSelect"><div id='connectionsSelectOptions'></div></select>
+                    <button type="button" class="btn btn-default" ng-click="removeConnection()">Remove</button>
+                  </div><!--/col-->
+                  <div class="col-xs-12 col-sm-4">
                     <!--Button to email user -->
                     <button class="btn btn-primary btn-block" type="button" ng-click="contactBtn_Click()"><span class="fa fa-gear"></span> <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Contact </button>
                   </div><!--/col-->
                   <div class="col-xs-12 col-sm-4">
-                    <!--Button to view list of contacts -->
+                    <!--Button to view list of connections -->
                     <button class="btn btn-primary btn-block" type="button" data-toggle="modal" data-target="#viewConnectionsModal"><span class="fa fa-gear"></span> <span class="glyphicon glyphicon-list" aria-hidden="true"></span> View Contacts </button>
                   </div><!--/col-->
                   <!-- View Connections Modal -->

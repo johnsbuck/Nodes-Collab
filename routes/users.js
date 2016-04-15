@@ -23,7 +23,7 @@ router.put('/get', function(req, res, next) {
       where_clause = 'email = \'' + req.body.email + '\'';
     }
 
-    client.query('SELECT first_name, last_name, username, email, gender, bio, facebook, linkedin ' +
+    client.query('SELECT currentgroup, bio, facebook, linkedin, first_name, last_name, username, email, gender ' +
       'FROM users WHERE ' + where_clause + ';',
       function(err, result) {
         done();
@@ -143,15 +143,16 @@ router.put('/edit', function(req, res, next) {
          var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
          console.log(passHash.verify(req.body.pass, hashpass));
          if(passHash.verify(req.body.pass, hashpass)) {
+           console.log(req.body.new);
            // Check what to UPDATE in user's row
            var sqlQuery = 'UPDATE users SET';
            var columns = {'username': true, 'pass': true, 'email': true, 'first_name': true, 'last_name': true,
-            'gender': true, 'bio': true, 'facebook': true, 'linkedin': true};
+            'gender': true, 'currentgroup': true, 'bio': true, 'facebook': true, 'linkedin': true};
            for(key in req.body.new) {
              if(key in columns) {
                sqlQuery += ' ' + key + '=\'' + req.body.new[key] + '\',';
              } else {
-               console.err('INVALID COLUMN GIVEN');
+               console.error('INVALID COLUMN GIVEN');
                res.sendStatus(406).end();
              }
            }
