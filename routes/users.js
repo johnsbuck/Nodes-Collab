@@ -23,11 +23,7 @@ router.put('/get', function(req, res, next) {
       where_clause = 'email = \'' + req.body.email + '\'';
     }
 
-<<<<<<< HEAD
     client.query('SELECT currentgroup, bio, facebook, linkedin, first_name, last_name, username, email, gender ' +
-=======
-    client.query('SELECT first_name, last_name, username, email, gender, bio, facebook, linkedin ' +
->>>>>>> profileImplementation
       'FROM users WHERE ' + where_clause + ';',
       function(err, result) {
         done();
