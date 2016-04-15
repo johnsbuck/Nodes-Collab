@@ -13,7 +13,11 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
  * their username.
  */
  router.put('/forumSearch', function(req, res) {
+   console.log("in forumSearch");
+   req.body = quoteFixer(req.body);
    pg.connect(connectionString, function(err, client, done) {
+
+     console.log("in forumSearch");
      var stringAndTagSplit = req.body.searchString.split(':');
      var type = quoteFixer(req.body.searchType);
      var tagsArray;
@@ -69,6 +73,7 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
          console.log(result);
 
          if(err) {
+           console.log("meme");
            console.error(err);
            res.sendStatus(406);
          }else if(!result || result.rows.length === 0) {

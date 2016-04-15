@@ -25,7 +25,7 @@
 
   </head>
 
-  <body>
+  <body onload = "loadCollab()">
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
@@ -96,26 +96,18 @@
       </div>
     </div>
 
+    <div class="container"><br><br>
+    <div class="alert alert-warning">
+  <strong>Alert!</strong> This page opens a new tab directed to http://collabedit.com but requires pop-ups to be enabled in your browser.
+</div>
+</div>
 
-    <div class="main col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
-      <H1> Title your post:</H1>
-
-      <input type="text" class="form-control" placeholder="Title" aria-describedby="sizing-addon1" style="width: 300px;">
-      <label></label>
-
-      <textarea name="area3" style="width: 1000px; height: 500px;"> </textarea>
-
-
-    <footer class="blog-footer">
-      <h6>Text Editor page built for NodesConnect</h6>
-      <p>
-        <a href="#">Back to top</a>
-      </p>
-    </footer>
-
-    </div>
-
-
+    <script>
+    function loadCollab()
+    {
+      window.open("http://collabedit.com/new");
+    }
+    </script>
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->

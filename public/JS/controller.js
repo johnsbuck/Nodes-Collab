@@ -722,7 +722,9 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
         {
           searchMethod = 'userSearch';
         }
-        $http.put('/search/'+searchMethod, formData).
+        var searchCall = '/search/'+searchMethod;
+        console.log(searchCall);
+        $http.put(searchCall, formData).
           success(function(data) {
               console.log('Sent to sever successfully.' + data);
               document.getElementById("searchResults").innerHTML = "";
