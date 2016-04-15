@@ -6,6 +6,7 @@ function singlePost(singleData)
   var obj = JSON.parse(singleData);
   console.log(obj);
   var groupname = obj.group[0].groupname;
+  console.log(groupname);
   //well just set the post type as a tag
   var privacy = obj.group[0].privacy;
 
@@ -22,7 +23,7 @@ function singlePost(singleData)
                        </section>
                        <section class="row">
                               <ul class="col-md-6">`
-                              if(privacy.equals("public"))
+                              if(privacy === "public")
                               {
                                 divBuilder += `<li class="list-unstyled"><a href="ProjectCollab.html" onclick="storeSearchedGroup('` + groupname + `')"><i class="glyphicon glyphicon-comment"> </i> View Group</a>`
                               }

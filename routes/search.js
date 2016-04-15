@@ -86,22 +86,24 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
  });
 
  router.put('/groupSearch', function(req, res) {
+   console.log("in groupSearch");
    pg.connect(connectionString, function(err, client, done) {
+     console.log("data base connect est");
      var searchWordsArray = req.body.searchString.split(" ");
-     var containsClause = '';
+     var likeClause = '';
      if(searchWordsArray.length > 0)
      {
-       containsClause = ' CONTAINS \'' + quoteFixer(searchWordsArray[0])+'\'';
+       likeClause = ' LIKE \'' + quoteFixer(searchWordsArray[0])+'\'';
        for(var i = 1; i < searchWordsArray.length; i++)
        {
-         containsClause += ' OR CONTAINS \'' + quoteFixer(searchWordsArray[i])+'\'';
+         likeClause += ' OR LIKE \'' + quoteFixer(searchWordsArray[i])+'\'';
        }
      }
 
-     console.log(containsClause);
+     console.log(likeClause);
 
      client.query('SELECT * FROM groups WHERE groupname' +
-       containsClause + ' ORDER BY groupname ASC;',
+       likeClause + ' ORDER BY groupname ASC;',
        function(err, result) {
          done();
          console.log(result);

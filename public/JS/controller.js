@@ -1109,48 +1109,66 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
                     });
                     break;
                   case 'groupSearch':
-                  angular.forEach(data, function(value, key) {
-                    console.log("Key: " + key + ", Value: " + value.groupname +" privacy "+ value.privacy);
-                    //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
-                    if(value.privacy == 0)
-                    {
-                      if(!value.groupname.equals(prevKey))
-                      {
-                        map[value.groupname] = value;
-                        map[value.groupname].count = 1;
-                        prevKey = value.groupname;
+                    var gname = "";
+                    var privacy = "";
+                    angular.forEach(data, function(value, key) {
+                      console.log("key: " + key + " value: " + value);
+                    //   console.log("Key: " + key + ", Value: " + value.groupname +" privacy "+ value.privacy);
+                    //   //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
+                    //   if(value.privacy == 0)
+                    //   {
+                    //     if(!value.groupname.equals(prevKey))
+                    //     {
+                    //       map[value.groupname] = value;
+                    //       map[value.groupname].count = 1;
+                    //       prevKey = value.groupname;
+                    //
+                    //     }
+                    //     else {
+                    //       map[value.groupname].count++;
+                    //     }
+                    //   }
+                    //
+                    // });
+                    // Object.keys(map).forEach(function(key, value){
+                    //
+                    //   var highestCount = -1;
+                    //   var mostReleventkey = "";
+                    //   Object.keys(map).forEach(function(key, value){
+                    //     if(value.count > highestCount)
+                    //     {
+                    //       highestCount = value.count;
+                    //       mostReleventkey = key;
+                    //     }
+                    //   });
+                    //   map[mostReleventkey].count = -1;
+                    //   var postData = map[mostReleventkey];
+                    //   var groupPriv = "public";
+                    //   if(postData.privacy == 1)
+                    //   {
+                    //     groupPriv = "private";
+                    //   }
 
+                      if(key === "privacy")
+                      {
+                        if(value == 0)
+                        {
+                          privacy = "public";
+                        }
+                        else {
+                          privacy = "private";
+                        }
+                        $.getScript("JS/groupSearchResultBuilder.js", function(){
+                          param = '{ "group" : [' +
+                          '{ "groupname": "' + gname + '", "privacy":"' + privacy + '" }]}';
+                          console.log(param);
+                          document.getElementById("searchResults").innerHTML += singlePost(param);
+                        });
                       }
                       else {
-                        map[value.groupname].count++;
+                        gname = value;
+                        console.log(gname);
                       }
-                    }
-
-                  });
-                  Object.keys(map).forEach(function(key, value){
-
-                    var highestCount = -1;
-                    var mostReleventkey = "";
-                    Object.keys(map).forEach(function(key, value){
-                      if(value.count > highestCount)
-                      {
-                        highestCount = value.count;
-                        mostReleventkey = key;
-                      }
-                    });
-                    map[mostReleventkey].count = -1;
-                    var postData = map[mostReleventkey];
-                    var groupPriv = "public";
-                    if(postData.privacy == 1)
-                    {
-                      groupPriv = "private";
-                    }
-                    $.getScript("JS/groupSearchResultsBuilder.js", function(){
-                      param = '{ "group" : [' +
-                      '{ "groupname": "' + postData.groupname + '", "privacy":"' + groupPriv + '" }]}';
-                      console.log(param);
-                      document.getElementById("searchResults").innerHTML += singlePost(param);
-                    });
                     });
                     break;
                   case 'userSearch':
