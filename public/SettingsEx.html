@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="nodesConnect">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>NodesConnect Settings</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../Bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="../Bootstrap/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="../CSS/main.css" rel="stylesheet">
+
+    <script src="JS/angular.min.js"></script>
+    <script src="JS/controller.js"></script>
+  </head>
+
+  <body ng-controller="generalCtrl" ng-init="initBio(formdata)">
+
+    <nav class="navbar navbar-inverse navbar-fixed-top" ng-controller="navCtrl">
+      <div class="container-fluid" ng-controller="settingsCtrl">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="cover.html">NodesConnect</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="main.html">Dashboard</a></li>
+            <li><a href="#">Settings</a></li>
+            <li><a href="Profile.html">Profile</a></li>
+            <li><a href="Help.html">Help</a></li>
+            <li><a href ="#" ng-click="signout()">Sign Out</a></li>
+          </ul>
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="Search...">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+              <li>
+                <div class="form-group">
+                    <label for="filter">Search in:</label>
+                    <select class="form-control">
+                      <option value="0" selected>All</option>
+                      <option value="1">Projects</option>
+                      <option value="2">Freelance Work</option>
+                      <option value="3">Q&A</option>
+                      <option value="4">People</option>
+                    </select>
+                </div>
+              </li> <label></label>
+              <li>
+                <label for="contain">Contains the words</label>
+                <input class="form-control" type="text" />
+               </li> <label></label>
+               <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+            </ul>
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li><a href="main.html">Home <span class="sr-only">(current)</span></a></li>
+            <li><a href="QandA.html" class="QA" onclick="QA()">Q and A</a></li>
+            <li><a href="ProjectCollab.html">Project Collab</a></li>
+            <li><a href="FreelanceEx.html" class="Freelance" onclick="FreeLance()">Freelance Work</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="TextEditorEx.html"  >Text Editor</a></li>
+            <li><a href="MyProject.html">My Projects</a></li>
+            <li><a href="Messenger.html" class="Messenger">Messaging</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="SearchEx.html">Search</a></li>
+            <li  class="active"><a href="#">Settings</a></li>
+            <li><a href="Profile.html">Profile</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="main col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
+
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand">Settings</a>
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#General">General <span class="sr-only">(current)</span></a></li>
+                        <li><a data-toggle="tab" href="#privacy">Privacy</a></li>
+                        <li><a data-toggle="tab" href="#blocked">Blocked</a></li>
+                    </ul>
+
+      <div class="tab-content">
+            <div id="General" class="tab-pane fade in active">
+              <br>
+                {{message}}
+                <hr>
+                {{messageName}} <a href="#" data-toggle="modal" data-target="#editName">Edit</a>
+
+                <div class="modal fade" id="editName" role="dialog">
+                  <div class="modal-dialog">
+    
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Change Name:</h4>
+                      </div>
+                    <div class="modal-body">
+                      <label>First name:</label>
+                      <input type="text" id="first" ng-model="formData.new.first_name" required>
+                      <br>
+                      <label>Last name:</label>
+                      <input type="text" id="last"  ng-model="formData.new.last_name" required>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-default" data-dismiss="modal" ng-click="changeName(formData)">Submit</button>
+                    </div>
+                  </div>
+      
+                </div>
+              </div>
+                <hr>
+                {{messageEmail}}
+                <hr>
+                Bio: 
+                <br> 
+                {{bio}}
+                <br>
+                <textarea type="text" id="bioSetting" style="width: 100%; height: 250px;" ng-model="formData.new.bio">  </textarea>
+                <button type="button" ng-click="updateBio(formData)">Update</button>
+                <hr>
+                Social Medias:<br>
+                Facebook: <label id="fblink">{{facebook}}</label><br>
+                LinkedIn: <label id="lilink">{{linkedin}}</label><br>
+                <a href="#" data-toggle="modal" data-target="#editMedia">Edit</a>
+
+                <div class="modal fade" id="editMedia" role="dialog">
+                  <div class="modal-dialog">
+    
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Change Links:</h4>
+                      </div>
+                    <div class="modal-body">
+                      <label>Facebook:</label>
+                      <input type="text" id="fb" ng-model="formData.new.facebook" required>
+                      <br>
+                      <label>LinkedIn:</label>
+                      <input type="text" id="li"  ng-model="formData.new.linkedin" required>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-default" data-dismiss="modal" ng-click="changeMedia(formData)">Submit</button>
+                    </div>
+                  </div>
+      
+                </div>
+              </div>
+                <hr>
+            </div>
+            <div id="privacy" class="tab-pane fade" ng-controller="settingCtrl">
+                <br>
+                <form>
+                    <input type = "radio" name="privacy" value="private" ng-model="formData.privacy"> Private
+                    <input type = "radio" name="privacy" value="public" ng-model="formData.privacy"> Public
+                    <input type="submit" value="Submit" ng-click="sub(formData)">
+                </form>
+                <br>
+            </div>
+            <div id="blocked" class="tab-pane fade" ng-controller="blockedCtrl">
+                <br>
+                <label>Enter user to block:</label>
+                <input type = "textbox" id="user" ng-model="formData.blocked">
+                <button type="button" ng-click"sub(formData)"> Block </button>
+                <hr>
+                <h4>Blocked users:</h4>
+                <label class="glyphicon glyphicon-remove"> Username</label>
+            </div>
+        </div>
+
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+        <footer class="blog-footer">
+            <h6>Settings page built for NodesConnect</h6>
+            <p>
+                <a href="#">Back to top</a>
+            </p>
+        </footer>
+
+    </div>
+
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="../JS/FreeLance.js"></script>
+
+    <script type="text/javascript">
+      function toggleContent(content) {
+      //Get the style from the object
+      // Toggle
+      content.css('display') == "block" ? content.css({"display":"none"}) :
+      content.css({"display":"block"});
+    }
+    </script>
+    <script>window.jQuery || document.write('<script src="../Bootstrap/assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="../Bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+    <script src="../Bootstrap/assets/js/vendor/holder.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../Bootstrap/assets/js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>

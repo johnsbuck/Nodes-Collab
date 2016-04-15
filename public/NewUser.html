@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="nodesConnect">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>NodesConnect New User</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../Bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="../Bootstrap/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="../CSS/Signin.css" rel="stylesheet">
+
+    <script src="../Bootstrap/assets/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src="JS/jquery.js"></script>
+    <script src="JS/angular.min.js"></script>
+    <script src="JS/controller.js"></script>
+  </head>
+
+  <body>
+
+    <div class="container" ng-controller="newUserCtrl">
+
+      <form class="form-signin" role="form" method="post">
+        <h2 class="form-signin-heading">Create a new account</h2>
+
+        <input type="text" class="form-control" placeholder="First Name" ng-model="formData.first_name" id="First Name">
+        <input type="text" class="form-control" placeholder="Last" ng-model="formData.last_name" id="Last Name">
+
+        <label> </label>
+        <input type="text" class="form-control" placeholder="Username" ng-model="formData.username" id="Username">
+        <label> </label>
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" ng-model="formData.email" required autofocus>
+
+        <label> </label>
+        <label for="inputConfirmEmail" class="sr-only">Confirm Email address</label>
+        <input type="email" id="inputConfirmEmail" class="form-control" placeholder="Confirm Email address" required>
+
+        <label> </label>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" id="inputPassword" class="form-control" placeholder="Password" ng-model="formData.pass" required>
+
+        <label for="inputConfirmPassword" class="sr-only">Confirm Password</label>
+        <input type="password" id="inputConfirmPassword" class="form-control" placeholder="Confirm Password" required>
+
+
+        <div class="radio">
+          <label><input type="radio" ng-model="formData.gender" value="male" name="genderradio"> Male </label>
+        </div>
+        <div class="radio">
+          <label><input type="radio" ng-model="formData.gender" value="female" name="genderradio"> Female</label>
+        </div>
+        <div class = "radio">
+          <label><input type="radio" ng-model="formData.gender" value="other" name="genderradio"> Other </label>
+        </div>
+
+    <label> </label>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="sub(formData)">Sign Up</button>
+      </form>
+
+    </div> <!-- /container -->
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../Bootstrap/assets/js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>

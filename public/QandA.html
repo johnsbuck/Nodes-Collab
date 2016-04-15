@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="nodesConnect">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>NodesConnect Q and A</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../Bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="../Bootstrap/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="../CSS/main.css" rel="stylesheet">
+
+    <script src="JS/angular.min.js"></script>
+    <script src="JS/controller.js"></script>
+
+  </head>
+
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top" ng-controller="navCtrl">
+      <div class="container-fluid" ng-controller="mainCtrl">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="cover.html">NodesConnect</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="main.html">Dashboard</a></li>
+            <li><a href="SettingsEx.html">Settings</a></li>
+            <li><a href="Profile.html">Profile</a></li>
+            <li><a href="Help.html">Help</a></li>
+            <li><a href ="#" ng-click="signout()">Sign Out</a></li>
+          </ul>
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="Search...">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+              <li>
+                <div class="form-group">
+                    <label for="filter">Search in:</label>
+                        <select class="form-control">
+                          <option value="0" selected>All</option>
+                          <option value="1">Projects</option>
+                          <option value="2">Freelance Work</option>
+                          <option value="3">Q&A</option>
+                          <option value="4">People</option>
+                      </select>
+                    </label>
+                </div>
+                </li> <label></label>
+                <li>
+                    <label for="contain">Contains the words</label>
+                        <input class="form-control" type="text" /></li> <label></label>
+                        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+            </ul>
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li><a href="main.html" class="main">Home </a></li>
+            <li class="active"><a href="QandA.html" class="QA">Q and A</a></li>
+            <li><a href="ProjectCollab.html" class="collab">Project Collab</a></li>
+            <li><a href="FreelanceEx.html" class="Freelance" onclick="FreeLance()">Freelance Work</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="TextEditorEx.html"  >Text Editor</a></li>
+            <li><a href="MyProject.html">My Projects</a></li>
+            <li><a href="Messenger.html" class="Messenger">Messaging</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="SearchEx.html">Search</a></li>
+            <li><a href="SettingsEx.html">Settings</a></li>
+            <li><a href="Profile.html">Profile</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <div class="container">
+
+      <div class="blog-header">
+        <h1 class="blog-title">Question and Answers</h1>
+        <a href="QASubmitPost.html"><button type="button" class="btn btn-primary">Submit New Post</button></a>
+        <hr>
+        <p class="lead blog-description">Recent QA Activity</p>
+      </div>
+      <hr>
+      <!-- START OF -> Post Activity -->
+     <div id="QAPostGen" ng-controller="QAPostGen"><p ng-bind="txt">
+       <!-- under this div the posts will be generated, it is identified by it's controller/div id-->
+     </p></div>
+      <!-- END OF -> Post Activity -->
+
+      <hr>
+    </div><!-- /.container -->
+
+    <footer class="blog-footer">
+      <h6>Q And A page built for NodesConnect</h6>
+      <p>
+        <a href="#">Back to top</a>
+      </p>
+    </footer>
+
+  </div>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+    <script type="text/javascript">
+      function toggleContent(content) {
+      //Get the style from the object
+      // Toggle
+      content.css('display') == "block" ? content.css({"display":"none"}) :
+      content.css({"display":"block"});
+    }
+    </script>
+    <script>window.jQuery || document.write('<script src="../Bootstrap/assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="../Bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+    <script src="../Bootstrap/assets/js/vendor/holder.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../Bootstrap/assets/js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>
