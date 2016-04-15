@@ -46,6 +46,7 @@ app.controller('profileGen', function($scope, $http) {
   var viewingCurrentUser = true;    //Are we viewing the current user's profile or another person's profile? TODO integreate this better
     $scope.refreshConnections = function() {
       console.log("Getting user contacts!");
+      var formData = {username: sessionStorage.getItem('username'), pass : sessionStorage.getItem('pass')};
       $http.put('/user/get/connections', formData).
         success(function(data) {
           console.log("User Connections GET Request sent to server successfully!");
@@ -53,7 +54,7 @@ app.controller('profileGen', function($scope, $http) {
           {
             $scope.no_connections = Object.keys(data).length;
             //Initialize the select picker to the contacts
-            var selectOptions = "";   //none by default
+            //var selectOptions = "";   //none by default
             //Initialize table as string first
             var userTable =
              "<table class='table table-striped' width='100%'> " +
@@ -61,17 +62,17 @@ app.controller('profileGen', function($scope, $http) {
                 "<tbody>";
             data.forEach(function(value) {
             userTable += "<tr><td>" + value.second_user + "</td><td>" + "Link" + "</td></tr>";
-            selectOptions += "<option>" + value.second_user + "</option>"
+            //selectOptions += "<option>" + value.second_user + "</option>"
             });
             userTable += "</tbody></table>";
             //Finally set the table to the innerHTML
             document.getElementById('viewConnectionsGen').innerHTML = userTable;
-            document.getElementById('connectionsSelectOptions').innerHTML = selectOptions;
+            //document.getElementById('connectionsSelectOptions').innerHTML = selectOptions;
             console.log(document.getElementById('viewConnectionsGen').innerHTML);
           }
           else {
             $scope.no_connections = 0;
-            $scope.viewConnectionsGen.innerHTML = "<p>No connections!</p>"
+            document.getElementById('viewConnectionsGen').innerHTML = "<p>No connections!</p>"
             console.log("No connections for this user found.");
           }
         }).error(function(data) {
@@ -95,7 +96,7 @@ app.controller('profileGen', function($scope, $http) {
       $http.put('/user/create/connection', formData).
         success(function(data) {
           $scope.no_connections += 1;   //Does this work???
-          refreshConnections();         //refresh to update the modal as well.
+          $scope.refreshConnections();         //refresh to update the modal as well.
           console.log("Connection added successfully!");
           popMessage("Connection Added!");
         }).error(function(data) {
@@ -159,7 +160,7 @@ app.controller('profileGen', function($scope, $http) {
             console.log('ERROR: Not sent to server.');
         });
       var formData = {username: sessionStorage.getItem('username'), pass : sessionStorage.getItem('pass')};
-      refreshConnections();   //get the user connections
+      $scope.refreshConnections();   //get the user connections
     }
     //Call method to execute code above.
     $scope.sub();
@@ -343,8 +344,8 @@ app.controller('mainCtrl', function($scope, $http) {
 
 app.controller('generalCtrl', function($scope, $http) {
   if(sessionStorage.getItem('bio') == "null")
-    $scope.bio = "No current bio."; 
-  else 
+    $scope.bio = "No current bio.";
+  else
     $scope.bio = sessionStorage.getItem('bio');
   $scope.message = "Username: " + sessionStorage.getItem('username');
   $scope.messageName = "Name: " + sessionStorage.getItem('first_name') + " " + sessionStorage.getItem('last_name');
