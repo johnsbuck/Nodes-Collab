@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>NodesConnect Search</title>
+    <title>NodesConnect Project Collab</title>
 
     <!-- Bootstrap core CSS -->
     <link href="../Bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -21,15 +21,11 @@
     <link href="../CSS/main.css" rel="stylesheet">
     <script src="JS/angular.min.js"></script>
     <script src="JS/controller.js"></script>
-
-
-    <script src="JS/angular.min.js"></script>
-    <script src="JS/controller.js"></script>
   </head>
 
-  <body>
+  <body ng-controllor="qaPostCtrl">
 
-    <nav class="navbar navbar-inverse navbar-fixed-top" ng-controller="navCtrl">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -44,9 +40,9 @@
           <ul class="nav navbar-nav navbar-right">
             <li><a href="main.html">Dashboard</a></li>
             <li><a href="SettingsEx.html">Settings</a></li>
-            <li><a href="Profile.html">Profile</a></li>
+            <li><a href="ProfileEx.html">Profile</a></li>
             <li><a href="Help.html">Help</a></li>
-            <li><a href ="#" ng-click="signout()">Sign Out</a></li>
+            <li><a ng-click="signout()">Sign Out</a></li>
           </ul>
           <form class="navbar-form navbar-right">
             <input type="text" class="form-control" placeholder="Search...">
@@ -61,12 +57,13 @@
                     <option value="2">Freelance Work</option>
                     <option value="3">Q&A</option>
                     <option value="4">People</option>
-                 </select>
-               </div>
-             </li> <label></label>
-             <li>
+                  </select>
+                </div>
+              </li> <label></label>
+              <li>
                 <label for="contain">Contains the words</label>
-                <input class="form-control" type="text" /></li> <label></label>
+                <input class="form-control" type="text" />
+              </li> <label></label>
                 <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
             </ul>
           </form>
@@ -79,9 +76,9 @@
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
             <li><a href="main.html">Home <span class="sr-only">(current)</span></a></li>
-            <li><a href="QandA.html" class="QA" onclick="QA()">Q and A</a></li>
+            <li class="active"><a href="QandA.html" class="QA" onclick="QA()">Q and A</a></li>
             <li><a href="ProjectCollab.html">Project Collab</a></li>
-            <li><a href="FreelanceEx.html">Freelance Work</a></li>
+            <li><a href="FreelanceEx.html" class="Freelance" onclick="FreeLance()">Freelance Work</a></li>
           </ul>
           <ul class="nav nav-sidebar">
             <li><a href="TextEditorEx.html"  >Text Editor</a></li>
@@ -89,62 +86,77 @@
             <li><a href="Messenger.html" class="Messenger">Messaging</a></li>
           </ul>
           <ul class="nav nav-sidebar">
-            <li  class="active"><a href="#.html">Search</a></li>
+            <li><a href="SearchEx.html">Search</a></li>
             <li><a href="SettingsEx.html">Settings</a></li>
-            <li><a href="Profile.html">Profile</a></li>
+            <li><a href="ProfileEx.html">Profile</a></li>
           </ul>
         </div>
       </div>
     </div>
 
-
     <div class="main col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
+      <div class="container" ng-controller="qaPostCtrl">
+        <h1>{{message}}</h1>
+        <form class="form-groupPost" role="form" method="post">
+        <div class="row">
+          <section class="panel panel-info">
+            <header class="panel-heading">
+              <div class="row">
+                <div class="col-xs-4"> <h4>Post a message </h4></div>
+              </div>
+            </header>
+          <section class="row panel-body">
+            <section class="col-md-6">
+              <div id="author">
+               <script type="text/javascript">document.getElementById("author").innerHTML = "<p>Author: " + sessionStorage.getItem('username') + "</p>";</script>
+              </div>
+              <h4> Title: </h4>
+              <input style="width: 300px;" type="text" ng-model="formData.title">
+              <h4> Post: </h4>
+              <textarea rows = "15" cols = "150" ng-model="formData.text"></textarea>
+              <br>
+              <h4><div id="userTags"> Tags: </div></h4>
+              <input style="width: 300px;" placeholder="End your tag with a semicolon ';' Ex. 'Jquery;'" id="tagBox" type="text" onkeyup="clearInput(event)" onkeydown="createTag(event)" />
+              <script type="text/javascript">
+              //TODO make tags deletable after they are created
+              var tagBuilder = "";
+              sessionStorage.setItem('postTags', tagBuilder);
 
-
-          <h2>Enter a Search</h2>
-          <div class = "row" >
-          <div class = "col-lg-6" ng-controller="searchWebsiteCtrl">
-            <form class="form-search" role="form" method="put" >
-            <input type="text" class="form-control" placeholder="Search..." ng-model="formData.searchString">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></button>
-            <button type="submit" class="btn btn-primary" ng-click="sub(formData)"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-            <ul class="SearchPage dropdown-menu" style = "width: 200px">
-              <li>
-                <div class="form-group" >
-                  <label for="filter">Search in:</label>
-                  <select ng-model="formData.searchType" ng-init="formData.searchType = '0'" class="form-control">
-                    <option value="0" ng-model="formData.searchType" >Questions and Answers</option>
-                    <option value="1" ng-model="formData.searchType">Freelance Work</option>
-                    <option value="2" ng-model="formData.searchType">Projects</option>
-                    <option value="3" ng-model="formData.searchType">People</option>
-                  </select>
-                </div>
-              </li> <label></label>
-            </ul>
-
-          </form>
-        </div>
+              function createTag(e) { //onkeydown two not include our delimiter
+                      if (e.which == 59 || e.keyCode == 59) {
+                          var tb = document.getElementById("tagBox").value;
+                          document.getElementById("userTags").innerHTML += '<span class="label label-info tags">' + tb + '</span>' + " ";
+                          tagBuilder = sessionStorage.getItem('postTags');
+                          sessionStorage.setItem('postTags', tagBuilder + tb + ";");
+                          console.log(sessionStorage.getItem('postTags'));
+                      }
+                  }
+              function clearInput(e){
+                if (e.which == 59 || e.keyCode == 59) {
+                    document.getElementById("tagBox").value = '';
+                }
+              }
+              </script>
+              <!--LEFT for timestamp. Delete Later-->
+              <class="form-control" ng-model="formData.timestamp">
+              <div class="checkbox">
+                <label><input type="checkbox" ng-model="formData.collabedit" value="true">Open a CollabEdit.com page for this post.</label>
+              </div><br>
+              <button class="btn" class="form-control" ng-click="sub(formData)"><span class="glyphicon glyphicon-pushpin" type="submit" aria-hidden="true"></span> Post </button>
+          </section>
+         </section>
+        </section>
       </div>
-
-            <p>Search Results:</p>
-
-            <div class = "search-results" ng-controller="searchResults">
-
-            </div>
-
-
-
-
-
-    <footer class="blog-footer">
-      <h6>Search page built for NodesConnect</h6>
+      </form>
+      </div>
+      <footer class="blog-footer">
+      <h6>Q&A Post page built for NodesConnect</h6>
       <p>
         <a href="#">Back to top</a>
       </p>
     </footer>
 
     </div>
-
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->

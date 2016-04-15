@@ -3,7 +3,78 @@ var app = angular.module('nodesConnect', []);
 
 //Seperate this controller per post generating pages i.e. Q&A, Freelance
 //AngularJS to retrieve the data from the DB
-app.controller('tableGen', function($scope, $http) {
+app.controller('userPostsGen', function($scope, $http) {
+    $scope.txt = "";
+
+    $scope.sub = function() {
+      $scope.formData = {'username': sessionStorage.getItem('username')};
+
+      $http.put('/user/get/posts', $scope.formData).
+        success(function(data) {
+          console.log(data);
+            console.log('Sent to sever successfully.');
+            //Apparently we need a directive to parse this data into a string -> use value.table_name
+            if(Object.keys(data).length != 0)
+            {
+                //we want to build this reverse order to retrieve the most recent posts first
+                //for each post returned
+                data.reverse();
+                angular.forEach(data, function(value, key) {
+
+                  console.log("Retrieving tag data for: " + value.title + ", " + value.type);
+                  $scope.formData = {'title': value.title,
+                                    'type' : value.type};
+
+                  var tagBuilder = "notag";
+                  //get the tags for this posts
+                  $http.put('/tag/get', $scope.formData).
+                    success(function(dataTag) {
+                        console.log('Sent to sever successfully.');
+                        if(Object.keys(dataTag).length != 0)
+                        {
+                            console.log(dataTag);
+                            //for each tag returned
+                            tagBuilder = "";
+                            angular.forEach(dataTag, function(valueTag, keyTag) {
+                                tagBuilder += valueTag.tag + ";";
+                              });
+                              console.log("TagBuilder: " + tagBuilder);
+                        }
+                        else {
+                            console.log("TagBuilder: Didn't find any tags for this post.");
+                        }
+
+                        $.getScript("JS/tableGen.js", function(){
+                          param = '{ "post" : [' +
+                          '{ "username": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + tagBuilder +
+                          '", "type":"' + value.type + '", "id":"' + value.id + '" }]}';
+                          console.log(param);
+                          document.getElementById("allPostsGen").innerHTML += singlePost(param);
+
+                    }).error(function(dataTag){
+                        //db error
+                        console.log('ERROR: Tag data not sent to server.');
+                    });
+                  });
+                });
+
+            }
+            else {
+              $scope.txt = "No posts have been found. Make a post to see some activity!";
+            }
+        }).error(function(data){
+            $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
+            console.log('ERROR: Not sent to server.');
+        });
+    }
+
+    $scope.sub();
+});
+
+
+//Only shows QA posts
+//AngularJS to retrieve the data from the DB
+app.controller('QAPostGen', function($scope, $http) {
     $scope.txt = "";
 
     $scope.sub = function() {
@@ -14,18 +85,48 @@ app.controller('tableGen', function($scope, $http) {
             //Apparently we need a directive to parse this data into a string -> use value.table_name
             if(Object.keys(data).length != 0)
             {
-                //$scope.txt = "Some data has been found, let's print it out!";
+                //we want to build this reverse order to retrieve the most recent posts first
+                //for each post returned
+                data.reverse();
                 angular.forEach(data, function(value, key) {
 
-                  console.log("Key: " + key + ", Value: " + value.username + ", " + value.title + ", " + value.text);
-                  //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
-                  $.getScript("JS/tableGen.js", function(){
-                    param = '{ "post" : [' +
-                    '{ "postAuthor": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + "No tags found." + '" }]}';
-                    console.log(param);
-                    document.getElementById("tableGen").innerHTML += singlePost(param);
+                  console.log("Retrieving tag data for: " + value.title + ", " + value.type);
+                  $scope.formData = {'title': value.title,
+                                    'type' : value.type};
+
+                  var tagBuilder = "notag";
+                  //get the tags for this posts
+                  $http.put('/tag/get', $scope.formData).
+                    success(function(dataTag) {
+                        console.log('Sent to sever successfully.');
+                        if(Object.keys(dataTag).length != 0)
+                        {
+                            console.log(dataTag);
+                            //for each tag returned
+                            tagBuilder = "";
+                            angular.forEach(dataTag, function(valueTag, keyTag) {
+                                tagBuilder += valueTag.tag + ";";
+                              });
+                              console.log("TagBuilder: " + tagBuilder);
+                        }
+                        else {
+                            console.log("TagBuilder: Didn't find any tags for this post.");
+                        }
+
+                        $.getScript("JS/tableGen.js", function(){
+                          param = '{ "post" : [' +
+                          '{ "username": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + tagBuilder +
+                          '", "type":"' + value.type + '", "id":"' + value.id + '" }]}';
+                          console.log(param);
+                          document.getElementById("QAPostGen").innerHTML += singlePost(param);
+
+                    }).error(function(dataTag){
+                        //db error
+                        console.log('ERROR: Tag data not sent to server.');
+                    });
                   });
                 });
+
             }
             else {
               $scope.txt = "No posts have been found. Make a post to see some activity!";
@@ -242,6 +343,322 @@ app.controller('groupPostCtrl', function($scope, $http) {
     }, 5000)
 });
 
+//Only shows Freelance posts
+//AngularJS to retrieve the data from the DB
+app.controller('freelancePostGen', function($scope, $http) {
+    $scope.txt = "";
+
+    $scope.sub = function() {
+      //API CALL -> qa_posts put (which is redefined as a get).
+      $http.put('/free-post/get').
+        success(function(data) {
+            console.log('Sent to sever successfully.');
+            //Apparently we need a directive to parse this data into a string -> use value.table_name
+
+            if(Object.keys(data).length != 0)
+            {
+                data.reverse();
+                //$scope.txt = "Some data has been found, let's print it out!";
+                angular.forEach(data, function(value, key) {
+
+                  console.log("Retrieving tag data for: " + value.title + ", " + value.type);
+                  $scope.formData = {'title': value.title,
+                                    'type' : value.type};
+
+                  var tagBuilder = "notag";
+                  //get the tags for this posts
+                  $http.put('/tag/get', $scope.formData).
+                    success(function(dataTag) {
+                        console.log('Sent to sever successfully.');
+                        if(Object.keys(dataTag).length != 0)
+                        {
+                            console.log(dataTag);
+                            //for each tag returned
+                            tagBuilder = "";
+                            angular.forEach(dataTag, function(valueTag, keyTag) {
+                                tagBuilder += valueTag.tag + ";";
+                              });
+                              console.log("TagBuilder: " + tagBuilder);
+                        }
+                        else {
+                            console.log("TagBuilder: Didn't find any tags for this post.");
+                        }
+
+                        $.getScript("JS/tableGen.js", function(){
+                          param = '{ "post" : [' +
+                          '{ "username": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + tagBuilder +
+                          '", "type":"' + value.type + '", "id":"' + value.id + '" }]}';
+                          console.log(param);
+                          document.getElementById("freelancePostGen").innerHTML += singlePost(param);
+
+                    }).error(function(dataTag){
+                        //db error
+                        console.log('ERROR: Tag data not sent to server.');
+                    });
+                  });
+                });
+            }
+            else {
+              $scope.txt = "No posts have been found. Make a post to see some activity!";
+            }
+        }).error(function(data){
+            $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
+            console.log('ERROR: Not sent to server.');
+        });
+    }
+
+    $scope.sub();
+});
+
+//view a post based on the given postID (Stored in session)
+app.controller('viewPostCtrl', function($scope, $http) {
+    $scope.txt = "";
+    $scope.init = function() {
+      $scope.formData = { 'title': sessionStorage.getItem('postTitle')};//change this to be passed by jquery
+      var accessor = '/qa-post';
+      if(sessionStorage.getItem('postType')==1)
+      {
+          accessor = '/free-post';
+      }
+      //First get the post
+      $http.put(accessor + '/get/post', $scope.formData)
+        .success(function(data) {
+          console.log(data);
+          console.log('Sent to sever successfully.');
+          //There should only be one object here
+          if(Object.keys(data).length != 0)
+          {
+            console.log("Retrieving tag data for: " + sessionStorage.getItem('postTitle') + ", " + sessionStorage.getItem('postType'));
+            $scope.formData = {'title': sessionStorage.getItem('postTitle'),
+                              'type' : sessionStorage.getItem('postType')};
+
+            var tagBuilder = "notag";
+            //get the tags for this posts
+            $http.put('/tag/get', $scope.formData).
+              success(function(dataTag) {
+                  console.log('Sent to sever successfully.');
+                  if(Object.keys(dataTag).length != 0)
+                  {
+                      console.log(dataTag);
+                      //for each tag returned
+                      tagBuilder = "";
+                      angular.forEach(dataTag, function(valueTag, keyTag) {
+                          tagBuilder += valueTag.tag + ";";
+                        });
+                        console.log("TagBuilder: " + tagBuilder);
+                  }
+                  else {
+                      console.log("TagBuilder: Didn't find any tags for this post.");
+                  }
+
+                  $.getScript("JS/viewPost.js", function(){
+                    param = '{ "post" : [' +
+                    '{ "author": "' + data.username + '", "text":"' + data.text + '", "timestamp":"' + data.timestamp + '", "title":"' + data.title + '", "post_tags":"' + tagBuilder +
+                    '", "type":"' + data.type + '", "id":"' + data.id + '" }]}';
+                    console.log(param);
+                    document.getElementById("viewPostCtrl").innerHTML += viewPost(param);
+                  });
+
+              }).error(function(dataTag){
+                  //db error
+                  console.log('ERROR: Tag data not sent to server.');
+              });
+          }
+          else {
+            $scope.txt = "No posts have been found. Make a post to see some activity!";
+          }
+        }).error(function(data) {
+          $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
+          console.log('ERROR: Not sent to server.');
+        });
+    }
+
+    //delete a post
+    $scope.delete = function() {
+      console.log("pass");
+      $scope.formData = {'username': sessionStorage.getItem('username'),
+                        'pass' : sessionStorage.getItem('pass'),
+                        'title' : sessionStorage.getItem('postTitle')};
+      //console.log($scope.formData);
+      var accessor = '/qa-post';
+      var href = 'QandA.html';
+      if(sessionStorage.getItem('postType')==1)
+      {
+        accessor = '/free-post';
+        href = 'FreelanceEx.html';
+      }
+      console.log($scope.formData);
+      $http.put(accessor + '/delete', $scope.formData).
+          success(function(data) {
+              console.log('Sent to sever successfully.');
+              window.location.href = href;
+          }).error(function(data){
+              console.log('ERROR: Not sent to server.');
+          });
+      }
+
+      //update a post
+      $scope.update = function() {
+        $scope.formData['username'] = sessionStorage.getItem('username');
+        $scope.formData['pass'] = sessionStorage.getItem('pass');
+        $scope.formData['titlePrev'] = sessionStorage.getItem('postTitle');
+        var accessor = '/qa-post';
+        var href = 'QandA.html';
+        if(sessionStorage.getItem('postType')==1)
+        {
+          accessor = '/free-post';
+          href = 'FreelanceEx.html';
+        }
+        console.log($scope.formData);
+        /*$http.put(accessor + '/edit', $scope.formData).
+            success(function(data) {
+                console.log('Sent to sever successfully.');
+                window.location.href = href;
+            }).error(function(data){
+                console.log('ERROR: Not sent to server.');
+            });*/
+        }
+
+    $scope.init();
+});
+
+//generate comments for a specified post ID
+app.controller('postCommentCtrl', function($scope, $http) {
+    $scope.txt = "";
+
+    $scope.init = function() {
+      $scope.formData = {'title': sessionStorage.getItem('postTitle'),
+                        'type' : sessionStorage.getItem('postType')};
+
+      console.log($scope.formData);
+
+      $http.put('/comments/get', $scope.formData)
+        .success(function(data) {
+          console.log(data);
+          console.log('Sent to sever successfully.');
+
+          if(Object.keys(data).length != 0)
+          {
+                data.reverse();
+                angular.forEach(data, function(value, key) {
+                  if(value.text) {
+                    param = '{ "comment" : [' +
+                    '{ "author": "' + value.username + '", "text":"' + value.text + '", "timestamp":"' + value.timestamp + '", "id":"' + value.id + '" }]}';
+                    console.log(param);
+                    document.getElementById("postCommentCtrl").innerHTML += viewComment(param);
+                  }
+                });
+
+          }
+          else {
+                $scope.txt = "No comments for this post have been made yet!";
+          }
+          }).error(function(data) {
+                    $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
+                    console.log('ERROR: Not sent to server.');
+          });
+    }
+
+    //delete a comment
+    $scope.delete = function() {
+      $scope.formData = {'username': sessionStorage.getItem('username'),
+                        'pass' : sessionStorage.getItem('pass'),
+                        'id' : sessionStorage.getItem('commentID')};
+      console.log($scope.formData);
+      $http.put('comments/delete', $scope.formData).
+          success(function(data) {
+              console.log('Sent to sever successfully.');
+              location.reload();
+          }).error(function(data){
+              console.log('ERROR: Not sent to server.');
+          });
+      }
+
+    $scope.init();
+});
+
+//Submit a comment for a post
+app.controller('submitCommentCtrl', function($scope, $http, $location) {
+  $scope.sub = function() {
+    $scope.formData['username'] = sessionStorage.getItem('username');
+    $scope.formData['title'] = sessionStorage.getItem('postTitle');
+    $scope.formData['type'] = sessionStorage.getItem('postType');
+    var date = new Date();
+    var timezone = date.getTimezoneOffset();//timezone difference convert to seconds
+    var dateOffset = new Date(date.getTime() - (timezone*60*1000));
+    $scope.formData['timestamp'] = dateOffset;
+    console.log($scope.formData);
+    $http.post('/comments/post', $scope.formData).
+      success(function(data) {
+        location.reload();//refresh this page
+        console.log('Sent to sever successfully.');
+      }).error(function(data){
+          console.log('ERROR: Not sent to server.');
+      });
+  }
+  });
+
+  //Submit a post for Freelancing
+  app.controller('freelancePostCtrl', function($scope, $http, $location) {
+    $scope.sub = function() {
+      if($scope.formData != undefined && $scope.formData.text != "" && $scope.formData.title != "")
+      {
+        $scope.formData['username'] = sessionStorage.getItem('username');
+        $scope.formData['pass'] = sessionStorage.getItem('pass');
+        $scope.formData['tags'] = sessionStorage.getItem('postTags').split(';');//tags are submitted as an object array
+        var date = new Date();
+        var timezone = date.getTimezoneOffset();//timezone difference convert to seconds
+        var dateOffset = new Date(date.getTime() - (timezone*60*1000));
+        $scope.formData['timestamp'] = dateOffset;
+        console.log($scope.formData);
+        $http.post('/free-post/post', $scope.formData).
+          success(function(data) {
+            window.location.href = '/FreelanceEx.html';
+            console.log('Sent to sever successfully.');
+          }).error(function(data){
+              console.log('ERROR: Not sent to server.');
+              popError('A post in Freelancing was already found with the given title. Please submit with a unique title or checkout that post!');
+          });
+      }
+      else {
+          popError('A post may only be submitted if it has a title and text.');
+        }
+      }
+    });
+
+//SUBMIT a post for Q&A
+app.controller('qaPostCtrl', function($scope, $http, $location) {
+  $scope.sub = function() {
+    console.log($scope.formData);
+    if($scope.formData != undefined && $scope.formData.text != "" && $scope.formData.title != "")
+    {
+      $scope.formData['username'] = sessionStorage.getItem('username');
+      $scope.formData['pass'] = sessionStorage.getItem('pass');
+      $scope.formData['tags'] = sessionStorage.getItem('postTags').split(';');//tgs are submitted as an object array
+      var date = new Date();
+      var timezone = date.getTimezoneOffset();//timezone difference convert to seconds
+      var dateOffset = new Date(date.getTime() - (timezone*60*1000));
+      $scope.formData['timestamp'] = dateOffset;
+      console.log($scope.formData);
+      $http.post('/qa-post/post', $scope.formData).
+        success(function(data) {
+          if($scope.formData.collabedit == true)//true -- open a collab edit
+          {
+            window.open("http://collabedit.com/new");//*NOTE pop-ups must be enabled for this to work
+          }
+          window.location.href = '/QandA.html';
+          console.log('Sent to sever successfully.');
+        }).error(function(data){
+            console.log('ERROR: Not sent to server.');
+            popError('A post in Q&A was already found with the given title. Please submit with a unique title or checkout that post!');
+        });
+    }
+    else {
+      popError('A post may only be submitted if it has a title and text.');
+    }
+  }
+  });
+
 app.controller('newUserCtrl', function($scope, $http) {
 
   $scope.sub = function() {
@@ -334,8 +751,8 @@ app.controller('mainCtrl', function($scope, $http) {
 
 app.controller('generalCtrl', function($scope, $http) {
   if(sessionStorage.getItem('bio') == "null")
-    $scope.bio = "No current bio."; 
-  else 
+    $scope.bio = "No current bio.";
+  else
     $scope.bio = sessionStorage.getItem('bio');
   $scope.message = "Username: " + sessionStorage.getItem('username');
   $scope.messageName = "Name: " + sessionStorage.getItem('first_name') + " " + sessionStorage.getItem('last_name');
@@ -619,6 +1036,146 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
         console.log('ERROR: Not sent to server.');
       });
     }
+  });
+
+  app.controller('searchWebsiteCtrl', function($scope, $http) {
+      $scope.txt = "";
+      $scope.sub = function(formData) {
+        console.log(formData);
+        console.log("infunction");
+        var searchMethod = '';
+        if (formData.searchType == 0 || formData.type == 1)//posts search
+        {
+          searchMethod = 'forumSearch';
+        }
+        else if (formData.searchType == 2) //group search
+        {
+          searchMethod = 'groupSearch';
+        }
+        else//user search
+        {
+          searchMethod = 'userSearch';
+        }
+        var searchCall = '/search/'+searchMethod;
+        console.log(searchCall);
+        $http.put(searchCall, formData).
+          success(function(data) {
+              console.log('Sent to sever successfully.' + data);
+              document.getElementById("searchResults").innerHTML = "";
+              //Apparently we need a directive to parse this data into a string -> use value.table_name
+              if(Object.keys(data).length != 0)
+              {
+                var map = {};
+                var prevKey = '';
+                switch (searchMethod)
+                {
+                  case 'forumSearch':
+                    //$scope.txt = "Some data has been found, let's print it out!";
+                    angular.forEach(data, function(value, key) {
+                      console.log("Key: " + key + ", Value: " + value.username + ", " + value.title + ", " + value.text);
+                      //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
+                      if(!value.title.equals(prevKey))
+                      {
+                        map[value.title] = value;
+                        map[value.title].count = 1;
+                        prevKey = value.title;
+
+                      }
+                      else {
+                        map[value.title].count++;
+                      }
+
+                    });
+                    Object.keys(map).forEach(function(key, value){
+
+                      var highestCount = -1;
+                      var mostReleventkey = "";
+                      Object.keys(map).forEach(function(key, value){
+                        if(value.count > highestCount)
+                        {
+                          highestCount = value.count;
+                          mostReleventkey = key;
+                        }
+                      });
+                      map[mostReleventkey].count = -1;
+                      var postData = map[mostReleventkey];
+                      $.getScript("JS/tableGen.js", function(){
+                        param = '{ "post" : [' +
+                        '{ "username": "' + postData.username + '", "timestamp":"' + postData.timestamp + '", "post_title":"' + postData.title + '", "post_tags":"' + "notag" +
+                        '", "type":"' + postData.type + '", "id":"' + postData.id + '" }]}';
+                        console.log(param);
+                        document.getElementById("searchResults").innerHTML += singlePost(param);
+                      });
+                    });
+                    break;
+                  case 'groupSearch':
+                  angular.forEach(data, function(value, key) {
+                    console.log("Key: " + key + ", Value: " + value.groupname +" privacy "+ value.privacy);
+                    //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
+                    if(value.privacy == 0)
+                    {
+                      if(!value.groupname.equals(prevKey))
+                      {
+                        map[value.groupname] = value;
+                        map[value.groupname].count = 1;
+                        prevKey = value.groupname;
+
+                      }
+                      else {
+                        map[value.groupname].count++;
+                      }
+                    }
+
+                  });
+                  Object.keys(map).forEach(function(key, value){
+
+                    var highestCount = -1;
+                    var mostReleventkey = "";
+                    Object.keys(map).forEach(function(key, value){
+                      if(value.count > highestCount)
+                      {
+                        highestCount = value.count;
+                        mostReleventkey = key;
+                      }
+                    });
+                    map[mostReleventkey].count = -1;
+                    var postData = map[mostReleventkey];
+                    var groupPriv = "public";
+                    if(postData.privacy == 1)
+                    {
+                      groupPriv = "private";
+                    }
+                    $.getScript("JS/groupSearchResultsBuilder.js", function(){
+                      param = '{ "group" : [' +
+                      '{ "groupname": "' + postData.groupname + '", "privacy":"' + groupPriv + '" }]}';
+                      console.log(param);
+                      document.getElementById("searchResults").innerHTML += singlePost(param);
+                    });
+                    });
+                    break;
+                  case 'userSearch':
+                    angular.forEach(data, function(value, key) {
+                      $.getScript("JS/profileSearchResultsBuilder.js", function(){
+                        param = '{ "user" : [' +
+                        '{ "username": "' + value.username + '", "email":"' + value.email + '" }]}';
+                        console.log(param);
+                        document.getElementById("searchResults").innerHTML += singlePost(param);
+                      });
+                    });
+                    break;
+                  default:
+                    //we should never get here
+                    break;
+                }
+              }
+              else {
+                $scope.txt = "No posts have been found. Try wording your search differently";
+              }
+          }).error(function(data){
+              $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
+              console.log('ERROR: Not sent to server.');
+          });
+      }
   });
 
 

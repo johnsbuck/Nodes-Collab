@@ -13,6 +13,7 @@ var freePost = require('./routes/freelance_posts');
 var qaPost = require('./routes/qa_posts');
 var tag = require('./routes/tags');
 var comments = require('./routes/comments');
+var search = require('./routes/search');
 
 var app = express();
 
@@ -36,6 +37,7 @@ app.use('/qa-post', qaPost);
 app.use('/free-post', freePost);
 app.use('/comments', comments);
 app.use('/tag', tag);
+app.use('/search', search);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
