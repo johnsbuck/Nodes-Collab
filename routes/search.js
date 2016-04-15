@@ -119,18 +119,20 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
  });
 
  router.put('/userSearch', function(req, res) {
+   console.log("in userSearch");
    pg.connect(connectionString, function(err, client, done) {
      var userName = quoteFixer(req.body.searchString);
-
      console.log(userName);
-
-     client.query('SELECT * FROM users WHERE username CONTAINS \''+ userName + '\';',
+     var queryString = 'SELECT username, email FROM users WHERE username LIKE \''+ userName + '\' OR email LIKE \''+ userName + '\';'
+     console.log(queryString);
+     client.query(queryString,
        function(err, result) {
          done();
          console.log(result);
 
          if(err) {
            console.error(err);
+           console.log("in userSearch error found");
            res.sendStatus(406);
          }else if(!result || result.rows.length === 0) {
            res.sendStatus(204);

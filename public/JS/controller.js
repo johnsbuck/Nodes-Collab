@@ -1154,13 +1154,21 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
                     });
                     break;
                   case 'userSearch':
+                    var usrname = "";
                     angular.forEach(data, function(value, key) {
-                      $.getScript("JS/profileSearchResultsBuilder.js", function(){
+                      console.log("key: " + key + " value: " + value);
+                      if(key === "email")
+                      {
+                        $.getScript("JS/profileSearchResultBuilder.js", function(){
                         param = '{ "user" : [' +
-                        '{ "username": "' + value.username + '", "email":"' + value.email + '" }]}';
+                        '{ "username": "' + usrname + '", "email":"' + value + '" }]}';
                         console.log(param);
                         document.getElementById("searchResults").innerHTML += singlePost(param);
-                      });
+                        });
+                      }
+                      else {
+                        usrname = value;
+                      }
                     });
                     break;
                   default:
