@@ -145,6 +145,41 @@ app.controller('QAPostGen', function($scope, $http) {
 //TODO when viewing another user's profile, the "Add" button should add them to that user's profile.
 app.controller('profileGen', function($scope, $http) {
   var viewingCurrentUser = true;    //Are we viewing the current user's profile or another person's profile? TODO integreate this better
+    $scope.refreshConnections = function() {
+      console.log("Getting user contacts!");
+      var formData = {username: sessionStorage.getItem('username'), pass : sessionStorage.getItem('pass')};
+      $http.put('/user/get/connections', formData).
+        success(function(data) {
+          console.log("User Connections GET Request sent to server successfully!");
+          if(Object.keys(data).length != 0)
+          {
+            $scope.no_connections = Object.keys(data).length;
+            //Initialize the select picker to the contacts
+            //var selectOptions = "";   //none by default
+            //Initialize table as string first
+            var userTable =
+             "<table class='table table-striped' width='100%'> " +
+                "<thead><tr><th>Username</th><th>View Profile</th></tr></thead>" +
+                "<tbody>";
+            data.forEach(function(value) {
+            userTable += "<tr><td>" + value.second_user + "</td><td>" + "Link" + "</td></tr>";
+            //selectOptions += "<option>" + value.second_user + "</option>"
+            });
+            userTable += "</tbody></table>";
+            //Finally set the table to the innerHTML
+            document.getElementById('viewConnectionsGen').innerHTML = userTable;
+            //document.getElementById('connectionsSelectOptions').innerHTML = selectOptions;
+            console.log(document.getElementById('viewConnectionsGen').innerHTML);
+          }
+          else {
+            $scope.no_connections = 0;
+            document.getElementById('viewConnectionsGen').innerHTML = "<p>No connections!</p>"
+            console.log("No connections for this user found.");
+          }
+        }).error(function(data) {
+          console.log("User connections GET request not sent to server!");
+        });
+    }
     $scope.viewContactsBtn_Click = function() {
       console.log("View contacts button clicked!")
     }
@@ -162,6 +197,7 @@ app.controller('profileGen', function($scope, $http) {
       $http.put('/user/create/connection', formData).
         success(function(data) {
           $scope.no_connections += 1;   //Does this work???
+          $scope.refreshConnections();         //refresh to update the modal as well.
           console.log("Connection added successfully!");
           popMessage("Connection Added!");
         }).error(function(data) {
@@ -225,33 +261,7 @@ app.controller('profileGen', function($scope, $http) {
             console.log('ERROR: Not sent to server.');
         });
       var formData = {username: sessionStorage.getItem('username'), pass : sessionStorage.getItem('pass')};
-      $http.put('/user/get/connections', formData).
-        success(function(data) {
-          console.log("User Connections GET Request sent to server successfully!");
-          if(Object.keys(data).length != 0)
-          {
-            $scope.no_connections = Object.keys(data).length;
-            //Initialize table as string first
-            var userTable =
-             "<table class='table table-striped' width='100%'> " +
-                "<thead><tr><th>Username</th><th>View Profile</th></tr></thead>" +
-                "<tbody>";
-            data.forEach(function(value) {
-            userTable += "<tr><td>" + value.second_user + "</td><td>" + "Link" + "</td></tr>";
-            });
-            userTable += "</tbody></table>";
-            //Finally set the table to the innerHTML
-            document.getElementById('viewConnectionsGen').innerHTML = userTable;
-            console.log(document.getElementById('viewConnectionsGen').innerHTML);
-          }
-          else {
-            $scope.no_connections = 0;
-            $scope.viewConnectionsGen.innerHTML = "<p>No connections!</p>"
-            console.log("No connections for this user found.");
-          }
-        }).error(function(data) {
-          console.log("User connections GET request not sent to server!");
-        });
+      $scope.refreshConnections();   //get the user connections
     }
     //Call method to execute code above.
     $scope.sub();
