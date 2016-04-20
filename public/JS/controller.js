@@ -141,46 +141,66 @@ app.controller('QAPostGen', function($scope, $http) {
 });
 
 //Controller for the user profile
-//TODO list connections of a user
 //TODO when viewing another user's profile, the "Add" button should add them to that user's profile.
 app.controller('profileGen', function($scope, $http) {
   var viewingCurrentUser = true;    //Are we viewing the current user's profile or another person's profile? TODO integreate this better
+    $scope.goToProfile = function(username) {
+      console.log("Navigating to profile: " + username);
+    }
     $scope.refreshConnections = function() {
-      console.log("Getting user contacts!");
-      var formData = {username: sessionStorage.getItem('username'), pass : sessionStorage.getItem('pass')};
-      $http.put('/user/get/connections', formData).
-        success(function(data) {
-          console.log("User Connections GET Request sent to server successfully!");
-          if(Object.keys(data).length != 0)
-          {
-            $scope.no_connections = Object.keys(data).length;
-            //Initialize the select picker to the contacts
-            //var selectOptions = "";   //none by default
-            //Initialize table as string first
-            var userTable =
-             "<table class='table table-striped' width='100%'> " +
-                "<thead><tr><th>Username</th><th>View Profile</th></tr></thead>" +
-                "<tbody>";
-            data.forEach(function(value) {
-            userTable += "<tr><td>" + value.second_user + "</td><td>" + "Link" + "</td></tr>";
-            //selectOptions += "<option>" + value.second_user + "</option>"
-            });
-            userTable += "</tbody></table>";
-            //Finally set the table to the innerHTML
-            document.getElementById('viewConnectionsGen').innerHTML = userTable;
-            //document.getElementById('connectionsSelectOptions').innerHTML = selectOptions;
-            console.log(document.getElementById('viewConnectionsGen').innerHTML);
-          }
-          else {
-            $scope.no_connections = 0;
-            document.getElementById('viewConnectionsGen').innerHTML = "<p>No connections!</p>"
-            console.log("No connections for this user found.");
-          }
-        }).error(function(data) {
-          console.log("User connections GET request not sent to server!");
-        });
+      if(viewingCurrentUser == true) {
+        console.log("Getting user contacts!");
+        var formData = {username: sessionStorage.getItem('username'), pass : sessionStorage.getItem('pass')};
+        $http.put('/user/get/connections', formData).
+          success(function(data) {
+            console.log("User Connections GET Request sent to server successfully!");
+            //console.log(viewingCurrentUser);
+            if(Object.keys(data).length != 0)
+            {
+              $scope.no_connections = Object.keys(data).length;
+              //Initialize the select picker to the contacts
+              //var selectOptions = "";   //none by default
+              //Initialize table as string first
+              var userTable =
+                "<table class='table table-striped' width='100%'> " +
+                  "<thead><tr><th>Username</th><th>View Profile</th></tr></thead>" +
+                  "<tbody>";
+                  data.forEach(function(value) {
+                    var link = "";
+                    //Problem: This JS gets called AFTER the rest of this method is done executing...So Link never gets put into the table...
+                    /*
+                    $.getScript("JS/connectionsLinkBuilder.js", function(){
+                    param = '{ "user" : "' + value.second_user + '"}';
+                    console.log(param);
+                    link = singleLink(param);
+                    console.log(link);
+                    });
+                    */
+                    //Problem with this: goToProfile is never hit - so the link is not functional. Why?
+                    //Removing the href="Profile.html" does not help."
+                    link = '<button type="button" class="btn btn-default" type="submit" ng-model="profileGen" ng-click="goToProfile(' + value.second_user + ')">View Profile</button>'
+                    //link = '<a href="Profile.html" ng-click="goToProfile(' + value.second_user + ')">View Profile</a>';
+                    userTable += `<tr><td>` + value.second_user + `</td><td>` + link + `</td></tr>`;
+                    //selectOptions += "<option>" + value.second_user + "</option>"
+                  });
+                  userTable += `</tbody></table>`;
+                  //Finally set the table to the innerHTML
+                  document.getElementById('viewConnectionsGen').innerHTML = userTable;
+                  //document.getElementById('connectionsSelectOptions').innerHTML = selectOptions;
+                  console.log(document.getElementById('viewConnectionsGen').innerHTML);
+                }
+                else {
+                  $scope.no_connections = 0;
+                  document.getElementById('viewConnectionsGen').innerHTML = "<p>No connections!</p>"
+                  console.log("No connections for this user found.");
+                }
+              }).error(function(data) {
+                console.log("User connections GET request not sent to server!");
+              });
+        }
     }
     $scope.viewContactsBtn_Click = function() {
+      //Modal pops up from HTML
       console.log("View contacts button clicked!")
     }
     $scope.contactBtn_Click = function() {
@@ -210,11 +230,11 @@ app.controller('profileGen', function($scope, $http) {
       $scope.formData['username'] = sessionStorage.getItem('username');
       //TODO Make sure this plays nice with adding connections, etc.
       //TODO undo this at the end!
-      if(sessionStorage.getItem('viewuser') != null) {
+      if(sessionStorage.getItem('viewuser') != null && sessionStorage.getItem('viewuser') != "") {
         viewingCurrentUser = false;
         $scope.formData['username'] = sessionStorage.getItem('viewuser');       //If we are attempting to view a user other than ourselves, redefine 'username'.
       }
-      $scope.formData['pass'] = sessionStorage.getItem('pass');
+      $scope.formData['pass'] = sessionStorage.getItem('pass');   //Note pass isn't needed for /user/get
       //API call to get user information
       $http.put('/user/get', $scope.formData).
         success(function(data) {
@@ -243,6 +263,7 @@ app.controller('profileGen', function($scope, $http) {
       //We also need to get the user's public groups they are part of.
       //API call requires: username and password.
       //TODO New API call to get all public groups ANY user is part of - no authentication required.
+      //When viewingCurrentUser == false this will get a 403!
       $http.put('/group/get/groups', $scope.formData).
         success(function(data) {
             console.log('Groups GET Request sent to sever successfully.');
@@ -262,7 +283,9 @@ app.controller('profileGen', function($scope, $http) {
         });
       var formData = {username: sessionStorage.getItem('username'), pass : sessionStorage.getItem('pass')};
       $scope.refreshConnections();   //get the user connections
+      sessionStorage.setItem('viewuser', "");
     }
+
     //Call method to execute code above.
     $scope.sub();
 });
