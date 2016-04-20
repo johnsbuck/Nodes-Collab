@@ -4,9 +4,9 @@ function singlePost(singleData)
 
   var divBuilder = `<table style ="width:100%">
                         <tr>
-                          <td align="left"> `+obj.post[0].username+` </td>
+                          <td align="left"> <b>`+obj.post[0].username+`:<b> </td>
                           <td align="center"> `+obj.post[0].text+` </td>
-                          <td align="right"> `+obj.post[0].timestamp+` </td>
+                          <td align="right"> <b>`+obj.post[0].timestamp+`<b> </td>
                         </tr>
                         <hr>
                         </table>`;
