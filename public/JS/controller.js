@@ -1054,7 +1054,7 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
         console.log(formData);
         console.log("infunction");
         var searchMethod = '';
-        if (formData.searchType == 0 || formData.type == 1)//posts search
+        if (formData.searchType == 0 || formData.searchType == 1)//posts search
         {
           searchMethod = 'forumSearch';
         }
@@ -1076,44 +1076,16 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
               //Apparently we need a directive to parse this data into a string -> use value.table_name
               if(Object.keys(data).length != 0)
               {
-                var map = {};
-                var prevKey = '';
                 switch (searchMethod)
                 {
                   case 'forumSearch':
                     //$scope.txt = "Some data has been found, let's print it out!";
                     angular.forEach(data, function(value, key) {
                       console.log("Key: " + key + ", Value: " + value.username + ", " + value.title + ", " + value.text);
-                      //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
-                      if(!value.title.equals(prevKey))
-                      {
-                        map[value.title] = value;
-                        map[value.title].count = 1;
-                        prevKey = value.title;
-
-                      }
-                      else {
-                        map[value.title].count++;
-                      }
-
-                    });
-                    Object.keys(map).forEach(function(key, value){
-
-                      var highestCount = -1;
-                      var mostReleventkey = "";
-                      Object.keys(map).forEach(function(key, value){
-                        if(value.count > highestCount)
-                        {
-                          highestCount = value.count;
-                          mostReleventkey = key;
-                        }
-                      });
-                      map[mostReleventkey].count = -1;
-                      var postData = map[mostReleventkey];
                       $.getScript("JS/tableGen.js", function(){
                         param = '{ "post" : [' +
-                        '{ "username": "' + postData.username + '", "timestamp":"' + postData.timestamp + '", "post_title":"' + postData.title + '", "post_tags":"' + "notag" +
-                        '", "type":"' + postData.type + '", "id":"' + postData.id + '" }]}';
+                        '{ "username": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + "notag" +
+                        '", "type":"' + value.type + '", "id":"' + value.id + '" }]}';
                         console.log(param);
                         document.getElementById("searchResults").innerHTML += singlePost(param);
                       });
@@ -1124,42 +1096,6 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
                     console.log(data);
                     angular.forEach(data, function(value, key) {
                       console.log("key: " + key + " value: " + value);
-                    //   console.log("Key: " + key + ", Value: " + value.groupname +" privacy "+ value.privacy);
-                    //   //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
-                    //   if(value.privacy == 0)
-                    //   {
-                    //     if(!value.groupname.equals(prevKey))
-                    //     {
-                    //       map[value.groupname] = value;
-                    //       map[value.groupname].count = 1;
-                    //       prevKey = value.groupname;
-                    //
-                    //     }
-                    //     else {
-                    //       map[value.groupname].count++;
-                    //     }
-                    //   }
-                    //
-                    // });
-                    // Object.keys(map).forEach(function(key, value){
-                    //
-                    //   var highestCount = -1;
-                    //   var mostReleventkey = "";
-                    //   Object.keys(map).forEach(function(key, value){
-                    //     if(value.count > highestCount)
-                    //     {
-                    //       highestCount = value.count;
-                    //       mostReleventkey = key;
-                    //     }
-                    //   });
-                    //   map[mostReleventkey].count = -1;
-                    //   var postData = map[mostReleventkey];
-                    //   var groupPriv = "public";
-                    //   if(postData.privacy == 1)
-                    //   {
-                    //     groupPriv = "private";
-                    //   }
-
                         if(value.privacy == 0)
                         {
                           privacy = "public";
@@ -1185,7 +1121,7 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
                       '{ "username": "' + value.username + '", "email":"' + value.email + '" }]}';
                       console.log(param);
                       document.getElementById("searchResults").innerHTML += singlePost(param);
-                      });          
+                      });
                     });
                     break;
                   default:

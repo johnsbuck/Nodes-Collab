@@ -18,56 +18,29 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
    pg.connect(connectionString, function(err, client, done) {
 
      console.log("in forumSearch");
-     var stringAndTagSplit = req.body.searchString.split(':');
      var type = quoteFixer(req.body.searchType);
-     var tagsArray;
-     var wordsArray;
-     if(stringAndTagSplit.length == 2)
-     {
-       wordsArray = stringAndTagSplit[0].split(' ');
-       tagsArray = stringAndTagSplit[1].split(' ');
-     }
-     else if (stringAndTagSplit.length == 1)
-     {
-       wordsArray = stringAndTagSplit[0].split(' ');
-       tagsArray = [""];
-     }
-     else {
-       //need case where string is empty or where a : is used in search
-     }
-     var tagsQuery = '(';
-     for(var i = 1; i < tagsArray.length; i++)
-     {
-       if(i < tagsArray.length-1)
-       {
-         tagsQuery += "'" + quoteFixer(tagsArray[i]) + "', ";
-       }
-       else
-       {
-         tagsQuery += "'" + quoteFixer(tagsArray[i]) + "'";
-       }
-     }
-     tagsQuery += ') ';
-     var wordsQuery = 'ARRAY['
+     console.log(type);
+     var fullSearch = quoteFixer(req.body.searchString);
+     var wordsArray = quoteFixer(req.body.searchString).split(" ");
+
+     var likeClause = ' ( ';
+     likeClause += 'title LIKE \'%' + fullSearch+'%\'';
+     likeClause += ' OR title LIKE \'' + fullSearch+'%\'';
+     likeClause += ' OR title LIKE \'%' + fullSearch+'\'';
+     likeClause += ' OR title LIKE \'' + fullSearch+'\'';
      for(i = 0; i < wordsArray.length; i++)
      {
-       if(i < wordsArray.length-1)
-       {
-         wordsQuery += "'" + quoteFixer(wordsArray[i]) + "', ";
-       }
-       else
-       {
-         wordsQuery += "'" + quoteFixer(wordsArray[i]) + "'";
-       }
+       likeClause += ' OR title LIKE \'%' + quoteFixer(wordsArray[i])+'%\'';
+       likeClause += ' OR title LIKE \'' + quoteFixer(wordsArray[i])+'%\'';
+       likeClause += ' OR title LIKE \'%' + quoteFixer(wordsArray[i])+'\'';
+       likeClause += ' OR title LIKE \'' + quoteFixer(wordsArray[i])+'\'';
      }
-     wordsQuery += "] ";
+     likeClause += ' )';
 
-     console.log(tagsQuery, wordsQuery);
+     console.log(likeClause);
 
-     client.query('SELECT * ' +
-       'FROM posts INNER JOIN tags ON tags.tag IN ' + tagsQuery + 'OR ' +
-       'posts.title CONTAINS ANY(' + wordsQuery + ') AND posts.type = "'+ type + '"' +
-       'ORDER BY posts.post_id ASC;',
+     client.query('SELECT * FROM posts WHERE' + likeClause +
+       ' AND type ='+type+';',
        function(err, result) {
          done();
          console.log(result);
