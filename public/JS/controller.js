@@ -331,7 +331,9 @@ app.controller('groupPostCtrl', function($scope, $http) {
       if($scope.formData != undefined) {
       $scope.formData.username = sessionStorage.getItem('username');
       $scope.formData.groupname = sessionStorage.getItem('currentgroup');
-      $scope.formData.timestamp = '4/16/2016';
+      var dt = new Date();
+      var utcDate = dt.toUTCString();
+      $scope.formData.timestamp = utcDate;
       $scope.formData.pass = sessionStorage.getItem('pass');
       $http.put('/group-post/post', $scope.formData).
       success(function(data) {
