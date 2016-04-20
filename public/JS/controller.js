@@ -1070,7 +1070,8 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
         console.log(searchCall);
         $http.put(searchCall, formData).
           success(function(data) {
-              console.log('Sent to sever successfully.' + data);
+              console.log('Sent to sever successfully');
+              console.log(data);
               document.getElementById("searchResults").innerHTML = "";
               //Apparently we need a directive to parse this data into a string -> use value.table_name
               if(Object.keys(data).length != 0)
@@ -1119,8 +1120,8 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
                     });
                     break;
                   case 'groupSearch':
-                    var gname = "";
                     var privacy = "";
+                    console.log(data);
                     angular.forEach(data, function(value, key) {
                       console.log("key: " + key + " value: " + value);
                     //   console.log("Key: " + key + ", Value: " + value.groupname +" privacy "+ value.privacy);
@@ -1159,9 +1160,7 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
                     //     groupPriv = "private";
                     //   }
 
-                      if(key === "privacy")
-                      {
-                        if(value == 0)
+                        if(value.privacy == 0)
                         {
                           privacy = "public";
                         }
@@ -1170,33 +1169,23 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
                         }
                         $.getScript("JS/groupSearchResultBuilder.js", function(){
                           param = '{ "group" : [' +
-                          '{ "groupname": "' + gname + '", "privacy":"' + privacy + '" }]}';
+                          '{ "groupname": "' + value.groupname + '", "privacy":"' + privacy + '" }]}';
                           console.log(param);
                           document.getElementById("searchResults").innerHTML += singlePost(param);
                         });
-                      }
-                      else {
-                        gname = value;
-                        console.log(gname);
-                      }
+
                     });
                     break;
                   case 'userSearch':
-                    var usrname = "";
                     angular.forEach(data, function(value, key) {
                       console.log("key: " + key + " value: " + value);
-                      if(key === "email")
-                      {
-                        $.getScript("JS/profileSearchResultBuilder.js", function(){
-                        param = '{ "user" : [' +
-                        '{ "username": "' + usrname + '", "email":"' + value + '" }]}';
-                        console.log(param);
-                        document.getElementById("searchResults").innerHTML += singlePost(param);
-                        });
-                      }
-                      else {
-                        usrname = value;
-                      }
+
+                      $.getScript("JS/profileSearchResultBuilder.js", function(){
+                      param = '{ "user" : [' +
+                      '{ "username": "' + value.username + '", "email":"' + value.email + '" }]}';
+                      console.log(param);
+                      document.getElementById("searchResults").innerHTML += singlePost(param);
+                      });          
                     });
                     break;
                   default:
