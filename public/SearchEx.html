@@ -83,11 +83,10 @@
           <div class = "row" >
           <div class = "col-lg-6" ng-controller="searchWebsiteCtrl">
             <form class="form-search" role="form" method="put" >
-            <input type="text" class="form-control" placeholder="Search..." ng-model="formData.searchString">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></button>
-            <button type="submit" class="btn btn-primary" ng-click="sub(formData)"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-            <ul class="SearchPage dropdown-menu" style = "width: 200px">
-              <li>
+            <button type="submit" class="btn btn-primary" style="float: right" ng-click="sub(formData)"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+            <div>
+              <input type="text" class="form-control" placeholder="Search..." ng-model="formData.searchString" style="overflow: hidden; padding-right: .5em;">
+            </div>
                 <div class="form-group" >
                   <label for="filter">Search in:</label>
                   <select ng-model="formData.searchType" ng-init="formData.searchType = '0'" class="form-control">
@@ -97,9 +96,6 @@
                     <option value="3" ng-model="formData.searchType">People</option>
                   </select>
                 </div>
-              </li> <label></label>
-            </ul>
-
           </form>
         </div>
       </div>
