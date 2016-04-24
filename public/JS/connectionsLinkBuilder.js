@@ -19,5 +19,6 @@ function goToProfile(username)
   console.log("Session Stored OtherUserName "+ username);
   sessionStorage.setItem('viewuser', username);
 }
+
 //See the note @ function above
 //generate();

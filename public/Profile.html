@@ -26,7 +26,9 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <script src="JS/jquery.js"></script>
     <script src="JS/angular.min.js"></script>
+    <script src="JS/profile.js"></script>
     <script src="JS/controller.js"></script>
   </head>
 
@@ -150,7 +152,7 @@
                     <h2><strong>{{ no_connections }}</strong></h2>
                    <p><small>Connections</small></p>
                    <!--Button to add a connection-->
-                    <button class="btn btn-info btn-block" data-toggle="modal" data-target="#addConnectionModal"><span class="fa fa-user"></span> <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add </button>
+                    <button class="btn btn-info btn-block" ng-show="isAddConnectionButtonVisible" ng-init="true" data-toggle="modal" data-target="#addConnectionModal"><span class="fa fa-user"></span> <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add </button>
                     <!-- Add connection Modal -->
                     <div id="addConnectionModal" class="modal fade" role="dialog">
                         <div class="modal-dialog">
@@ -189,7 +191,7 @@
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                             <h4 class="modal-title">User connections</h4>
                           </div>
-                          <div class="modal-body" ng-controller="profileGen">
+                          <div class="modal-body">
                             <div id="viewConnectionsGen"></div>
                           </div>
                           <div class="modal-footer">
