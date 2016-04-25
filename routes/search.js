@@ -18,56 +18,29 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
    pg.connect(connectionString, function(err, client, done) {
 
      console.log("in forumSearch");
-     var stringAndTagSplit = req.body.searchString.split(':');
      var type = quoteFixer(req.body.searchType);
-     var tagsArray;
-     var wordsArray;
-     if(stringAndTagSplit.length == 2)
-     {
-       wordsArray = stringAndTagSplit[0].split(' ');
-       tagsArray = stringAndTagSplit[1].split(' ');
-     }
-     else if (stringAndTagSplit.length == 1)
-     {
-       wordsArray = stringAndTagSplit[0].split(' ');
-       tagsArray = [""];
-     }
-     else {
-       //need case where string is empty or where a : is used in search
-     }
-     var tagsQuery = '(';
-     for(var i = 1; i < tagsArray.length; i++)
-     {
-       if(i < tagsArray.length-1)
-       {
-         tagsQuery += "'" + quoteFixer(tagsArray[i]) + "', ";
-       }
-       else
-       {
-         tagsQuery += "'" + quoteFixer(tagsArray[i]) + "'";
-       }
-     }
-     tagsQuery += ') ';
-     var wordsQuery = 'ARRAY['
+     console.log(type);
+     var fullSearch = quoteFixer(req.body.searchString);
+     var wordsArray = quoteFixer(req.body.searchString).split(" ");
+
+     var likeClause = ' ( ';
+     likeClause += 'title LIKE \'%' + fullSearch+'%\'';
+     likeClause += ' OR title LIKE \'' + fullSearch+'%\'';
+     likeClause += ' OR title LIKE \'%' + fullSearch+'\'';
+     likeClause += ' OR title LIKE \'' + fullSearch+'\'';
      for(i = 0; i < wordsArray.length; i++)
      {
-       if(i < wordsArray.length-1)
-       {
-         wordsQuery += "'" + quoteFixer(wordsArray[i]) + "', ";
-       }
-       else
-       {
-         wordsQuery += "'" + quoteFixer(wordsArray[i]) + "'";
-       }
+       likeClause += ' OR title LIKE \'%' + quoteFixer(wordsArray[i])+'%\'';
+       likeClause += ' OR title LIKE \'' + quoteFixer(wordsArray[i])+'%\'';
+       likeClause += ' OR title LIKE \'%' + quoteFixer(wordsArray[i])+'\'';
+       likeClause += ' OR title LIKE \'' + quoteFixer(wordsArray[i])+'\'';
      }
-     wordsQuery += "] ";
+     likeClause += ' )';
 
-     console.log(tagsQuery, wordsQuery);
+     console.log(likeClause);
 
-     client.query('SELECT * ' +
-       'FROM posts INNER JOIN tags ON tags.tag IN ' + tagsQuery + 'OR ' +
-       'posts.title CONTAINS ANY(' + wordsQuery + ') AND posts.type = "'+ type + '"' +
-       'ORDER BY posts.post_id ASC;',
+     client.query('SELECT * FROM posts WHERE' + likeClause +
+       ' AND type ='+type+';',
        function(err, result) {
          done();
          console.log(result);
@@ -79,7 +52,7 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
          }else if(!result || result.rows.length === 0) {
            res.sendStatus(204);
          }else {
-           res.status(202).send(result.rows[0]);
+           res.status(202).send(result.rows);
          }
        });
    })
@@ -93,16 +66,22 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
      var likeClause = '';
      if(searchWordsArray.length > 0)
      {
-       likeClause = ' LIKE \'' + quoteFixer(searchWordsArray[0])+'\'';
+       likeClause = ' groupname LIKE \'%' + quoteFixer(searchWordsArray[0])+'%\'';
+       likeClause += ' OR groupname LIKE \'' + quoteFixer(searchWordsArray[0])+'%\'';
+       likeClause += ' OR groupname LIKE \'%' + quoteFixer(searchWordsArray[0])+'\'';
+       likeClause += ' OR groupname LIKE \'' + quoteFixer(searchWordsArray[0])+'\'';
        for(var i = 1; i < searchWordsArray.length; i++)
        {
-         likeClause += ' OR LIKE \'' + quoteFixer(searchWordsArray[i])+'\'';
+         likeClause += ' OR groupname LIKE \'%' + quoteFixer(searchWordsArray[i])+'%\'';
+         likeClause += ' OR groupname LIKE \'' + quoteFixer(searchWordsArray[i])+'%\'';
+         likeClause += ' OR groupname LIKE \'%' + quoteFixer(searchWordsArray[i])+'\'';
+         likeClause += ' OR groupname LIKE \'' + quoteFixer(searchWordsArray[i])+'\'';
        }
      }
 
      console.log(likeClause);
 
-     client.query('SELECT * FROM groups WHERE groupname' +
+     client.query('SELECT * FROM groups WHERE ' +
        likeClause + ' ORDER BY groupname ASC;',
        function(err, result) {
          done();
@@ -114,7 +93,7 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
          }else if(!result || result.rows.length === 0) {
            res.sendStatus(204);
          }else {
-           res.status(202).send(result.rows[0]);
+           res.status(202).send(result.rows);
          }
        });
    })
@@ -123,9 +102,27 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
  router.put('/userSearch', function(req, res) {
    console.log("in userSearch");
    pg.connect(connectionString, function(err, client, done) {
-     var userName = quoteFixer(req.body.searchString);
+     var splitString = req.body.searchString.split(":");
+     var userName = quoteFixer(splitString[0]);
+     var email = "";
+     if(splitString.length > 0)
+     {
+       email = quoteFixer(splitString[1]);
+     }
      console.log(userName);
-     var queryString = 'SELECT username, email FROM users WHERE username LIKE \''+ userName + '\' OR email LIKE \''+ userName + '\';'
+     var likeClause = "";
+     likeClause += ' username LIKE \'' + userName+'\'';
+     likeClause += ' OR username LIKE \'' + userName+'%\'';
+     likeClause += ' OR username LIKE \'%' + userName+'\'';
+     likeClause += ' OR username LIKE \'%' + userName+'%\'';
+     if(email != "")
+     {
+       likeClause += ' OR email LIKE \'' + email+'\'';
+       likeClause += ' OR email LIKE \'' + email+'%\'';
+       likeClause += ' OR email LIKE \'%' + email+'\'';
+       likeClause += ' OR email LIKE \'%' + email+'%\'';
+     }
+     var queryString = 'SELECT * FROM users WHERE' +likeClause+';'
      console.log(queryString);
      client.query(queryString,
        function(err, result) {
@@ -139,7 +136,7 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
          }else if(!result || result.rows.length === 0) {
            res.sendStatus(204);
          }else {
-           res.status(202).send(result.rows[0]);
+           res.status(202).send(result.rows);
          }
        });
    })

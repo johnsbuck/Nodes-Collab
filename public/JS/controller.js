@@ -346,7 +346,9 @@ app.controller('groupPostCtrl', function($scope, $http) {
       if($scope.formData != undefined) {
       $scope.formData.username = sessionStorage.getItem('username');
       $scope.formData.groupname = sessionStorage.getItem('currentgroup');
-      $scope.formData.timestamp = '4/16/2016';
+      var dt = new Date();
+      var utcDate = dt.toUTCString();
+      $scope.formData.timestamp = utcDate;
       $scope.formData.pass = sessionStorage.getItem('pass');
       $http.put('/group-post/post', $scope.formData).
       success(function(data) {
@@ -1069,7 +1071,7 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
         console.log(formData);
         console.log("infunction");
         var searchMethod = '';
-        if (formData.searchType == 0 || formData.type == 1)//posts search
+        if (formData.searchType == 0 || formData.searchType == 1)//posts search
         {
           searchMethod = 'forumSearch';
         }
@@ -1085,98 +1087,33 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
         console.log(searchCall);
         $http.put(searchCall, formData).
           success(function(data) {
-              console.log('Sent to sever successfully.' + data);
+              console.log('Sent to sever successfully');
+              console.log(data);
               document.getElementById("searchResults").innerHTML = "";
               //Apparently we need a directive to parse this data into a string -> use value.table_name
               if(Object.keys(data).length != 0)
               {
-                var map = {};
-                var prevKey = '';
                 switch (searchMethod)
                 {
                   case 'forumSearch':
                     //$scope.txt = "Some data has been found, let's print it out!";
                     angular.forEach(data, function(value, key) {
                       console.log("Key: " + key + ", Value: " + value.username + ", " + value.title + ", " + value.text);
-                      //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
-                      if(!value.title.equals(prevKey))
-                      {
-                        map[value.title] = value;
-                        map[value.title].count = 1;
-                        prevKey = value.title;
-
-                      }
-                      else {
-                        map[value.title].count++;
-                      }
-
-                    });
-                    Object.keys(map).forEach(function(key, value){
-
-                      var highestCount = -1;
-                      var mostReleventkey = "";
-                      Object.keys(map).forEach(function(key, value){
-                        if(value.count > highestCount)
-                        {
-                          highestCount = value.count;
-                          mostReleventkey = key;
-                        }
-                      });
-                      map[mostReleventkey].count = -1;
-                      var postData = map[mostReleventkey];
                       $.getScript("JS/tableGen.js", function(){
                         param = '{ "post" : [' +
-                        '{ "username": "' + postData.username + '", "timestamp":"' + postData.timestamp + '", "post_title":"' + postData.title + '", "post_tags":"' + "notag" +
-                        '", "type":"' + postData.type + '", "id":"' + postData.id + '" }]}';
+                        '{ "username": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + "notag" +
+                        '", "type":"' + value.type + '", "id":"' + value.id + '" }]}';
                         console.log(param);
                         document.getElementById("searchResults").innerHTML += singlePost(param);
                       });
                     });
                     break;
                   case 'groupSearch':
-                    var gname = "";
                     var privacy = "";
+                    console.log(data);
                     angular.forEach(data, function(value, key) {
                       console.log("key: " + key + " value: " + value);
-                    //   console.log("Key: " + key + ", Value: " + value.groupname +" privacy "+ value.privacy);
-                    //   //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
-                    //   if(value.privacy == 0)
-                    //   {
-                    //     if(!value.groupname.equals(prevKey))
-                    //     {
-                    //       map[value.groupname] = value;
-                    //       map[value.groupname].count = 1;
-                    //       prevKey = value.groupname;
-                    //
-                    //     }
-                    //     else {
-                    //       map[value.groupname].count++;
-                    //     }
-                    //   }
-                    //
-                    // });
-                    // Object.keys(map).forEach(function(key, value){
-                    //
-                    //   var highestCount = -1;
-                    //   var mostReleventkey = "";
-                    //   Object.keys(map).forEach(function(key, value){
-                    //     if(value.count > highestCount)
-                    //     {
-                    //       highestCount = value.count;
-                    //       mostReleventkey = key;
-                    //     }
-                    //   });
-                    //   map[mostReleventkey].count = -1;
-                    //   var postData = map[mostReleventkey];
-                    //   var groupPriv = "public";
-                    //   if(postData.privacy == 1)
-                    //   {
-                    //     groupPriv = "private";
-                    //   }
-
-                      if(key === "privacy")
-                      {
-                        if(value == 0)
+                        if(value.privacy == 0)
                         {
                           privacy = "public";
                         }
@@ -1185,33 +1122,23 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
                         }
                         $.getScript("JS/groupSearchResultBuilder.js", function(){
                           param = '{ "group" : [' +
-                          '{ "groupname": "' + gname + '", "privacy":"' + privacy + '" }]}';
+                          '{ "groupname": "' + value.groupname + '", "privacy":"' + privacy + '" }]}';
                           console.log(param);
                           document.getElementById("searchResults").innerHTML += singlePost(param);
                         });
-                      }
-                      else {
-                        gname = value;
-                        console.log(gname);
-                      }
+
                     });
                     break;
                   case 'userSearch':
-                    var usrname = "";
                     angular.forEach(data, function(value, key) {
                       console.log("key: " + key + " value: " + value);
-                      if(key === "email")
-                      {
-                        $.getScript("JS/profileSearchResultBuilder.js", function(){
-                        param = '{ "user" : [' +
-                        '{ "username": "' + usrname + '", "email":"' + value + '" }]}';
-                        console.log(param);
-                        document.getElementById("searchResults").innerHTML += singlePost(param);
-                        });
-                      }
-                      else {
-                        usrname = value;
-                      }
+
+                      $.getScript("JS/profileSearchResultBuilder.js", function(){
+                      param = '{ "user" : [' +
+                      '{ "username": "' + value.username + '", "email":"' + value.email + '" }]}';
+                      console.log(param);
+                      document.getElementById("searchResults").innerHTML += singlePost(param);
+                      });
                     });
                     break;
                   default:
