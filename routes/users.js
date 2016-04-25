@@ -273,7 +273,7 @@ router.delete('/delete/connection', function(req, res, next) {
               console.error(err);
               res.sendStatus(406).end();
             } else {
-              res.sendStatus(202).end();
+              res.sendStatus(201).end();
             }
           });
         }else {

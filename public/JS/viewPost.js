@@ -57,7 +57,7 @@ function viewPost(singlePost)
   if(myPost=="true")
   {
       divBuilder += `<button class="btn btn-primary pull-right" style="margin-left:5px" data-toggle="modal" data-target="#deleteModal" type="button"><i class="glyphicon glyphicon-trash"></i></button>`
-      divBuilder += `<button class="btn btn-primary pull-right" data-toggle="modal" data-target="#editModal" type="button">Edit</button>`;
+      //divBuilder += `<button class="btn btn-primary pull-right" data-toggle="modal" data-target="#editModal" type="button">Edit</button>`;
   }
 
   divBuilder += `</p><hr>`;

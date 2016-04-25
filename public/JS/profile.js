@@ -15,9 +15,9 @@ function deleteProfile(username)
   $.ajax({
     url:'/user/delete/connection',
     type: 'DELETE',
-    context: {"username" : formData['username'], "pass" : formData['pass']},
+    data: {"username" : formData['username'], "pass" : formData['pass'], "connect_user": username},
     success: function() {
-      console.log("Connection removed!");
+      location.reload();
     }
   });
 

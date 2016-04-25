@@ -227,6 +227,8 @@ app.controller('profileGen', function($scope, $http) {
       if(sessionStorage.getItem('viewuser') != null && sessionStorage.getItem('viewuser') != "") {
         $scope.formData['username'] = sessionStorage.getItem('viewuser');       //If we are attempting to view a user other than ourselves, redefine 'username'.
         $scope.isAddConnectionButtonVisible = false;
+      }else {
+        $scope.isAddConnectionButtonVisible = true;
       }
       $scope.formData['pass'] = sessionStorage.getItem('pass');   //Note pass isn't needed for /user/get
       //API call to get user information
