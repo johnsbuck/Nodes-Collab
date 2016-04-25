@@ -141,46 +141,60 @@ app.controller('QAPostGen', function($scope, $http) {
 });
 
 //Controller for the user profile
-//TODO list connections of a user
 //TODO when viewing another user's profile, the "Add" button should add them to that user's profile.
 app.controller('profileGen', function($scope, $http) {
-  var viewingCurrentUser = true;    //Are we viewing the current user's profile or another person's profile? TODO integreate this better
+    $scope.goToProfile = function(username) {
+      console.log("Navigating to profile: " + username);
+    }
     $scope.refreshConnections = function() {
-      console.log("Getting user contacts!");
-      var formData = {username: sessionStorage.getItem('username'), pass : sessionStorage.getItem('pass')};
-      $http.put('/user/get/connections', formData).
-        success(function(data) {
-          console.log("User Connections GET Request sent to server successfully!");
-          if(Object.keys(data).length != 0)
-          {
-            $scope.no_connections = Object.keys(data).length;
-            //Initialize the select picker to the contacts
-            //var selectOptions = "";   //none by default
-            //Initialize table as string first
-            var userTable =
-             "<table class='table table-striped' width='100%'> " +
-                "<thead><tr><th>Username</th><th>View Profile</th></tr></thead>" +
-                "<tbody>";
-            data.forEach(function(value) {
-            userTable += "<tr><td>" + value.second_user + "</td><td>" + "Link" + "</td></tr>";
-            //selectOptions += "<option>" + value.second_user + "</option>"
-            });
-            userTable += "</tbody></table>";
-            //Finally set the table to the innerHTML
-            document.getElementById('viewConnectionsGen').innerHTML = userTable;
-            //document.getElementById('connectionsSelectOptions').innerHTML = selectOptions;
-            console.log(document.getElementById('viewConnectionsGen').innerHTML);
-          }
-          else {
-            $scope.no_connections = 0;
-            document.getElementById('viewConnectionsGen').innerHTML = "<p>No connections!</p>"
-            console.log("No connections for this user found.");
-          }
-        }).error(function(data) {
-          console.log("User connections GET request not sent to server!");
-        });
+      var formData;
+        if(sessionStorage.getItem('viewuser') != null && sessionStorage.getItem('viewuser') != "") {
+          formData = {username: sessionStorage.getItem('viewuser')};       //If we are attempting to view a user other than ourselves, redefine 'username'.
+        } else{
+          formData = {username: sessionStorage.getItem('username')};
+        }
+        console.log("Getting user contacts!");
+        $http.put('/user/get/connections', formData).
+          success(function(data) {
+            console.log("User Connections GET Request sent to server successfully!");
+            //console.log(viewingCurrentUser);
+            if(Object.keys(data).length != 0)
+            {
+              $scope.no_connections = Object.keys(data).length;
+              //Initialize the select picker to the contacts
+              //var selectOptions = "";   //none by default
+              //Initialize table as string first
+              var userTable =
+                "<table class='table table-striped' id='connectionTable' width='100%'> " +
+                  "<thead><tr><th>Username</th><th>View Profile</th></tr></thead>" +
+                  "<tbody>";
+                  data.forEach(function(value) {
+                    var link = "";
+                    //TODO: buttons should be invisible if viewing another user's profile
+                    link = '<button type="button" class="btn btn-default viewProfile" type="submit" ng-model="profileGen" onclick="viewProfile(\'' + value.second_user + '\');">View Profile</button>' +
+                            '<button type="button" class="btn btn-default deleteProfile" type="submit" ng-model="profileGen" onclick="deleteProfile(\'' + value.second_user + '\');">Delete</button>';
+                    //link = '<a href="Profile.html" ng-click="goToProfile(' + value.second_user + ')">View Profile</a>';
+                    userTable += `<tr><td>` + value.second_user + `</td><td>` + link + `</td></tr>`;
+                    //selectOptions += "<option>" + value.second_user + "</option>"
+                  });
+                  userTable += `</tbody></table>`;
+                  //Finally set the table to the innerHTML
+                  document.getElementById('viewConnectionsGen').innerHTML = userTable;
+                  //document.getElementById('connectionsSelectOptions').innerHTML = selectOptions;
+                  console.log(document.getElementById('viewConnectionsGen').innerHTML);
+                }
+                else {
+                  $scope.no_connections = 0;
+                  document.getElementById('viewConnectionsGen').innerHTML = "<p>No connections!</p>"
+                  console.log("No connections for this user found.");
+                }
+              }).error(function(data) {
+                console.log("User connections GET request not sent to server!");
+              });
+
     }
     $scope.viewContactsBtn_Click = function() {
+      //Modal pops up from HTML
       console.log("View contacts button clicked!")
     }
     $scope.contactBtn_Click = function() {
@@ -210,11 +224,13 @@ app.controller('profileGen', function($scope, $http) {
       $scope.formData['username'] = sessionStorage.getItem('username');
       //TODO Make sure this plays nice with adding connections, etc.
       //TODO undo this at the end!
-      if(sessionStorage.getItem('viewuser') != null) {
-        viewingCurrentUser = false;
+      if(sessionStorage.getItem('viewuser') != null && sessionStorage.getItem('viewuser') != "") {
         $scope.formData['username'] = sessionStorage.getItem('viewuser');       //If we are attempting to view a user other than ourselves, redefine 'username'.
+        $scope.isAddConnectionButtonVisible = false;
+      }else {
+        $scope.isAddConnectionButtonVisible = true;
       }
-      $scope.formData['pass'] = sessionStorage.getItem('pass');
+      $scope.formData['pass'] = sessionStorage.getItem('pass');   //Note pass isn't needed for /user/get
       //API call to get user information
       $http.put('/user/get', $scope.formData).
         success(function(data) {
@@ -242,7 +258,6 @@ app.controller('profileGen', function($scope, $http) {
         });
       //We also need to get the user's public groups they are part of.
       //API call requires: username and password.
-      //TODO New API call to get all public groups ANY user is part of - no authentication required.
       $http.put('/group/get/groups', $scope.formData).
         success(function(data) {
             console.log('Groups GET Request sent to sever successfully.');
@@ -262,7 +277,9 @@ app.controller('profileGen', function($scope, $http) {
         });
       var formData = {username: sessionStorage.getItem('username'), pass : sessionStorage.getItem('pass')};
       $scope.refreshConnections();   //get the user connections
+      sessionStorage.setItem('viewuser', "");
     }
+
     //Call method to execute code above.
     $scope.sub();
 });
@@ -331,7 +348,9 @@ app.controller('groupPostCtrl', function($scope, $http) {
       if($scope.formData != undefined) {
       $scope.formData.username = sessionStorage.getItem('username');
       $scope.formData.groupname = sessionStorage.getItem('currentgroup');
-      $scope.formData.timestamp = '4/16/2016';
+      var dt = new Date();
+      var utcDate = dt.toUTCString();
+      $scope.formData.timestamp = utcDate;
       $scope.formData.pass = sessionStorage.getItem('pass');
       $http.put('/group-post/post', $scope.formData).
       success(function(data) {
@@ -1054,13 +1073,17 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
         console.log(formData);
         console.log("infunction");
         var searchMethod = '';
-        if (formData.searchType == 0 || formData.type == 1)//posts search
+        if (formData.searchType == 0 || formData.searchType == 1)//posts search
         {
           searchMethod = 'forumSearch';
         }
         else if (formData.searchType == 2) //group search
         {
           searchMethod = 'groupSearch';
+        }
+        else if (formData.searchType == 4 || formData.searchType == 5)
+        {
+          searchMethod = 'forumSearchByTags';
         }
         else//user search
         {
@@ -1070,115 +1093,80 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
         console.log(searchCall);
         $http.put(searchCall, formData).
           success(function(data) {
-              console.log('Sent to sever successfully.' + data);
+              console.log('Sent to sever successfully');
+              console.log(data);
               document.getElementById("searchResults").innerHTML = "";
-              //Apparently we need a directive to parse this data into a string -> use value.table_name
+
               if(Object.keys(data).length != 0)
               {
-                var map = {};
-                var prevKey = '';
                 switch (searchMethod)
                 {
                   case 'forumSearch':
-                    //$scope.txt = "Some data has been found, let's print it out!";
                     angular.forEach(data, function(value, key) {
                       console.log("Key: " + key + ", Value: " + value.username + ", " + value.title + ", " + value.text);
-                      //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
-                      if(!value.title.equals(prevKey))
-                      {
-                        map[value.title] = value;
-                        map[value.title].count = 1;
-                        prevKey = value.title;
-
-                      }
-                      else {
-                        map[value.title].count++;
-                      }
-
-                    });
-                    Object.keys(map).forEach(function(key, value){
-
-                      var highestCount = -1;
-                      var mostReleventkey = "";
-                      Object.keys(map).forEach(function(key, value){
-                        if(value.count > highestCount)
-                        {
-                          highestCount = value.count;
-                          mostReleventkey = key;
-                        }
-                      });
-                      map[mostReleventkey].count = -1;
-                      var postData = map[mostReleventkey];
                       $.getScript("JS/tableGen.js", function(){
                         param = '{ "post" : [' +
-                        '{ "username": "' + postData.username + '", "timestamp":"' + postData.timestamp + '", "post_title":"' + postData.title + '", "post_tags":"' + "notag" +
-                        '", "type":"' + postData.type + '", "id":"' + postData.id + '" }]}';
+                        '{ "username": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + "notag" +
+                        '", "type":"' + value.type + '", "id":"' + value.id + '" }]}';
                         console.log(param);
                         document.getElementById("searchResults").innerHTML += singlePost(param);
                       });
+                    });
+                    break;
+                  case 'forumSearchByTags':
+                    angular.forEach(data, function(value, key) {
+                      console.log("Key: " + key + ", Value: " + value.username + ", " + value.title + ", " + value.type + ", " + value.tag);
+                      if(value.type == formData.searchType - 4)
+                      {
+                        formData.title = value.title;
+                        $http.put("/search/getPostFromTag", formData).
+                          success(function(row) {
+                            var post = row[0];
+                            $.getScript("JS/tableGen.js", function(){
+                              param = '{ "post" : [' +
+                              '{ "username": "' + post.username + '", "timestamp":"' + post.timestamp + '", "post_title":"' + post.title + '", "post_tags":"' + value.tag +
+                              '", "type":"' + post.type + '", "id":"' + post.id + '" }]}';
+                              console.log(param);
+                              document.getElementById("searchResults").innerHTML += singlePost(param);
+                            });
+                        }).error(function(data){
+                            $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
+                            console.log('ERROR: Not sent to server.');
+                        });
+                     }
                     });
                     break;
                   case 'groupSearch':
-                  angular.forEach(data, function(value, key) {
-                    console.log("Key: " + key + ", Value: " + value.groupname +" privacy "+ value.privacy);
-                    //console.log(value.toJson); Shouldn't this work? Instead we will create our own JSON
-                    if(value.privacy == 0)
-                    {
-                      if(!value.groupname.equals(prevKey))
-                      {
-                        map[value.groupname] = value;
-                        map[value.groupname].count = 1;
-                        prevKey = value.groupname;
+                    var privacy = "";
+                    console.log(data);
+                    angular.forEach(data, function(value, key) {
+                      console.log("key: " + key + " value: " + value);
+                        if(value.privacy == 0)
+                        {
+                          privacy = "public";
+                        }
+                        else {
+                          privacy = "private";
+                        }
+                        $.getScript("JS/groupSearchResultBuilder.js", function(){
+                          param = '{ "group" : [' +
+                          '{ "groupname": "' + value.groupname + '", "privacy":"' + privacy + '" }]}';
+                          console.log(param);
+                          document.getElementById("searchResults").innerHTML += singlePost(param);
+                        });
 
-                      }
-                      else {
-                        map[value.groupname].count++;
-                      }
-                    }
-
-                  });
-                  Object.keys(map).forEach(function(key, value){
-
-                    var highestCount = -1;
-                    var mostReleventkey = "";
-                    Object.keys(map).forEach(function(key, value){
-                      if(value.count > highestCount)
-                      {
-                        highestCount = value.count;
-                        mostReleventkey = key;
-                      }
-                    });
-                    map[mostReleventkey].count = -1;
-                    var postData = map[mostReleventkey];
-                    var groupPriv = "public";
-                    if(postData.privacy == 1)
-                    {
-                      groupPriv = "private";
-                    }
-                    $.getScript("JS/groupSearchResultsBuilder.js", function(){
-                      param = '{ "group" : [' +
-                      '{ "groupname": "' + postData.groupname + '", "privacy":"' + groupPriv + '" }]}';
-                      console.log(param);
-                      document.getElementById("searchResults").innerHTML += singlePost(param);
-                    });
                     });
                     break;
                   case 'userSearch':
-                    var usrname = "";
                     angular.forEach(data, function(value, key) {
                       console.log("key: " + key + " value: " + value);
-                      if(key === "email")
-                      {
-                        $.getScript("JS/profileSearchResultBuilder.js", function(){
-                        param = '{ "user" : [' +
-                        '{ "username": "' + usrname + '", "email":"' + value + '" }]}';
-                        console.log(param);
-                        document.getElementById("searchResults").innerHTML += singlePost(param);
-                        });
-                      }
-                      else {
-                        usrname = value;
-                      }
+
+                      $.getScript("JS/profileSearchResultBuilder.js", function(){
+                      param = '{ "user" : [' +
+                      '{ "username": "' + value.username + '", "email":"' + value.email + '" }]}';
+                      console.log(param);
+                      document.getElementById("searchResults").innerHTML += singlePost(param);
+                      });
                     });
                     break;
                   default:

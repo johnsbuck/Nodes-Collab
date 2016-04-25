@@ -45,29 +45,6 @@
             <li><a href="Help.html">Help</a></li>
             <li><a href ="#" ng-click="signout()">Sign Out</a></li>
           </ul>
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="Search...">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></button>
-            <ul class="dropdown-menu">
-              <li>
-                <div class="form-group">
-                    <label for="filter">Search in:</label>
-                    <select class="form-control">
-                      <option value="0" selected>All</option>
-                      <option value="1">Projects</option>
-                      <option value="2">Freelance Work</option>
-                      <option value="3">Q&A</option>
-                      <option value="4">People</option>
-                    </select>
-                </div>
-              </li> <label></label>
-              <li>
-                <label for="contain">Contains the words</label>
-                <input class="form-control" type="text" />
-               </li> <label></label>
-               <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-            </ul>
-          </form>
         </div>
       </div>
     </nav>
@@ -83,7 +60,7 @@
           </ul>
           <ul class="nav nav-sidebar">
             <li><a href="TextEditorEx.html"  >Text Editor</a></li>
-            
+
             <li><a href="Messenger.html" class="Messenger">Messaging</a></li>
           </ul>
           <ul class="nav nav-sidebar">
@@ -127,7 +104,7 @@
 
                 <div class="modal fade" id="editName" role="dialog">
                   <div class="modal-dialog">
-    
+
                     <!-- Modal content-->
                     <div class="modal-content">
                       <div class="modal-header">
@@ -145,14 +122,14 @@
                       <button type="submit" class="btn btn-default" data-dismiss="modal" ng-click="changeName(formData)">Submit</button>
                     </div>
                   </div>
-      
+
                 </div>
               </div>
                 <hr>
                 {{messageEmail}}
                 <hr>
-                Bio: 
-                <br> 
+                Bio:
+                <br>
                 {{bio}}
                 <br>
                 <textarea type="text" id="bioSetting" style="width: 100%; height: 250px;" ng-model="formData.new.bio">  </textarea>
@@ -165,7 +142,7 @@
 
                 <div class="modal fade" id="editMedia" role="dialog">
                   <div class="modal-dialog">
-    
+
                     <!-- Modal content-->
                     <div class="modal-content">
                       <div class="modal-header">
@@ -183,7 +160,7 @@
                       <button type="submit" class="btn btn-default" data-dismiss="modal" ng-click="changeMedia(formData)">Submit</button>
                     </div>
                   </div>
-      
+
                 </div>
               </div>
                 <hr>

@@ -57,7 +57,7 @@ var group_post = 'CREATE TABLE group_posts (id SERIAL NOT NULL, ' +
                                 'timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,' +
                                 'PRIMARY KEY (id, groupname));';
 
-var query = client.query(refresh + user + group + user_group_perms + basic_post + group_post + comment + tag,
+var query = client.query(refresh + user + group + user_group_perms + basic_post + group_post + comment + tag + connections,
   function(err, result) {
     if(err) {
       console.error(err);
