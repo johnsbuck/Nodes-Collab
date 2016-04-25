@@ -20,8 +20,10 @@ router.put('/get/members', function(req, res) {
 									'WHERE groupname =\'' + req.body.groupname + '\';',
 		function(err, result) {
 			if(err) {
+				done();
 				res.sendStatus(400).end();
 			} else if (!result || result.rows.length == 0) {
+				done();
 				res.sendStatus(406).end();
 			} else {
 				if (result.rows[0].privacy === 1) {
@@ -108,6 +110,7 @@ router.put('/get/groups', function(req, res) {
 					' OR perms <=\'1\');',
 					function(err, result) {
 						console.log(result);
+						done();
 						if(err) {
 							console.log(err);
 							console.log("Breaks here");
@@ -117,11 +120,11 @@ router.put('/get/groups', function(req, res) {
 						} else if (result.rows.length === 0) {
 							res.sendStatus(204);
 						} else {
-							done();
 							res.status(200).send(result.rows).end();
 						}
 					});
 				} else {
+					done();
 					res.sendStatus(403).end();
 				}
 			}
@@ -143,6 +146,7 @@ router.put('/create', function(req, res) {
 			'INSERT INTO user_group_perms (username, groupname, perms) VALUES ' +
 			'(\'' + req.body.username + '\', \'' + req.body.groupname + '\', 0);',
 		function(err, result) {
+			done();
 			if(err) {
 				console.error(err);
 				res.sendStatus(406).end();
@@ -178,6 +182,7 @@ router.put('/delete', function(req, res) {
 				if(passHash.verify(req.body.pass, hashpass)) {
 					client.query('DELETE FROM groups WHERE groupname=\'' + req.body.groupname + '\'	;',
 					function(err, result) {
+						done();
 						if(err) {
 							console.error(err);
 							res.sendStatus(406).end();
@@ -317,6 +322,7 @@ router.put('/edit', function(req, res) {
 						if(key in columns) {
 							sqlQuery += ' ' + key + '=\'' + req.body.new[key] + '\',';
 						} else {
+							done();
 							console.err('INVALID COLUMN GIVEN');
 							res.sendStatus(406).end();
 						}
