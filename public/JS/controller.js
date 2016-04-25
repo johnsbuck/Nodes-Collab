@@ -1079,6 +1079,10 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
         {
           searchMethod = 'groupSearch';
         }
+        else if (formData.searchType == 4 || formData.searchType == 5)
+        {
+          searchMethod = 'forumSearchByTags';
+        }
         else//user search
         {
           searchMethod = 'userSearch';
@@ -1090,13 +1094,12 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
               console.log('Sent to sever successfully');
               console.log(data);
               document.getElementById("searchResults").innerHTML = "";
-              //Apparently we need a directive to parse this data into a string -> use value.table_name
+
               if(Object.keys(data).length != 0)
               {
                 switch (searchMethod)
                 {
                   case 'forumSearch':
-                    //$scope.txt = "Some data has been found, let's print it out!";
                     angular.forEach(data, function(value, key) {
                       console.log("Key: " + key + ", Value: " + value.username + ", " + value.title + ", " + value.text);
                       $.getScript("JS/tableGen.js", function(){
@@ -1106,6 +1109,29 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
                         console.log(param);
                         document.getElementById("searchResults").innerHTML += singlePost(param);
                       });
+                    });
+                    break;
+                  case 'forumSearchByTags':
+                    angular.forEach(data, function(value, key) {
+                      console.log("Key: " + key + ", Value: " + value.username + ", " + value.title + ", " + value.type + ", " + value.tag);
+                      if(value.type == formData.searchType - 4)
+                      {
+                        formData.title = value.title;
+                        $http.put("/search/getPostFromTag", formData).
+                          success(function(row) {
+                            var post = row[0];
+                            $.getScript("JS/tableGen.js", function(){
+                              param = '{ "post" : [' +
+                              '{ "username": "' + post.username + '", "timestamp":"' + post.timestamp + '", "post_title":"' + post.title + '", "post_tags":"' + value.tag +
+                              '", "type":"' + post.type + '", "id":"' + post.id + '" }]}';
+                              console.log(param);
+                              document.getElementById("searchResults").innerHTML += singlePost(param);
+                            });
+                        }).error(function(data){
+                            $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
+                            console.log('ERROR: Not sent to server.');
+                        });
+                     }
                     });
                     break;
                   case 'groupSearch':

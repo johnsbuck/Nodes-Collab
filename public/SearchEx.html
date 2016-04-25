@@ -90,8 +90,10 @@
                 <div class="form-group" >
                   <label for="filter">Search in:</label>
                   <select ng-model="formData.searchType" ng-init="formData.searchType = '0'" class="form-control">
-                    <option value="0" ng-model="formData.searchType" >Questions and Answers</option>
+                    <option value="0" ng-model="formData.searchType">Questions and Answers</option>
                     <option value="1" ng-model="formData.searchType">Freelance Work</option>
+                    <option value="4" ng-model="formData.searchType">Questions and Answers by Tags</option>
+                    <option value="5" ng-model="formData.searchType">Freelance Work by Tags</option>
                     <option value="2" ng-model="formData.searchType">Projects</option>
                     <option value="3" ng-model="formData.searchType">People</option>
                   </select>

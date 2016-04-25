@@ -6,12 +6,7 @@ var quoteFixer = require('./db_tools');
 
 var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhost/nodesconnect';
 
-/* /get
- * Method: PUT (Should be GET)
- *
- * Gets the description of a single user that either matches their email or
- * their username.
- */
+
  router.put('/forumSearch', function(req, res) {
    console.log("in forumSearch");
    req.body = quoteFixer(req.body);
@@ -56,6 +51,64 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
          }
        });
    })
+ });
+
+ router.put('/forumSearchByTags', function(req, res) {
+   console.log("in forumSearch");
+   req.body = quoteFixer(req.body);
+   pg.connect(connectionString, function(err, client, done) {
+     console.log("in forumSearchByTags");
+     var tagsArray = quoteFixer(req.body.searchString).split(",");
+
+     var likeClause = ' tag LIKE \'' + quoteFixer(tagsArray[0])+'\'';
+     for(var i = 1; i < tagsArray.length; i++)
+     {
+       likeClause += ' OR tag LIKE \'' + quoteFixer(tagsArray[i])+'\'';
+     }
+
+     console.log(likeClause);
+
+     client.query('SELECT * FROM tags WHERE' + likeClause + ';',
+       function(err, result) {
+         done();
+         console.log(result);
+
+         if(err) {
+           console.log("meme");
+           console.error(err);
+           res.sendStatus(406);
+         }else if(!result || result.rows.length === 0) {
+           res.sendStatus(204);
+         }else {
+           res.status(202).send(result.rows);
+         }
+       });
+   })
+ });
+
+ router.put('/getPostFromTag', function(req, res) {
+ 	req.body = quoteFixer(req.body);
+ 	pg.connect(connectionString, function(err, client, done) {
+    var type = 0;
+    console.log(req.body.searchType);
+    if(req.body.searchType == 5)
+    {
+      type = 1;
+    }
+    console.log(type);
+ 		client.query('SELECT * FROM posts WHERE title = \'' + req.body.title + '\' AND type ='+type+';',
+ 		function(err, result) {
+ 			done();
+ 			if(err) {
+ 				console.error(err);
+ 				res.sendStatus(406).end();
+ 			}else if(!result || result.rows.length === 0) {
+ 				res.sendStatus(204).end();
+ 			}else {
+ 				res.status(202).send(result.rows).end();
+ 			}
+ 		});
+ 	});
  });
 
  router.put('/groupSearch', function(req, res) {
