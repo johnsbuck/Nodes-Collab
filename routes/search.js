@@ -43,9 +43,9 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
          if(err) {
            console.log("meme");
            console.error(err);
-           res.sendStatus(406);
+           res.sendStatus(406).end();
          }else if(!result || result.rows.length === 0) {
-           res.sendStatus(204);
+           res.sendStatus(204).end();
          }else {
            res.status(202).send(result.rows);
          }
@@ -76,9 +76,9 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
          if(err) {
            console.log("meme");
            console.error(err);
-           res.sendStatus(406);
+           res.sendStatus(406).end();
          }else if(!result || result.rows.length === 0) {
-           res.sendStatus(204);
+           res.sendStatus(204).end();
          }else {
            res.status(202).send(result.rows);
          }
@@ -142,9 +142,9 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
 
          if(err) {
            console.error(err);
-           res.sendStatus(406);
+           res.sendStatus(406).end();
          }else if(!result || result.rows.length === 0) {
-           res.sendStatus(204);
+           res.sendStatus(204).end();
          }else {
            res.status(202).send(result.rows);
          }
@@ -185,9 +185,9 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
          if(err) {
            console.error(err);
            console.log("in userSearch error found");
-           res.sendStatus(406);
+           res.sendStatus(406).end();
          }else if(!result || result.rows.length === 0) {
-           res.sendStatus(204);
+           res.sendStatus(204).end();
          }else {
            res.status(202).send(result.rows);
          }
