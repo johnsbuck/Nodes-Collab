@@ -47,7 +47,6 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
          console.log(result);
 
          if(err) {
-           console.log("meme");
            console.error(err);
            res.sendStatus(406).end();
          }else if(!result || result.rows.length === 0) {
@@ -119,7 +118,6 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
  router.put('/groupSearch', function(req, res) {
    console.log("in groupSearch");
    pg.connect(connectionString, function(err, client, done) {
-     console.log("data base connect est");
      var searchWordsArray = req.body.searchString.split(" ");
 
      //Sets to lowercase
