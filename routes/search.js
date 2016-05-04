@@ -121,6 +121,12 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
    pg.connect(connectionString, function(err, client, done) {
      console.log("data base connect est");
      var searchWordsArray = req.body.searchString.split(" ");
+
+     //Sets to lowercase
+     for(var i = 0; i < searchWordsArray.length; i++)
+     {
+       searchWordsArray[i] = searchWordsArray[i].toLowerCase();
+     }
      var likeClause = '';
      if(searchWordsArray.length > 0)
      {
