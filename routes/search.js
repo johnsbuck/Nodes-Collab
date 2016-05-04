@@ -18,17 +18,23 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
      var fullSearch = quoteFixer(req.body.searchString);
      var wordsArray = quoteFixer(req.body.searchString).split(" ");
 
+     // Converts to lowercase
+     for(var i = 0; i < wordsArray.length; i++)
+     {
+       wordsArray[i] = wordsArray[i].toLowerCase();
+     }
+
      var likeClause = ' ( ';
-     likeClause += 'title LIKE \'%' + fullSearch+'%\'';
-     likeClause += ' OR title LIKE \'' + fullSearch+'%\'';
-     likeClause += ' OR title LIKE \'%' + fullSearch+'\'';
-     likeClause += ' OR title LIKE \'' + fullSearch+'\'';
+     likeClause += 'lower(title) LIKE \'%' + fullSearch+'%\'';
+     likeClause += ' OR lower(title) LIKE \'' + fullSearch+'%\'';
+     likeClause += ' OR lower(title) LIKE \'%' + fullSearch+'\'';
+     likeClause += ' OR lower(title) LIKE \'' + fullSearch+'\'';
      for(i = 0; i < wordsArray.length; i++)
      {
-       likeClause += ' OR title LIKE \'%' + quoteFixer(wordsArray[i])+'%\'';
-       likeClause += ' OR title LIKE \'' + quoteFixer(wordsArray[i])+'%\'';
-       likeClause += ' OR title LIKE \'%' + quoteFixer(wordsArray[i])+'\'';
-       likeClause += ' OR title LIKE \'' + quoteFixer(wordsArray[i])+'\'';
+       likeClause += ' OR lower(title) LIKE \'%' + quoteFixer(wordsArray[i])+'%\'';
+       likeClause += ' OR lower(title) LIKE \'' + quoteFixer(wordsArray[i])+'%\'';
+       likeClause += ' OR lower(title) LIKE \'%' + quoteFixer(wordsArray[i])+'\'';
+       likeClause += ' OR lower(title) LIKE \'' + quoteFixer(wordsArray[i])+'\'';
      }
      likeClause += ' )';
 
@@ -60,10 +66,10 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
      console.log("in forumSearchByTags");
      var tagsArray = quoteFixer(req.body.searchString).split(",");
 
-     var likeClause = ' tag LIKE \'' + quoteFixer(tagsArray[0])+'\'';
+     var likeClause = ' lower(tag) LIKE \'' + quoteFixer(tagsArray[0])+'\'';
      for(var i = 1; i < tagsArray.length; i++)
      {
-       likeClause += ' OR tag LIKE \'' + quoteFixer(tagsArray[i])+'\'';
+       likeClause += ' OR lower(tag) LIKE \'' + quoteFixer(tagsArray[i])+'\'';
      }
 
      console.log(likeClause);
@@ -74,7 +80,6 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
          console.log(result);
 
          if(err) {
-           console.log("meme");
            console.error(err);
            res.sendStatus(406).end();
          }else if(!result || result.rows.length === 0) {
@@ -119,16 +124,16 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
      var likeClause = '';
      if(searchWordsArray.length > 0)
      {
-       likeClause = ' groupname LIKE \'%' + quoteFixer(searchWordsArray[0])+'%\'';
-       likeClause += ' OR groupname LIKE \'' + quoteFixer(searchWordsArray[0])+'%\'';
-       likeClause += ' OR groupname LIKE \'%' + quoteFixer(searchWordsArray[0])+'\'';
-       likeClause += ' OR groupname LIKE \'' + quoteFixer(searchWordsArray[0])+'\'';
+       likeClause = ' lower(groupname) LIKE \'%' + quoteFixer(searchWordsArray[0])+'%\'';
+       likeClause += ' OR lower(groupname) LIKE \'' + quoteFixer(searchWordsArray[0])+'%\'';
+       likeClause += ' OR lower(groupname) LIKE \'%' + quoteFixer(searchWordsArray[0])+'\'';
+       likeClause += ' OR lower(groupname) LIKE \'' + quoteFixer(searchWordsArray[0])+'\'';
        for(var i = 1; i < searchWordsArray.length; i++)
        {
-         likeClause += ' OR groupname LIKE \'%' + quoteFixer(searchWordsArray[i])+'%\'';
-         likeClause += ' OR groupname LIKE \'' + quoteFixer(searchWordsArray[i])+'%\'';
-         likeClause += ' OR groupname LIKE \'%' + quoteFixer(searchWordsArray[i])+'\'';
-         likeClause += ' OR groupname LIKE \'' + quoteFixer(searchWordsArray[i])+'\'';
+         likeClause += ' OR lower(groupname) LIKE \'%' + quoteFixer(searchWordsArray[i])+'%\'';
+         likeClause += ' OR lower(groupname) LIKE \'' + quoteFixer(searchWordsArray[i])+'%\'';
+         likeClause += ' OR lower(groupname) LIKE \'%' + quoteFixer(searchWordsArray[i])+'\'';
+         likeClause += ' OR lower(groupname) LIKE \'' + quoteFixer(searchWordsArray[i])+'\'';
        }
      }
 
@@ -164,16 +169,16 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
      }
      console.log(userName);
      var likeClause = "";
-     likeClause += ' username LIKE \'' + userName+'\'';
-     likeClause += ' OR username LIKE \'' + userName+'%\'';
-     likeClause += ' OR username LIKE \'%' + userName+'\'';
-     likeClause += ' OR username LIKE \'%' + userName+'%\'';
+     likeClause += ' lower(username) LIKE \'' + userName+'\'';
+     likeClause += ' OR lower(username) LIKE \'' + userName+'%\'';
+     likeClause += ' OR lower(username) LIKE \'%' + userName+'\'';
+     likeClause += ' OR lower(username) LIKE \'%' + userName+'%\'';
      if(email != "")
      {
-       likeClause += ' OR email LIKE \'' + email+'\'';
-       likeClause += ' OR email LIKE \'' + email+'%\'';
-       likeClause += ' OR email LIKE \'%' + email+'\'';
-       likeClause += ' OR email LIKE \'%' + email+'%\'';
+       likeClause += ' OR lower(email) LIKE \'' + email+'\'';
+       likeClause += ' OR lower(email) LIKE \'' + email+'%\'';
+       likeClause += ' OR lower(email) LIKE \'%' + email+'\'';
+       likeClause += ' OR lower(email) LIKE \'%' + email+'%\'';
      }
      var queryString = 'SELECT * FROM users WHERE' +likeClause+';'
      console.log(queryString);

@@ -484,6 +484,8 @@ app.controller('viewPostCtrl', function($scope, $http) {
                     param = '{ "post" : [' +
                     '{ "author": "' + data.username + '", "text":"' + data.text + '", "timestamp":"' + data.timestamp + '", "title":"' + data.title + '", "post_tags":"' + tagBuilder +
                     '", "type":"' + data.type + '", "id":"' + data.id + '" }]}';
+                    param = param.replace("\n", "\\n");
+                    param = param.replace(/\s+/g," ");
                     console.log(param);
                     document.getElementById("viewPostCtrl").innerHTML += viewPost(param);
                   });

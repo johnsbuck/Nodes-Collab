@@ -36,7 +36,7 @@ var basic_post = 'CREATE TABLE posts (' +
                                 'PRIMARY KEY (title, type));';
 
 var comment = 'CREATE TABLE comments (id SERIAL NOT NULL, ' +
-                                    'username VARCHAR(40) REFERENCES users (username), ' +
+                                    'username VARCHAR(40) REFERENCES users (username) ON DELETE CASCADE, ' +
                                     'text VARCHAR(63206) NOT NULL, ' +
                                     'timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, ' +
                                     'type INTEGER NOT NULL, ' +
@@ -52,7 +52,7 @@ var tag = 'CREATE TABLE tags (title VARCHAR(64) NOT NULL, ' +
 
 var group_post = 'CREATE TABLE group_posts (id SERIAL NOT NULL, ' +
                                 'groupname VARCHAR(40) NOT NULL REFERENCES groups (groupname) ON DELETE CASCADE, ' +
-                                'username VARCHAR(40) NOT NULL REFERENCES users (username), ' +
+                                'username VARCHAR(40) NOT NULL REFERENCES users (username) ON DELETE CASCADE, ' +
                                 'text VARCHAR(63206) NOT NULL, ' +
                                 'timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,' +
                                 'PRIMARY KEY (id, groupname));';

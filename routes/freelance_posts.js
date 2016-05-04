@@ -19,11 +19,14 @@ router.put('/get', function(req, res) {
 		client.query('SELECT * FROM posts WHERE type=\'1\';',
 		function(err, result) {
 			if(err) {
+				done();
 				console.error(err);
 				res.sendStatus(406).end();
 			}else if(!result || result.rows.length === 0) {
+				done();
 				res.sendStatus(204).end();
 			}else {
+				done();
 				res.status(202).send(result.rows).end();
 			}
 		});
@@ -40,6 +43,7 @@ router.put('/get/post', function(req, res) {
 	pg.connect(connectionString, function(err, client, done) {
 		client.query('SELECT * FROM posts WHERE title = \'' + req.body.title + '\' AND type=\'1\';',
 		function(err, result) {
+			done();
 			if(err) {
 				console.error(err);
 				res.sendStatus(406).end();
@@ -62,8 +66,8 @@ router.put('/get/post', function(req, res) {
  	pg.connect(connectionString, function(err, client, done) {
       client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
        function(err, result) {
- 				done();
          if(err) {
+					done();
            console.error(err);
            res.sendStatus(406).end();
          }else if(!result || result.rows.length === 0) {
@@ -85,6 +89,7 @@ router.put('/get/post', function(req, res) {
  						client.query(sqlQuery,
  						function(err, result) {
  							if(err) {
+								done();
  								console.error(err);
  								res.sendStatus(406).end();
  							} else {
@@ -104,6 +109,7 @@ router.put('/get/post', function(req, res) {
  							}
  						});
  					}else {
+						done();
              res.sendStatus(406).end();
            }
  				}
@@ -123,6 +129,7 @@ router.put('/get/post', function(req, res) {
        function(err, result) {
  				console.log(result);
          if(err) {
+					 done();
            console.error(err);
            res.sendStatus(406).end();
          }else if(!result || result.rows.length === 0) {
@@ -159,6 +166,7 @@ router.put('/get/post', function(req, res) {
 router.put('/edit', function(req, res) {
 	// Nothing new to change
   if(!req.body.new) {
+		done();
     res.sendStatus(406).end();
   }
 
@@ -170,6 +178,7 @@ router.put('/edit', function(req, res) {
  			'posts.username = \'' + req.body.username +'\' AND posts.title = \'' + req.body.title + '\' AND posts.type=\'1\';',
  		 function(err, result) {
  			 if(err) {
+				 done();
  				 console.error(err);
  				 res.sendStatus(406).end();
  			 }else if(!result || result.rows.length === 0) {
@@ -186,6 +195,7 @@ router.put('/edit', function(req, res) {
   						if(key in columns) {
   							sqlQuery += ' ' + key + '=\'' + req.body.new[key] + '\',';
   						} else {
+								done();
   							console.err('INVALID COLUMN GIVEN');
   							res.sendStatus(406).end();
   						}
@@ -196,6 +206,7 @@ router.put('/edit', function(req, res) {
 
  					client.query(sqlQuery,
  						function(err, result) {
+							done();
  							if(err) {
  								console.error(err);
  								res.sendStatus(406).end();
@@ -204,6 +215,7 @@ router.put('/edit', function(req, res) {
  							}
  						});
  					}else {
+						done();
              res.sendStatus(406).end();
            }
  				}
