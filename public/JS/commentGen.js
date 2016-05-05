@@ -1,11 +1,16 @@
-//Hand me a JSON file to parse into a post.
+/*  commentGen.js
+    The purpose of this script is to generate a format for a given set of data
+    viewComment takes in a set of "comment" data and generates it into nicely formatted HTML
 
-//Hand a JSON with a single object containing { "comment" : [ { "username":"ex_author", "timestamp" : "ex_timestamp","text"} ] }
+    param : JSON file to parse into a post.
+    return : HTML code representing the post data
+*/
+
+//Hand a JSON with a single object containing { "comment" : [ { "author":"ex_author", "timestamp" : "ex_timestamp", "text" : "ex_text", "id" : "1"} ] }
 function viewComment(singleComment)
 {
   //document.getElementById("tableGen").innerHTML= singleData;
   var obj = JSON.parse(singleComment);
-  console.log(obj);
   var dateOptions = {
     weekday: "long", year: "numeric", month: "short",
     day: "numeric", hour: "2-digit", minute: "2-digit"
@@ -35,13 +40,12 @@ function viewComment(singleComment)
 
 }
 
+//deleteCommentt helper allows the user to click a button and delete the associated comment if it is theirs.
 function deleteComment(commentID)
 {
   sessionStorage.setItem('commentID', commentID);
-  console.log(commentID);
   var scope = angular.element(document.getElementById("postCommentCtrl")).scope();
     scope.$apply(function () {
-    console.log(scope);
     scope.delete();
     });
 }

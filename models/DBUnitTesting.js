@@ -1,3 +1,10 @@
+/*  DBUnitTesting.js
+    Prior to having functional front-end input, this was used to make sure
+    data was correctly being added to the database thus far.
+
+    It was also used to make sample test-data to display.
+*/
+
 var pg = require('pg');
 var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhost/nodesconnect';
 

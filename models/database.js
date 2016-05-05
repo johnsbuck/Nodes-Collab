@@ -1,3 +1,7 @@
+/*  database.js
+    Refreshes the database by dropping the SCHEMA and recreating it
+    using the most up-to-date DB structure.
+*/
 var pg = require('pg');
 var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhost/nodesconnect';
 

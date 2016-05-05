@@ -1,3 +1,23 @@
+/*  freelance_posts.js
+    Defines the NodeJS Database API for Freelance Posts under table 'posts'
+		Logs are kept in this file as they are displayed in the back-end, not to the client
+
+		*NOTE - There was an issue using router.post and router.delete and so these functions
+		are defined under router.put.
+		We are allowed to do this since we can define it anyway we want and use different
+		header names ie: '/get', '/delete', '/post'
+
+    Optimally we would want to use these the correct way, but our setup was having issues with it.
+
+		Webcodes used in this script are defined as:
+		202 - Accepted - Request is OK for processing, but did not actually process
+		204 ERROR - No Content - This method requires specific parts of the body which was not provided by the input
+		206 ERROR - Partial Content - Fulfilled parital request; however, there is missing information in the input
+		404 ERROR - Not Found - Server did not find anything amtching the request URI
+		403 ERROR - Forbidden - The request/input is acceptable, but will not be fulfilled due to an authorization issue.
+		406 ERROR - Not Acceptable - Bad input was provided.
+*/
+
 var express = require('express');
 var router = express.Router();
 var passHash = require('password-hash');
@@ -118,7 +138,7 @@ router.put('/get/post', function(req, res) {
  });
 
 /* /delete
- * Method: DELETE
+ * Method: DELETE (Should be DELETE)
  *
  * Deletes a single Freelance post. Requires username and password.
  */

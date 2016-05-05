@@ -1,8 +1,22 @@
+/*  controller.js
+    The primary controller of our system. Links the front-end angular with NodeJS.
+    To reference this script, declare ng-app="nodesConnect" in the html tag and then
+    declare ng-controller="X", where X is the controller definition found below, in a tag
+    containing the necessary components.
+*/
+
 var app = angular.module('nodesConnect', []);
 //var groupPost = require('./groupGen',[]);
 
-//Seperate this controller per post generating pages i.e. Q&A, Freelance
-//AngularJS to retrieve the data from the DB
+/*  userPostsGen
+    Uses: JS/tableGen.js
+    Used By: main.html
+    Used For: Displays a table of posts, both Freelance and Q&A which have been made by
+    the user which is currently logged in. This data is retreived from sessionStorage.
+    Makes an API call to users.js to retrieve this data and builds the JSON which is
+    passed to tableGen.js to make the display.
+    The returning information is then written to the controlling element.
+*/
 app.controller('userPostsGen', function($scope, $http) {
     $scope.txt = "";
 
@@ -11,7 +25,6 @@ app.controller('userPostsGen', function($scope, $http) {
 
       $http.put('/user/get/posts', $scope.formData).
         success(function(data) {
-          console.log(data);
             console.log('Sent to sever successfully.');
             //Apparently we need a directive to parse this data into a string -> use value.table_name
             if(Object.keys(data).length != 0)
@@ -20,8 +33,6 @@ app.controller('userPostsGen', function($scope, $http) {
                 //for each post returned
                 data.reverse();
                 angular.forEach(data, function(value, key) {
-
-                  console.log("Retrieving tag data for: " + value.title + ", " + value.type);
                   $scope.formData = {'title': value.title,
                                     'type' : value.type};
 
@@ -32,23 +43,20 @@ app.controller('userPostsGen', function($scope, $http) {
                         console.log('Sent to sever successfully.');
                         if(Object.keys(dataTag).length != 0)
                         {
-                            console.log(dataTag);
                             //for each tag returned
                             tagBuilder = "";
                             angular.forEach(dataTag, function(valueTag, keyTag) {
                                 tagBuilder += valueTag.tag + ";";
                               });
-                              console.log("TagBuilder: " + tagBuilder);
                         }
                         else {
-                            console.log("TagBuilder: Didn't find any tags for this post.");
+                            //No tags were found for this post, use the default value.
                         }
 
                         $.getScript("JS/tableGen.js", function(){
                           param = '{ "post" : [' +
                           '{ "username": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + tagBuilder +
                           '", "type":"' + value.type + '", "id":"' + value.id + '" }]}';
-                          console.log(param);
                           document.getElementById("allPostsGen").innerHTML += singlePost(param);
 
                     }).error(function(dataTag){
@@ -72,8 +80,15 @@ app.controller('userPostsGen', function($scope, $http) {
 });
 
 
-//Only shows QA posts
-//AngularJS to retrieve the data from the DB
+/*  QAPostGen
+    Uses: JS/tableGen.js
+    Used By: QandA.html
+    Used For: Displays a table of ONLY Q&A posts.
+    This will display all Q&A posts, not ones just made by the user.
+    Makes an API call to qa_posts.js to retrieve this data and builds the JSON which is
+    passed to tableGen.js to make the display.
+    The returning information is then written to the controlling element.
+*/
 app.controller('QAPostGen', function($scope, $http) {
     $scope.txt = "";
 
@@ -90,7 +105,6 @@ app.controller('QAPostGen', function($scope, $http) {
                 data.reverse();
                 angular.forEach(data, function(value, key) {
 
-                  console.log("Retrieving tag data for: " + value.title + ", " + value.type);
                   $scope.formData = {'title': value.title,
                                     'type' : value.type};
 
@@ -101,23 +115,20 @@ app.controller('QAPostGen', function($scope, $http) {
                         console.log('Sent to sever successfully.');
                         if(Object.keys(dataTag).length != 0)
                         {
-                            console.log(dataTag);
                             //for each tag returned
                             tagBuilder = "";
                             angular.forEach(dataTag, function(valueTag, keyTag) {
                                 tagBuilder += valueTag.tag + ";";
                               });
-                              console.log("TagBuilder: " + tagBuilder);
                         }
                         else {
-                            console.log("TagBuilder: Didn't find any tags for this post.");
+                            //No tags were found for this post, use the default value.
                         }
 
                         $.getScript("JS/tableGen.js", function(){
                           param = '{ "post" : [' +
                           '{ "username": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + tagBuilder +
                           '", "type":"' + value.type + '", "id":"' + value.id + '" }]}';
-                          console.log(param);
                           document.getElementById("QAPostGen").innerHTML += singlePost(param);
 
                     }).error(function(dataTag){
@@ -144,7 +155,7 @@ app.controller('QAPostGen', function($scope, $http) {
 //TODO when viewing another user's profile, the "Add" button should add them to that user's profile.
 app.controller('profileGen', function($scope, $http) {
     $scope.goToProfile = function(username) {
-      console.log("Navigating to profile: " + username);
+      //console.log("Navigating to profile: " + username);
     }
     $scope.refreshConnections = function() {
       var formData;
@@ -153,7 +164,6 @@ app.controller('profileGen', function($scope, $http) {
         } else{
           formData = {username: sessionStorage.getItem('username')};
         }
-        console.log("Getting user contacts!");
         $http.put('/user/get/connections', formData).
           success(function(data) {
             console.log("User Connections GET Request sent to server successfully!");
@@ -344,7 +354,6 @@ app.controller('groupPostCtrl', function($scope, $http) {
     }
 
     $scope.post = function() {
-      console.log($scope.formData);
       if($scope.formData != undefined) {
       $scope.formData.username = sessionStorage.getItem('username');
       $scope.formData.groupname = sessionStorage.getItem('currentgroup');
@@ -363,7 +372,7 @@ app.controller('groupPostCtrl', function($scope, $http) {
       });
       }
       else {
-        console.log("Please input data");
+        //No input data
       }
     }
     $scope.init();
@@ -372,8 +381,15 @@ app.controller('groupPostCtrl', function($scope, $http) {
     }, 5000)
 });
 
-//Only shows Freelance posts
-//AngularJS to retrieve the data from the DB
+/*  freelancePostGen
+    Uses: JS/tableGen.js
+    Used By: FreelanceEx.html
+    Used For: Displays a table of ONLY Freelance posts.
+    This will display all Freelance posts, not ones just made by the user.
+    Makes an API call to freelance_posts.js to retrieve this data and builds the JSON which is
+    passed to tableGen.js to make the display.
+    The returning information is then written to the controlling element.
+*/
 app.controller('freelancePostGen', function($scope, $http) {
     $scope.txt = "";
 
@@ -390,7 +406,7 @@ app.controller('freelancePostGen', function($scope, $http) {
                 //$scope.txt = "Some data has been found, let's print it out!";
                 angular.forEach(data, function(value, key) {
 
-                  console.log("Retrieving tag data for: " + value.title + ", " + value.type);
+
                   $scope.formData = {'title': value.title,
                                     'type' : value.type};
 
@@ -401,23 +417,20 @@ app.controller('freelancePostGen', function($scope, $http) {
                         console.log('Sent to sever successfully.');
                         if(Object.keys(dataTag).length != 0)
                         {
-                            console.log(dataTag);
                             //for each tag returned
                             tagBuilder = "";
                             angular.forEach(dataTag, function(valueTag, keyTag) {
                                 tagBuilder += valueTag.tag + ";";
                               });
-                              console.log("TagBuilder: " + tagBuilder);
                         }
                         else {
-                            console.log("TagBuilder: Didn't find any tags for this post.");
+                            //No tags found, use the default value.
                         }
 
                         $.getScript("JS/tableGen.js", function(){
                           param = '{ "post" : [' +
                           '{ "username": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + tagBuilder +
                           '", "type":"' + value.type + '", "id":"' + value.id + '" }]}';
-                          console.log(param);
                           document.getElementById("freelancePostGen").innerHTML += singlePost(param);
 
                     }).error(function(dataTag){
@@ -439,7 +452,14 @@ app.controller('freelancePostGen', function($scope, $http) {
     $scope.sub();
 });
 
-//view a post based on the given postID (Stored in session)
+/*  viewPostCtrl
+    Uses: JS/viewPost.js
+    Used By: ViewQAPost.html, ViewFreelancePost.html
+    Used For: Displays a single post based on the ID found in sessionStorage.
+    Makes an API call to either qa_posts.js or freelance_posts.js to retrieve the data about the post and build a JSON for it.
+    The data is then passed to viewPost.js to make the display.
+    The returning information is then written to the controlling element.
+*/
 app.controller('viewPostCtrl', function($scope, $http) {
     $scope.txt = "";
     $scope.init = function() {
@@ -452,12 +472,10 @@ app.controller('viewPostCtrl', function($scope, $http) {
       //First get the post
       $http.put(accessor + '/get/post', $scope.formData)
         .success(function(data) {
-          console.log(data);
           console.log('Sent to sever successfully.');
           //There should only be one object here
           if(Object.keys(data).length != 0)
           {
-            console.log("Retrieving tag data for: " + sessionStorage.getItem('postTitle') + ", " + sessionStorage.getItem('postType'));
             $scope.formData = {'title': sessionStorage.getItem('postTitle'),
                               'type' : sessionStorage.getItem('postType')};
 
@@ -468,16 +486,14 @@ app.controller('viewPostCtrl', function($scope, $http) {
                   console.log('Sent to sever successfully.');
                   if(Object.keys(dataTag).length != 0)
                   {
-                      console.log(dataTag);
                       //for each tag returned
                       tagBuilder = "";
                       angular.forEach(dataTag, function(valueTag, keyTag) {
                           tagBuilder += valueTag.tag + ";";
                         });
-                        console.log("TagBuilder: " + tagBuilder);
                   }
                   else {
-                      console.log("TagBuilder: Didn't find any tags for this post.");
+                      //No tags found, use the default value.
                   }
 
                   $.getScript("JS/viewPost.js", function(){
@@ -486,7 +502,6 @@ app.controller('viewPostCtrl', function($scope, $http) {
                     '", "type":"' + data.type + '", "id":"' + data.id + '" }]}';
                     param = param.replace("\n", "\\n");
                     param = param.replace(/\s+/g," ");
-                    console.log(param);
                     document.getElementById("viewPostCtrl").innerHTML += viewPost(param);
                   });
 
@@ -506,11 +521,9 @@ app.controller('viewPostCtrl', function($scope, $http) {
 
     //delete a post
     $scope.delete = function() {
-      console.log("pass");
       $scope.formData = {'username': sessionStorage.getItem('username'),
                         'pass' : sessionStorage.getItem('pass'),
                         'title' : sessionStorage.getItem('postTitle')};
-      //console.log($scope.formData);
       var accessor = '/qa-post';
       var href = 'QandA.html';
       if(sessionStorage.getItem('postType')==1)
@@ -518,7 +531,6 @@ app.controller('viewPostCtrl', function($scope, $http) {
         accessor = '/free-post';
         href = 'FreelanceEx.html';
       }
-      console.log($scope.formData);
       $http.put(accessor + '/delete', $scope.formData).
           success(function(data) {
               console.log('Sent to sever successfully.');
@@ -528,32 +540,17 @@ app.controller('viewPostCtrl', function($scope, $http) {
           });
       }
 
-      //update a post
-      $scope.update = function() {
-        $scope.formData['username'] = sessionStorage.getItem('username');
-        $scope.formData['pass'] = sessionStorage.getItem('pass');
-        $scope.formData['titlePrev'] = sessionStorage.getItem('postTitle');
-        var accessor = '/qa-post';
-        var href = 'QandA.html';
-        if(sessionStorage.getItem('postType')==1)
-        {
-          accessor = '/free-post';
-          href = 'FreelanceEx.html';
-        }
-        console.log($scope.formData);
-        /*$http.put(accessor + '/edit', $scope.formData).
-            success(function(data) {
-                console.log('Sent to sever successfully.');
-                window.location.href = href;
-            }).error(function(data){
-                console.log('ERROR: Not sent to server.');
-            });*/
-        }
-
     $scope.init();
 });
 
-//generate comments for a specified post ID
+/*  postCommentCtrl
+    Uses: JS/commentGen.js
+    Used By: ViewQAPost.html, ViewFreelancePost.html
+    Used For: Displays a list of comments for a single post based on the ID found in sessionStorage.
+    Makes an API call to comments.js to retrieve all comment data about the post and build a JSON for it.
+    The data is then passed to commentGen.js to make the display.
+    The returning information is then written to the controlling element.
+*/
 app.controller('postCommentCtrl', function($scope, $http) {
     $scope.txt = "";
 
@@ -561,11 +558,8 @@ app.controller('postCommentCtrl', function($scope, $http) {
       $scope.formData = {'title': sessionStorage.getItem('postTitle'),
                         'type' : sessionStorage.getItem('postType')};
 
-      console.log($scope.formData);
-
       $http.put('/comments/get', $scope.formData)
         .success(function(data) {
-          console.log(data);
           console.log('Sent to sever successfully.');
 
           if(Object.keys(data).length != 0)
@@ -575,7 +569,6 @@ app.controller('postCommentCtrl', function($scope, $http) {
                   if(value.text) {
                     param = '{ "comment" : [' +
                     '{ "author": "' + value.username + '", "text":"' + value.text + '", "timestamp":"' + value.timestamp + '", "id":"' + value.id + '" }]}';
-                    console.log(param);
                     document.getElementById("postCommentCtrl").innerHTML += viewComment(param);
                   }
                 });
@@ -595,7 +588,6 @@ app.controller('postCommentCtrl', function($scope, $http) {
       $scope.formData = {'username': sessionStorage.getItem('username'),
                         'pass' : sessionStorage.getItem('pass'),
                         'id' : sessionStorage.getItem('commentID')};
-      console.log($scope.formData);
       $http.put('comments/delete', $scope.formData).
           success(function(data) {
               console.log('Sent to sever successfully.');
@@ -608,7 +600,13 @@ app.controller('postCommentCtrl', function($scope, $http) {
     $scope.init();
 });
 
-//Submit a comment for a post
+/*  submitCommentCtrl
+    Uses: --
+    Used By: ViewQAPost.html, ViewFreelancePost.html
+    Used For: Retrieves data from the comment element to submit a comment to the Database on the current post.
+    Makes an API call to comments.js to post the comment data.
+    Once the comment is posted successfully, the page is reloaded.
+*/
 app.controller('submitCommentCtrl', function($scope, $http, $location) {
   $scope.sub = function() {
     $scope.formData['username'] = sessionStorage.getItem('username');
@@ -618,7 +616,6 @@ app.controller('submitCommentCtrl', function($scope, $http, $location) {
     var timezone = date.getTimezoneOffset();//timezone difference convert to seconds
     var dateOffset = new Date(date.getTime() - (timezone*60*1000));
     $scope.formData['timestamp'] = dateOffset;
-    console.log($scope.formData);
     $http.post('/comments/post', $scope.formData).
       success(function(data) {
         location.reload();//refresh this page
@@ -630,7 +627,15 @@ app.controller('submitCommentCtrl', function($scope, $http, $location) {
   });
 
   //Submit a post for Freelancing
-  app.controller('freelancePostCtrl', function($scope, $http, $location) {
+
+/*  freelancePostCtrl
+    Uses: --
+    Used By: FreelanceSubmitPost.html
+    Used For: Retrieves data from the forum post element to submit a post to the Database.
+    Makes an API call to freelance_posts.js to insert the post data.
+    Once the post is submitted successfully, the client is redirected to /FreelanceEx.html.
+*/
+app.controller('freelancePostCtrl', function($scope, $http, $location) {
     $scope.sub = function() {
       if($scope.formData != undefined && $scope.formData.text != "" && $scope.formData.title != "")
       {
@@ -641,7 +646,6 @@ app.controller('submitCommentCtrl', function($scope, $http, $location) {
         var timezone = date.getTimezoneOffset();//timezone difference convert to seconds
         var dateOffset = new Date(date.getTime() - (timezone*60*1000));
         $scope.formData['timestamp'] = dateOffset;
-        console.log($scope.formData);
         $http.post('/free-post/post', $scope.formData).
           success(function(data) {
             window.location.href = '/FreelanceEx.html';
@@ -657,10 +661,16 @@ app.controller('submitCommentCtrl', function($scope, $http, $location) {
       }
     });
 
-//SUBMIT a post for Q&A
+/*  freelancePostCtrl
+    Uses: --
+    Used By: QASubmitPost.html
+    Used For: Retrieves data from the forum post element to submit a post to the Database.
+    Makes an API call to qa_posts.js to insert the post data.
+    Opens a collabedit page if the checkbox was selected.
+    Once the post is submitted successfully, the client is redirected to /QandA.html.
+*/
 app.controller('qaPostCtrl', function($scope, $http, $location) {
   $scope.sub = function() {
-    console.log($scope.formData);
     if($scope.formData != undefined && $scope.formData.text != "" && $scope.formData.title != "")
     {
       $scope.formData['username'] = sessionStorage.getItem('username');
@@ -670,7 +680,6 @@ app.controller('qaPostCtrl', function($scope, $http, $location) {
       var timezone = date.getTimezoneOffset();//timezone difference convert to seconds
       var dateOffset = new Date(date.getTime() - (timezone*60*1000));
       $scope.formData['timestamp'] = dateOffset;
-      console.log($scope.formData);
       $http.post('/qa-post/post', $scope.formData).
         success(function(data) {
           if($scope.formData.collabedit == true)//true -- open a collab edit
@@ -764,7 +773,6 @@ app.controller('loginCtrl', function($scope, $http, $location) {
     };
   }
 });
-
 
 app.controller('navCtrl', function($scope, $http) {
   $scope.signout = function() {
@@ -879,7 +887,6 @@ $scope.changeMedia = function() {
 
 
 });
-
 
 app.controller('settingsCtrl', function($scope, $http) {
   console.log("SETTINGS");
