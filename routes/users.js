@@ -90,7 +90,6 @@ router.delete('/delete', function(req, res, next) {
  * Creates a new user. Requires their basic information that should match with
  * the 'NewUser.html' form.
  *
- * TODO Modify for new attributes!
  */
 router.put('/create', function(req, res, next) {
   req.body = quoteFixer(req.body);
@@ -181,6 +180,7 @@ router.put('/edit', function(req, res, next) {
 });
 /*
 Requires: current user username, pass, newuser
+Creates a new connection row for the passed username.
 */
 router.put('/create/connection', function(req, res, next) {
   console.log("Entered create connection!");
@@ -230,7 +230,8 @@ router.put('/create/connection', function(req, res, next) {
 });
 /*
 Get all the connections for a user.
-
+Note that this does not require authentication.
+param: username to get connections for.
 Method: PUT (should be GET)
 **/
 router.put('/get/connections', function(req, res, next) {
@@ -248,7 +249,14 @@ router.put('/get/connections', function(req, res, next) {
         });
     });
 });
+/*
+Delete a specified username from a user's connection list.
+Requires authentication.
 
+param: username
+       user's passowrd
+       connection's username to remove
+*/
 router.delete('/delete/connection', function(req, res, next) {
   req.body = quoteFixer(req.body);
   pg.connect(connectionString, function(err, client, done) {
@@ -288,7 +296,8 @@ router.delete('/delete/connection', function(req, res, next) {
 /* /get/posts
  * Method: PUT (Should be GET)
  *
- * Returns all posts by a specific user
+ * Returns all posts by a specific user. Does not require authentication.
+ * param: username to get posts for.
  */
 router.put('/get/posts', function(req, res) {
 	req.body = quoteFixer(req.body);
