@@ -1,3 +1,11 @@
+/*  groupGen.js
+    This script is designed to take in a json object and parse through it and output the group messages.
+*/
+
+/* singlePost
+param: json object with post information. 
+return: html element to be appened to the projectcolab page.
+*/
 function singlePost(singleData)
 {
   var obj = JSON.parse(singleData);
@@ -15,6 +23,9 @@ function singlePost(singleData)
 
 }
 
+/* updateScroll
+    Used to keep the scroll on the group messages up to the most recent one. 
+*/
 function updateScroll(){
     var element = document.getElementById("groupGen");
     element.scrollTop = element.scrollHeight;
