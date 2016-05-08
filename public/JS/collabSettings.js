@@ -1,3 +1,11 @@
+/*  collabSettings.js
+    This script is designed to take in a json object and parse through it and output modals of groups/members.
+*/
+
+/* addGroup
+param: json object with groupname 
+return: html element to be appened to the projectcolab settings page.
+*/
 function addGroup(singleData)
 {
   var obj = JSON.parse(singleData);
@@ -30,6 +38,10 @@ function addGroup(singleData)
 
 }
 
+/* addMember
+param: json object with membername 
+return: html element to be appened to the projectcolab settings page.
+*/
 function addMember(singleData)
 {
   var obj = JSON.parse(singleData);
