@@ -6,17 +6,19 @@ var quoteFixer = require('./db_tools');
 
 var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhost/nodesconnect';
 
-/* /get
- * Method: PUT (Should be GET)
+/* /user/get
+ * Method: PUT
  *
  * Gets the description of a single user that either matches their email or
  * their username.
+ * Returns 406 if error, otherwise 202 or 204.
+ *
+ * param: username OR email
  */
 router.put('/get', function(req, res, next) {
   req.body = quoteFixer(req.body);
   pg.connect(connectionString, function(err, client, done) {
     var where_clause = null;
-    console.log(req.body);
     if (req.body.username) {
       where_clause = 'username = \'' + req.body.username + '\'';
     }else if (req.body.email) {
@@ -41,10 +43,13 @@ router.put('/get', function(req, res, next) {
   })
 });
 
-/* /delete
+/* /user/delete
  * Method: DELETE
  *
  * Deletes a single user. Requires their username and password to proceed.
+ * Returns 406 if error, 404 or 403 if unable to access, otherwise 201.
+ * param: username : string
+ *        pass : string
  */
 router.delete('/delete', function(req, res, next) {
   req.body = quoteFixer(req.body);
@@ -71,7 +76,7 @@ router.delete('/delete', function(req, res, next) {
                 console.error(err);
                 res.sendStatus(406).end();
               } else {
-                res.sendStatus(202).end();
+                res.sendStatus(201).end();
               }
             });
           }else {
@@ -84,12 +89,14 @@ router.delete('/delete', function(req, res, next) {
 });
 
 
-/* /create
+/* /user/create
  * Method: PUT
  *
  * Creates a new user. Requires their basic information that should match with
  * the 'NewUser.html' form.
+ * Returns 406 if error, otherwise 201.
  *
+ * params: username, email, first_name, last_name, gender, pass
  */
 router.put('/create', function(req, res, next) {
   req.body = quoteFixer(req.body);
@@ -116,10 +123,14 @@ router.put('/create', function(req, res, next) {
   });
 });
 
-/* /edit/pass
+/* /user/edit/pass
  * Method: PUT
  *
  * Edits the password for a user. Requires their password to continue.
+ * Returns 406 if error, 404 or 403 if unable to access, otherwise 201.
+ *
+ * params: username OR pass OR email OR first_name OR last_name OR gender OR
+ *          currentgroup OR bio OR facebook OR linkedin
  */
 router.put('/edit', function(req, res, next) {
   // Nothing new to change
@@ -178,10 +189,15 @@ router.put('/edit', function(req, res, next) {
     });
   });
 });
-/*
-Requires: current user username, pass, newuser
-Creates a new connection row for the passed username.
-*/
+
+/* /user/create/connection
+ * Method: PUT
+ *
+ * Creates a new connection row for the passed username.
+ * Returns 406 if error, 404 or 403 if unable to access, otherwise 202.
+ *
+ * params: current user username, pass, newuser
+ */
 router.put('/create/connection', function(req, res, next) {
   console.log("Entered create connection!");
   if(req.body.username === req.body.newuser) {
@@ -189,11 +205,8 @@ router.put('/create/connection', function(req, res, next) {
   }
   req.body = quoteFixer(req.body);
   pg.connect(connectionString, function(err, client, done) {
-    console.log(req.body);
     client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
      function(err, result) {
-        console.log("result");
-       console.log(result);
        if(err) {
          done();
          console.error(err);
@@ -215,8 +228,6 @@ router.put('/create/connection', function(req, res, next) {
               res.sendStatus(406).end();
             } else {
               //Query accepted and is returning stuff.
-              console.log("Printing connection results:");
-              console.log(result);
               res.sendStatus(202).end();
             }
           });
@@ -228,12 +239,15 @@ router.put('/create/connection', function(req, res, next) {
     });
   });
 });
-/*
-Get all the connections for a user.
-Note that this does not require authentication.
-param: username to get connections for.
-Method: PUT (should be GET)
-**/
+
+/* /user/get/connections
+ * Method: PUT
+ *
+ * Get all the connections for a user.
+ * Note that this does not require authentication.
+ * param: username to get connections for.
+ * Returns 406 if error, otherwise 202.
+ */
 router.put('/get/connections', function(req, res, next) {
   req.body = quoteFixer(req.body);
   pg.connect(connectionString, function(err, client, done) {
@@ -249,13 +263,17 @@ router.put('/get/connections', function(req, res, next) {
         });
     });
 });
-/*
-Delete a specified username from a user's connection list.
-Requires authentication.
 
-param: username
-       user's passowrd
-       connection's username to remove
+/* /user/delete/connection
+ * Method: DELETE
+ *
+ * Delete a specified username from a user's connection list.
+ * Requires authentication.
+ *
+ * Returns 406 if error, 404 or 403 if unable to access, otherwise 201.
+ * param: username
+ *        user's passowrd
+ *        connection's username to remove
 */
 router.delete('/delete/connection', function(req, res, next) {
   req.body = quoteFixer(req.body);
@@ -293,10 +311,11 @@ router.delete('/delete/connection', function(req, res, next) {
   });
 });
 
-/* /get/posts
+/* /user/get/posts
  * Method: PUT (Should be GET)
  *
  * Returns all posts by a specific user. Does not require authentication.
+ * Returns 406 if error, otherwise 202 or 204.
  * param: username to get posts for.
  */
 router.put('/get/posts', function(req, res) {

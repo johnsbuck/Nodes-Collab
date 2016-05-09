@@ -1,23 +1,3 @@
-/*  freelance_posts.js
-    Defines the NodeJS Database API for Freelance Posts under table 'posts'
-		Logs are kept in this file as they are displayed in the back-end, not to the client
-
-		*NOTE - There was an issue using router.post and router.delete and so these functions
-		are defined under router.put.
-		We are allowed to do this since we can define it anyway we want and use different
-		header names ie: '/get', '/delete', '/post'
-
-    Optimally we would want to use these the correct way, but our setup was having issues with it.
-
-		Webcodes used in this script are defined as:
-		202 - Accepted - Request is OK for processing, but did not actually process
-		204 ERROR - No Content - This method requires specific parts of the body which was not provided by the input
-		206 ERROR - Partial Content - Fulfilled parital request; however, there is missing information in the input
-		404 ERROR - Not Found - Server did not find anything amtching the request URI
-		403 ERROR - Forbidden - The request/input is acceptable, but will not be fulfilled due to an authorization issue.
-		406 ERROR - Not Acceptable - Bad input was provided.
-*/
-
 var express = require('express');
 var router = express.Router();
 var passHash = require('password-hash');
@@ -31,7 +11,8 @@ var router = express();
 /* /get
  * Method: PUT (Should be GET)
  *
- * Returns all freelance_posts.
+ * Returns all Freelance posts.
+ * Returns 406 if error and 204 or 202 if successful
  */
 router.put('/get', function(req, res) {
 	req.body = quoteFixer(req.body);
@@ -54,9 +35,12 @@ router.put('/get', function(req, res) {
 });
 
 /* /get/post
- * Method: PUT (Should be GET)
+ * Method: PUT
  *
  * Returns a single Freelance post.
+ * Returns 406 if error, and 204 or 202 if successful.
+ *
+ * params: title
  */
 router.put('/get/post', function(req, res) {
 	req.body = quoteFixer(req.body);
@@ -80,10 +64,15 @@ router.put('/get/post', function(req, res) {
  * Method: POST
  *
  * Submits a single FREELANCE POST. Requires username and password.
+ * Returns 406 if error, 404 or 403 if unable to access, otherwise 206.
+ *
+ * params: username AND title and text
+ * 	optional: timestamp
  */
  router.post('/post', function(req, res) {
  	req.body = quoteFixer(req.body);
  	pg.connect(connectionString, function(err, client, done) {
+			// Check username & password
       client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
        function(err, result) {
          if(err) {
@@ -97,11 +86,12 @@ router.put('/get/post', function(req, res) {
            var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
            if(passHash.verify(req.body.pass, hashpass)) {
+						// If timestamp, use timestamp
  						if(req.body.timestamp) {
  							var sqlQuery = 'INSERT INTO posts (username, timestamp, title, text, type) VALUES ' +
  													'(\'' + req.body.username + '\', \'' + req.body.timestamp + '\', \'' + req.body.title + '\', ' +
  													'\'' + req.body.text + '\', \'1\');'
- 						} else {
+ 						} else {	//If no timestamp, use default timestamp
  							var sqlQuery = 'INSERT INTO posts (username, title, text, type) VALUES ' +
  													'(\'' + req.body.username + '\', \'' + req.body.title + '\', ' +
  													'\'' + req.body.text + '\', \'1\');'
@@ -115,6 +105,7 @@ router.put('/get/post', function(req, res) {
  							} else {
  								req.body.tags.forEach(function (tag)
 								{
+									// For each tag, insert into database
  									client.query(' INSERT INTO tags (title, type, tag) VALUES (\'' + req.body.title + '\', \'1\', \'' + tag + '\');',
  									function(err, result) {
  										if(err) {
@@ -141,10 +132,14 @@ router.put('/get/post', function(req, res) {
  * Method: DELETE (Should be DELETE)
  *
  * Deletes a single Freelance post. Requires username and password.
+ * Returns 406 if error, 404 or 403 if unable to access, otherwise 202.
+ *
+ * params: username AND pass AND title
  */
  router.put('/delete', function(req, res) {
  	req.body = quoteFixer(req.body);
  	pg.connect(connectionString, function(err, client, done) {
+			// Checks username & password
       client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
        function(err, result) {
  				console.log(result);
@@ -159,6 +154,7 @@ router.put('/get/post', function(req, res) {
            var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
 
            if(passHash.verify(req.body.pass, hashpass)) {
+						 // Delete post with matching title
  						client.query('DELETE FROM posts WHERE title = \'' + req.body.title + '\' AND type=\'1\';',
  						function(err, result) {
  							done();
@@ -182,6 +178,10 @@ router.put('/get/post', function(req, res) {
  * Method: PUT
  *
  * Edits a single Freelance post. Requires username and password.
+ * Returns 406 if error, 404 or 403 if unable to access, otherwise 206.
+ *
+ * params: username AND pass
+ *	optional: title AND text (requires one)
  */
 router.put('/edit', function(req, res) {
 	// Nothing new to change
@@ -189,11 +189,11 @@ router.put('/edit', function(req, res) {
 		done();
     res.sendStatus(406).end();
   }
-
  	req.body = quoteFixer(req.body);
 
  	pg.connect(connectionString, function(err, client, done) {
  		req.body = quoteFixer(req.body);
+		// Matches user with posts. Checks username and password
  		client.query('SELECT pass, salt FROM users INNER JOIN posts WHERE ' +
  			'posts.username = \'' + req.body.username +'\' AND posts.title = \'' + req.body.title + '\' AND posts.type=\'1\';',
  		 function(err, result) {
@@ -206,7 +206,7 @@ router.put('/edit', function(req, res) {
  				 res.sendStatus(404).end();
  			 }else {
  				 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
-
+				 // Verified
  				 if(passHash.verify(req.body.pass, hashpass)) {
  					// Check what to UPDATE in user's row
   					var sqlQuery = 'UPDATE posts SET';
@@ -216,14 +216,14 @@ router.put('/edit', function(req, res) {
   							sqlQuery += ' ' + key + '=\'' + req.body.new[key] + '\',';
   						} else {
 								done();
-  							console.err('INVALID COLUMN GIVEN');
+  							console.error('INVALID COLUMN GIVEN');
   							res.sendStatus(406).end();
   						}
   					}
 
-  					// Replace last ',' with end query.
-  					sqlQuery = sqlQuery.slice(0, -1) + ' WHERE username=\'' + req.body.username + '\';';
-
+  				// Replace last ',' with end query.
+  				sqlQuery = sqlQuery.slice(0, -1) + ' WHERE username=\'' + req.body.username + '\';';
+					// Submit UPDATE query
  					client.query(sqlQuery,
  						function(err, result) {
 							done();

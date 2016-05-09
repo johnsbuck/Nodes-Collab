@@ -6,10 +6,13 @@ var quoteFixer = require('./db_tools');
 
 var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhost/nodesconnect';
 
-/* /get
+/* /tag/get
  * Method: PUT (Should be GET)
  *
  * Returns all tags connected to a single post.
+ * Returns 406 if error, otherwise 202 or 204.
+ *
+ * params: title AND type
  */
 router.put('/get', function(req, res) {
 	req.body = quoteFixer(req.body);
@@ -29,10 +32,13 @@ router.put('/get', function(req, res) {
 	});
 });
 
-/* /get/tag
+/* /tag/get/tag
  * Method: PUT (Should be GET)
  *
  * Returns one tag connected to a post.
+ * Returns 406 if error, otherwise 204 or 202.
+ *
+ * params: title AND type AND tag
  */
 router.put('/get/tag', function(req, res) {
 	req.body = quoteFixer(req.body);
@@ -52,31 +58,55 @@ router.put('/get/tag', function(req, res) {
 	});
 });
 
-/* /post
+/* /tag/post
  * Method: POST
  *
  * Adds a single tag connected to a post. Requires the poster's username and password to proceed.
+ * Returns 406 if error, 404 or 403 if unable to access, otherwise 202.
+ *
+ * params: username AND pass AND title AND type AND tag
  */
 router.put('/create', function(req, res) {
 	req.body = quoteFixer(req.body);
 	pg.connect(connectionString, function(err, client, done) {
-		client.query('INSERT INTO tags (title, type, tag) VALUES (\'' + req.body.title + '\', \'' + req.body.type + '\', \'' + req.body.tag + '\');',
-		function(err, result) {
-			done();
-			if(err) {
-				console.error(err);
-				res.sendStatus(406).end();
-			}else {
-				res.sendStatus(202).end();
+		client.query('SELECT pass, salt FROM users WHERE username = \'' + req.body.username +'\';',
+		 function(err, result) {
+			 if(err) {
+				 done();
+				 console.error(err);
+				 res.sendStatus(406).end();
+			 }else if(!result || result.rows.length === 0) {
+				 done();
+				 res.sendStatus(404).end();
+			 }else {
+				 var hashpass = 'sha1$' + result.rows[0].salt + '$1$' + result.rows[0].pass;
+
+				 if(passHash.verify(req.body.pass, hashpass)) {
+					client.query('INSERT INTO tags (title, type, tag) VALUES (\'' + req.body.title + '\', \'' + req.body.type + '\', \'' + req.body.tag + '\');',
+					function(err, result) {
+						done();
+						if(err) {
+							console.error(err);
+							res.sendStatus(406).end();
+						}else {
+							res.sendStatus(202).end();
+						}
+					});
+				} else {
+					res.sendStatus(403).end();
+				}
 			}
 		});
 	});
 });
 
-/* /delete
+/* /tag/delete
  * Method: DELETE
  *
  * Deletes all tags connected to a post. Requires the poster's username and password to proceed.
+ * Returns 406 if error, 404 or 403 if unable to access, otherwise 201.
+ *
+ * params: username AND pass AND title AND type
  */
 router.delete('/delete', function(req, res) {
 	req.body = quoteFixer(req.body);
@@ -112,10 +142,13 @@ router.delete('/delete', function(req, res) {
 	});
 });
 
-/* /delete/tag
+/* /tag/delete/tag
  * Method: DELETE
  *
  * Deletes a single tag connected to a post. Requires the poster's username and password to proceed.
+ * Returns 406 if error, 404 or 403 if unable to access, otherwise 201.
+ *
+ * params: username AND pass AND title AND type AND tag
  */
 router.delete('/delete/tag', function(req, res) {
 	req.body = quoteFixer(req.body);
@@ -151,6 +184,14 @@ router.delete('/delete/tag', function(req, res) {
 	});
 });
 
+/* /tag/edit/tag
+ * Method: PUT
+ *
+ * Edits a given tag
+ * Returns 406 if error, 404 or 403 if unable to access, otherwise 201.
+ *
+ * params: username AND pass AND tag AND title AND type AND new[tag]
+ */
 router.put('/edit/tag', function(req, res) {
 	// Nothing new to change
   if(!req.body.new) {

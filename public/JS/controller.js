@@ -25,7 +25,6 @@ app.controller('userPostsGen', function($scope, $http) {
 
       $http.put('/user/get/posts', $scope.formData).
         success(function(data) {
-            console.log('Sent to sever successfully.');
             //Apparently we need a directive to parse this data into a string -> use value.table_name
             if(Object.keys(data).length != 0)
             {
@@ -40,7 +39,6 @@ app.controller('userPostsGen', function($scope, $http) {
                   //get the tags for this posts
                   $http.put('/tag/get', $scope.formData).
                     success(function(dataTag) {
-                        console.log('Sent to sever successfully.');
                         if(Object.keys(dataTag).length != 0)
                         {
                             //for each tag returned
@@ -61,7 +59,6 @@ app.controller('userPostsGen', function($scope, $http) {
 
                     }).error(function(dataTag){
                         //db error
-                        console.log('ERROR: Tag data not sent to server.');
                     });
                   });
                 });
@@ -72,7 +69,6 @@ app.controller('userPostsGen', function($scope, $http) {
             }
         }).error(function(data){
             $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
-            console.log('ERROR: Not sent to server.');
         });
     }
 
@@ -96,7 +92,6 @@ app.controller('QAPostGen', function($scope, $http) {
       //API CALL -> qa_posts put (which is redefined as a get).
       $http.put('/qa-post/get').
         success(function(data) {
-            console.log('Sent to sever successfully.');
             //Apparently we need a directive to parse this data into a string -> use value.table_name
             if(Object.keys(data).length != 0)
             {
@@ -112,7 +107,6 @@ app.controller('QAPostGen', function($scope, $http) {
                   //get the tags for this posts
                   $http.put('/tag/get', $scope.formData).
                     success(function(dataTag) {
-                        console.log('Sent to sever successfully.');
                         if(Object.keys(dataTag).length != 0)
                         {
                             //for each tag returned
@@ -303,7 +297,6 @@ app.controller('groupPostCtrl', function($scope, $http) {
     $scope.init = function() {
       $http.put('/group-post/get', $scope.formData)
         .success(function(data) {
-          console.log('Sent to sever successfully.');
           if(Object.keys(data).length != 0)
           {
               data.forEach(function(value) {
@@ -328,7 +321,6 @@ app.controller('groupPostCtrl', function($scope, $http) {
     $scope.update = function() {
       $http.put('/group-post/get', $scope.formData).
         success(function(data) {
-            console.log('Sent to sever successfully.');
             if(Object.keys(data).length != 0)
             {
                 var i = 0;
@@ -361,7 +353,6 @@ app.controller('groupPostCtrl', function($scope, $http) {
       success(function(data) {
         $scope.txt = '';
         document.getElementById('groupPostForm').value="";
-        console.log('Sent to the server successfully.');
       }).error(function(data) {
         $scope.update();
         console.log('ERROR: Not sent to server.');
@@ -395,7 +386,6 @@ app.controller('freelancePostGen', function($scope, $http) {
       //API CALL -> qa_posts put (which is redefined as a get).
       $http.put('/free-post/get').
         success(function(data) {
-            console.log('Sent to sever successfully.');
             //Apparently we need a directive to parse this data into a string -> use value.table_name
 
             if(Object.keys(data).length != 0)
@@ -412,7 +402,6 @@ app.controller('freelancePostGen', function($scope, $http) {
                   //get the tags for this posts
                   $http.put('/tag/get', $scope.formData).
                     success(function(dataTag) {
-                        console.log('Sent to sever successfully.');
                         if(Object.keys(dataTag).length != 0)
                         {
                             //for each tag returned
@@ -470,7 +459,6 @@ app.controller('viewPostCtrl', function($scope, $http) {
       //First get the post
       $http.put(accessor + '/get/post', $scope.formData)
         .success(function(data) {
-          console.log('Sent to sever successfully.');
           //There should only be one object here
           if(Object.keys(data).length != 0)
           {
@@ -481,7 +469,6 @@ app.controller('viewPostCtrl', function($scope, $http) {
             //get the tags for this posts
             $http.put('/tag/get', $scope.formData).
               success(function(dataTag) {
-                  console.log('Sent to sever successfully.');
                   if(Object.keys(dataTag).length != 0)
                   {
                       //for each tag returned
@@ -531,7 +518,6 @@ app.controller('viewPostCtrl', function($scope, $http) {
       }
       $http.put(accessor + '/delete', $scope.formData).
           success(function(data) {
-              console.log('Sent to sever successfully.');
               window.location.href = href;
           }).error(function(data){
               console.log('ERROR: Not sent to server.');
@@ -558,8 +544,6 @@ app.controller('postCommentCtrl', function($scope, $http) {
 
       $http.put('/comments/get', $scope.formData)
         .success(function(data) {
-          console.log('Sent to sever successfully.');
-
           if(Object.keys(data).length != 0)
           {
                 data.reverse();
@@ -588,7 +572,6 @@ app.controller('postCommentCtrl', function($scope, $http) {
                         'id' : sessionStorage.getItem('commentID')};
       $http.put('comments/delete', $scope.formData).
           success(function(data) {
-              console.log('Sent to sever successfully.');
               location.reload();
           }).error(function(data){
               console.log('ERROR: Not sent to server.');
@@ -617,7 +600,6 @@ app.controller('submitCommentCtrl', function($scope, $http, $location) {
     $http.post('/comments/post', $scope.formData).
       success(function(data) {
         location.reload();//refresh this page
-        console.log('Sent to sever successfully.');
       }).error(function(data){
           console.log('ERROR: Not sent to server.');
       });
@@ -647,7 +629,6 @@ app.controller('freelancePostCtrl', function($scope, $http, $location) {
         $http.post('/free-post/post', $scope.formData).
           success(function(data) {
             window.location.href = '/FreelanceEx.html';
-            console.log('Sent to sever successfully.');
           }).error(function(data){
               console.log('ERROR: Not sent to server.');
               popError('A post in Freelancing was already found with the given title. Please submit with a unique title or checkout that post!');
@@ -685,7 +666,6 @@ app.controller('qaPostCtrl', function($scope, $http, $location) {
             window.open("http://collabedit.com/new");//*NOTE pop-ups must be enabled for this to work
           }
           window.location.href = '/QandA.html';
-          console.log('Sent to sever successfully.');
         }).error(function(data){
             console.log('ERROR: Not sent to server.');
             popError('A post in Q&A was already found with the given title. Please submit with a unique title or checkout that post!');
@@ -700,14 +680,11 @@ app.controller('qaPostCtrl', function($scope, $http, $location) {
 app.controller('newUserCtrl', function($scope, $http) {
 
   $scope.sub = function() {
-    console.log($http);
-      console.log($scope.formData);
       if($scope.formData && $scope.formData.first_name && $scope.formData.last_name &&
         $scope.formData.username && $scope.formData.email && $scope.formData.pass
         && $scope.formData.gender) {
         $http.put('/user/create', $scope.formData).
         success(function(data) {
-            console.log('Sent to sever successfully.');
             window.location.href = '/Signin.html';
         }).error(function(data){
             console.log('ERROR: Not sent to server.');
@@ -720,12 +697,9 @@ app.controller('newUserCtrl', function($scope, $http) {
 app.controller('loginCtrl', function($scope, $http, $location) {
 
   $scope.sub = function() {
-    console.log($scope.formData);
-    console.log($http.defaults.headers.common);
     if($scope.formData && $scope.formData.email && $scope.formData.pass) {
       $http.put('/login', $scope.formData).
       success(function(data) {
-        console.log($scope.formData);
         $http.put('/user/get', $scope.formData).success(function(data) {
           sessionStorage.setItem('currentgroup', data.currentgroup);
           sessionStorage.setItem('linkedin', data.linkedin);
@@ -737,7 +711,6 @@ app.controller('loginCtrl', function($scope, $http, $location) {
           sessionStorage.setItem('first_name', data.first_name);
           sessionStorage.setItem('last_name', data.last_name);
           window.location.href = '/main.html';
-          console.log('Sent to sever successfully.');
         }).error(function(data) {
           console.log('Unable to receive user info.');
           popError('Unable to receive user info');
@@ -759,11 +732,9 @@ app.controller('loginCtrl', function($scope, $http, $location) {
 
       $scope.sub($scope.formData);
     $scope.sub = function() {
-        console.log($scope.formData);
         $http.post('/login', $scope.formData).
         success(function(data) {
           window.location.href = '/main.html';
-            console.log('Sent to sever successfully.');
         }).error(function(data){
             console.log('ERROR: Not sent to server.');
         });
@@ -814,14 +785,11 @@ app.controller('generalCtrl', function($scope, $http) {
   $scope.formData.new = {};
 
   $scope.changeName = function() {
-      console.log("Change Name");
       $scope.formData.username = sessionStorage.getItem('username');
       $scope.formData.pass = sessionStorage.getItem('pass');
       $http.put('/user/edit', $scope.formData).success(function(data) {
-        console.log('Sent to the server successfully.');
 
         $http.put('/user/get', $scope.formData).success(function(data) {
-          console.log(data);
           if(typeof $scope.formData.new.first_name !== 'undefined'){
             sessionStorage.setItem('first_name', $scope.formData.new.first_name);
           }
@@ -839,12 +807,10 @@ app.controller('generalCtrl', function($scope, $http) {
   }
 
   $scope.updateBio = function(){
-    console.log("Update Bio");
      $scope.formData.username = sessionStorage.getItem('username');
      $scope.formData.pass = sessionStorage.getItem('pass');
 
      $http.put('/user/edit', $scope.formData).success(function(data) {
-      console.log(data);
       if(typeof $scope.formData.new.bio !== 'undefined'){
         sessionStorage.setItem('bio', $scope.formData.new.bio);
       }
@@ -856,14 +822,11 @@ app.controller('generalCtrl', function($scope, $http) {
   }
 
 $scope.changeMedia = function() {
-      console.log("Change Links");
       $scope.formData.username = sessionStorage.getItem('username');
       $scope.formData.pass = sessionStorage.getItem('pass');
       $http.put('/user/edit', $scope.formData).success(function(data) {
-        console.log('Sent to the server successfully.');
 
         $http.put('/user/get', $scope.formData).success(function(data) {
-          console.log(data);
           if(typeof $scope.formData.new.facebook !== 'undefined'){
             sessionStorage.setItem('facebook', $scope.formData.new.facebook);
              $scope.facebook = sessionStorage.getItem('facebook');
@@ -887,12 +850,9 @@ $scope.changeMedia = function() {
 });
 
 app.controller('settingsCtrl', function($scope, $http) {
-  console.log("SETTINGS");
   $scope.sub = function() {
-    console.log($scope.formData);
     $http.put('' , $scope.formData)
     success(function(data) {
-      console.log('Sent to the server successfully.');
     }).error(function(data) {
       console.log('ERROR: Not sent to server.');
     });
@@ -900,13 +860,9 @@ app.controller('settingsCtrl', function($scope, $http) {
 });
 
 app.controller('blockedCtrl', function($scope, $http) {
-  console.log("BlockedSettings");
   $scope.sub = function() {
-    console.log($scope.formData);
     $http.put('/settings/blocked' , $scope.formData)
-    success(function(data) {
-      console.log('Sent to the server successfully.');
-    }).error(function(data) {
+    .error(function(data) {
       console.log('ERROR: Not sent to server.');
     });
   }
@@ -933,7 +889,6 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
         $scope.formData.new = { 'currentgroup' : $scope.formData.groupname};
         $scope.switchGroup($scope.formData.new.groupname);
         document.getElementById('groupCreateForm').value="";
-        console.log('Sent to the server successfully.');
       }).error(function(data) {
         console.log('ERROR: Not sent to server.');
       });
@@ -942,23 +897,18 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
     //Sends a call to the back end to delete a group.
     $scope.deleteGroup = function() {
       $scope.formData.groupname = $scope.formData.groupnameDelete;
-      console.log($scope.formData);
       $http.put('/group/delete', $scope.formData).
       success(function(data) {
         $http.put('/group/get/groups', $scope.formData).
         success(function(data) {
-          console.log("delete group data");
-          console.log(data);
           if(data.length != 0) {
           $scope.formData.new = { 'currentgroup' : data[0].groupname};
           $scope.switchGroup(data[0].groupname);
           }
             document.getElementById('groupDeleteForm').value="";
-            console.log('Sent to the server successfully.');
         }).error(function(data) {
           console.log('ERROR: Not sent to server.');
         });
-        console.log('Sent to the server successfully.');
       }).error(function(data) {
         console.log('ERROR: Not sent to server.');
       });
@@ -969,11 +919,9 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
       document.getElementById("Groups").innerHTML = "";
       $http.put('/group/get/groups', $scope.formData).
       success(function(data) {
-        console.log('Sent to the server successfully.');
         if(Object.keys(data).length != 0)
         {
             data.forEach(function(dataElement)  {
-              console.log(dataElement);
               $.getScript("JS/collabSettings.js", function(){
                 param = '{ "post" : [' +
                 '{ "groupname": "' + dataElement.groupname + '" }]}';
@@ -989,15 +937,12 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
     //Used to show the members of a particular group.
     $scope.showMembers = function() {
         document.getElementById("Members").innerHTML = "";
-        console.log($scope.groupname);
       $scope.formData.groupname = $scope.groupname;
       $http.put('/group/get/members', $scope.formData).
       success(function(data) {
-        console.log('Sent to the server successfully.');
         if(Object.keys(data).length != 0)
         {
             data.forEach(function(dataElement)  {
-              console.log(dataElement);
               $.getScript("JS/collabSettings.js", function(){
                 param = '{ "post" : [' +
                 '{ "username": "' + dataElement.username + '" }]}';
@@ -1012,13 +957,10 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
 
     //Used to add a member to the current group the user adding the member is in.
     $scope.addMember = function() {
-      console.log("Add Members");
-      console.log($scope.formData);
       $http.put('/group/add/user', $scope.formData).
       success(function(data) {
         document.getElementById('userAdd').value="";
         $scope.showMembers();
-        console.log('Sent to the server successfully.');
       }).error(function(data) {
         console.log('ERROR: Not sent to server.');
       });
@@ -1026,13 +968,10 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
 
     //Used to remove a member from the current group the user is in. (This member can be the user themselves)
     $scope.removeMember = function() {
-      console.log("Remove Members");
-      console.log($scope.formData);
       $http.put('/group/delete/user', $scope.formData).
       success(function(data) {
         document.getElementById('userRemove').value="";
         $scope.showMembers();
-        console.log('Sent to the server successfully.');
       }).error(function(data) {
         console.log('ERROR: Not sent to server.');
       });
@@ -1040,18 +979,14 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
 
     //Sends a call to the backend to edit information about the group.
     $scope.editGroup = function() {
-      console.log("Edit group");
-      console.log($scope.formData);
       $http.put('/user/edit', $scope.formData).success(function(data) {
-       console.log("Update succeeded");
-       console.log(data);
        if(typeof $scope.formData.new.currentgroup !== 'undefined'){
          sessionStorage.setItem('currentgroup', $scope.formData.new.currentgroup);
        }
          $scope.groupname = sessionStorage.getItem('currentgroup');
          $scope.showGroups($scope.formData);
          $scope.showMembers($scope.formData);
-         console.log('Sent to the server successfully.');
+
       }).error(function(data) {
          console.log('ERROR: Not sent to server.');
        });

@@ -7,6 +7,14 @@ var quoteFixer = require('./db_tools');
 
 var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhost/nodesconnect';
 
+/* /login
+ * Method: PUT
+ *
+ * Used to confirm if user exists.
+ * Returns 406 if error, 401 if unable to verify, otherwise 202.
+ *
+ * params: username AND pass
+ */
 router.put('/login', function(req, res, next) {
   req.body = quoteFixer(req.body);
   pg.connect(connectionString, function(err, client, done) {

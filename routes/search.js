@@ -1,23 +1,3 @@
-/*  search.js
-    Defines the NodeJS Database API for Searching nodesConnect
-		Logs are kept in this file as they are displayed in the back-end, not to the client
-
-		*NOTE - There was an issue using router.post and router.delete and so these functions
-		are defined under router.put.
-		We are allowed to do this since we can define it anyway we want and use different
-		header names ie: '/get', '/delete', '/post'
-
-    Optimally we would want to use these the correct way, but our setup was having issues with it.
-
-		Webcodes used in this script are defined as:
-		202 - Accepted - Request is OK for processing, but did not actually process
-		204 ERROR - No Content - This method requires specific parts of the body which was not provided by the input
-		206 ERROR - Partial Content - Fulfilled parital request; however, there is missing information in the input
-		404 ERROR - Not Found - Server did not find anything amtching the request URI
-		403 ERROR - Forbidden - The request/input is acceptable, but will not be fulfilled due to an authorization issue.
-		406 ERROR - Not Acceptable - Bad input was provided.
-*/
-
 var express = require('express');
 var router = express.Router();
 var passHash = require('password-hash');
@@ -230,7 +210,7 @@ var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhos
      likeClause += ' OR lower(username) LIKE \'' + userName+'%\'';
      likeClause += ' OR lower(username) LIKE \'%' + userName+'\'';
      likeClause += ' OR lower(username) LIKE \'%' + userName+'%\'';
-     //add a like clause that attemps to match the searched email with a user if an email was specified 
+     //add a like clause that attemps to match the searched email with a user if an email was specified
      if(email != "")
      {
        likeClause += ' OR lower(email) LIKE \'' + email+'\'';

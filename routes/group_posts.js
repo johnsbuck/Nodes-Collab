@@ -1,24 +1,3 @@
-/*  group_posts.js
-    Defines the NodeJS Database API
-		Logs are kept in this file as they are displayed in the back-end, not to the client
-
-		*NOTE - There was an issue using router.post and router.delete and so these functions
-		are defined under router.put.
-		We are allowed to do this since we can define it anyway we want and use different
-		header names ie: '/get', '/delete', '/post'
-
-    Optimally we would want to use these the correct way, but our setup was having issues with it.
-
-		Webcodes used in this script are defined as:
-		201 - Created - Request made and resulted with creating a new resource
-		202 - Accepted - Request is OK for processing, but did not actually process
-		204 ERROR - No Content - This method requires specific parts of the body which was not provided by the input
-		206 ERROR - Partial Content - Fulfilled parital request; however, there is missing information in the input
-		404 ERROR - Not Found - Server did not find anything amtching the request URI
-		403 ERROR - Forbidden - The request/input is acceptable, but will not be fulfilled due to an authorization issue.
-		406 ERROR - Not Acceptable - Bad input was provided.
-*/
-
 var express = require('express');
 var router = express.Router();
 var passHash = require('password-hash');
@@ -27,12 +6,15 @@ var quoteFixer = require('./db_tools');
 
 var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhost/nodesconnect';
 
-/* /get
+/* /group-post/get
  * Method: PUT (Should be GET)
  *
  * Returns a set of posts of the given post's group and a 200 status code.
  * If no post exists, return a 204 status code.
- * If not authorized, return 403 status code.
+ * If not authorized, return 403 or 404 status code.
+ * If error, return 406 status code.
+ *
+ * params: groupname AND username AND pass
  */
 router.put('/get', function(req, res) {
 	console.log(req.body);
@@ -132,7 +114,13 @@ router.put('/get', function(req, res) {
 	});
 });
 
-/* Posts a given post onto the database.
+/* /group-post/post
+ * Method: PUT
+ *
+ * Posts a given post onto the database.
+ * Returns 406 if error, 403 or 404 in unable to access, otherwise 202.
+ *
+ * params: groupname AND username AND pass AND text AND timestamp
  */
 router.put('/post', function(req, res) {
 	req.body = quoteFixer(req.body);
@@ -190,7 +178,13 @@ router.put('/post', function(req, res) {
 	});
 });
 
-/* Deletes a given post onto the database.
+/* /group-post/delete
+ * Method: DELETE
+ *
+ * Deletes a given post onto the database.
+ * Returns 406 if error, 403 or 404 if unable to access, otherwise 201.
+ *
+ * params: username AND pass AND groupname AND id (post)
  */
 router.delete('/delete', function(req, res) {
 	req.body = quoteFixer(req.body);
@@ -247,6 +241,15 @@ router.delete('/delete', function(req, res) {
 	});
 });
 
+/* /group-post/edit
+ *
+ * Method: PUT
+ * Replaces older values with given values.
+ * Returns 406 if error, 403 or 404 if unable to access, otherwise 201.
+ *
+ * params: username AND groupname AND pass
+ *	optional: new[text], new[groupname] (requires one)
+ */
 router.put('/edit', function(req, res) {
 	// Nothing new to change
   if(!req.body.new) {
@@ -287,7 +290,7 @@ router.put('/edit', function(req, res) {
 						 if(passHash.verify(req.body.pass, hashpass)) {
 							 // Check what to UPDATE in user's row
 		           var sqlQuery = 'UPDATE group_posts SET';
-		           var columns = {'text': true, 'id': true, 'groupname': true};
+		           var columns = {'text': true, 'groupname': true};
 		           for(key in req.body.new) {
 		             if(key in columns) {
 		               sqlQuery += ' ' + key + '=\'' + req.body.new[key] + '\',';

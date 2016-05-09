@@ -46,16 +46,15 @@ socket.on('updatechat', function (username, data) {
 // listener, whenever the server emits 'updateusers', this updates the username list
 socket.on('updateusers', function(data) {
 	$('#users').empty();
-  console.log('username given: ' + data['username']);
-  console.log('otheruser given: ' + data['otheruser']);
 
+  // Matches username and otheruser
   if(sessionStorage.username == data['username'] && data['otheruser']) {
     sessionStorage.otheruser = data['otheruser'];
   }
 
-  console.log("Other User: " + sessionStorage.otheruser);
-
+  // Checks if not null
   if(typeof sessionStorage.otheruser === 'string') {
+    // Creates info for other user chat
     $('#users').append('<a href="?">Return to General</a><br><br>');
     $('#users').append(sessionStorage.username + '<br>');
     $('#users').append(sessionStorage.otheruser + '<br>');
@@ -65,8 +64,7 @@ socket.on('updateusers', function(data) {
 
   $('#users').append('<br>');
 
-  console.log(data['users']);
-
+  // Generates the list of available users
 	$.each(data['users'], function(index, value) {
     if(value !== sessionStorage.username && (!sessionStorage.otheruser || value !== sessionStorage.otheruser)) {
 		    $('#users').append('<a href="?user=' + value + '">' + value + '</a><br>');
@@ -100,6 +98,7 @@ $(function(){
 		}
 	});
 
+  // On click, switch to user
   $('#users a').click(function() {
     $('#conversation').clear();
     var otheruser = getParameterUrl('user');

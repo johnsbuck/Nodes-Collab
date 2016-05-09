@@ -1,17 +1,3 @@
-/*  group.js
-    Defines the NodeJS Database API
-		Logs are kept in this file as they are displayed in the back-end, not to the client
-
-		Webcodes used in this script are defined as:
-		201 - Created - Request made and resulted with creating a new resource
-		202 - Accepted - Request is OK for processing, but did not actually process
-		204 ERROR - No Content - This method requires specific parts of the body which was not provided by the input
-		206 ERROR - Partial Content - Fulfilled parital request; however, there is missing information in the input
-		403 ERROR - Forbidden - The request/input is acceptable, but will not be fulfilled due to an authorization issue.
-		404 ERROR - Not Found - Server did not find anything amtching the request URI
-		406 ERROR - Not Acceptable - Bad input was provided.
-*/
-
 var express = require('express');
 var router = express.Router();
 var passHash = require('password-hash');
@@ -20,10 +6,13 @@ var quoteFixer = require('./db_tools');
 
 var connectionString = process.env.DATABASE_URL || 'postgres://jsb:test@localhost/nodesconnect';
 
-/* /get
- * METHOD: PUT (Should be GET)
+/* /group/get/members
+ * METHOD: PUT
  *
  * Used to retrieve the members inside of a given group. Requires authorization.
+ * Returns 406 if error, 403 or 404 if unable to access, otherwise 403.
+ *
+ * params: groupname AND username AND pass
  */
 router.put('/get/members', function(req, res) {
 	req.body = quoteFixer(req.body);
@@ -35,10 +24,10 @@ router.put('/get/members', function(req, res) {
 		function(err, result) {
 			if(err) {
 				done();
-				res.sendStatus(400).end();
+				res.sendStatus(406).end();
 			} else if (!result || result.rows.length == 0) {
 				done();
-				res.sendStatus(406).end();
+				res.sendStatus(404).end();
 			} else {
 				if (result.rows[0].privacy === 1) {
 					//Authorization
@@ -93,10 +82,13 @@ router.put('/get/members', function(req, res) {
 });
 
 
-/* /get/user
- * METHOD: PUT (Should be GET)
+/* /group/get/groups
+ * METHOD: PUT
  *
  * Used to retrieve the groups that a particular user is a part of. Requires authorization.
+ * Returns 406 if error, 403 or 404 if unable to access, otherwise 204 or 200.
+ *
+ * params: username AND pass
  */
 router.put('/get/groups', function(req, res) {
 	req.body = quoteFixer(req.body);
@@ -123,11 +115,8 @@ router.put('/get/groups', function(req, res) {
 					'WHERE username=\'' + req.body.username + '\' AND (privacy =\'0\'' +
 					' OR perms <=\'1\');',
 					function(err, result) {
-						console.log(result);
 						done();
 						if(err) {
-							console.log(err);
-							console.log("Breaks here");
 							res.sendStatus(400).end();
 						} else if (!result) {
 							res.sendStatus(406).end();
@@ -146,10 +135,13 @@ router.put('/get/groups', function(req, res) {
 	});
 });
 
-/* /create
+/* /group/create
  * METHOD: PUT
  *
  * Creates a new group.
+ * Returns 406 if error, otherwise 202.
+ *
+ * params: username AND groupname AND privacy
  */
 router.put('/create', function(req, res) {
 	req.body = quoteFixer(req.body);
@@ -171,10 +163,13 @@ router.put('/create', function(req, res) {
 	});
 });
 
-/* /delete
+/* /group/delete
  * METHOD: PUT
  *
  * Deletes a new group.
+ * Returns 406 if error, 403 or 404 if unable to access, otherwise 202.
+ *
+ * params: username AND pass AND groupname
  */
 router.put('/delete', function(req, res) {
 	req.body = quoteFixer(req.body);
@@ -213,7 +208,13 @@ router.put('/delete', function(req, res) {
 	});
 });
 
-/* Add user to group onto the database.
+/* /group/add/user
+ * METHOD: PUT
+ *
+ * Adds user to group. Requires authorization
+ * Returns 406 if error, 403 or 404 if unable to access, otherwise 202.
+ *
+ * params: username AND groupname AND pass AND newuser
  */
 router.put('/add/user', function(req, res) {
 	req.body = quoteFixer(req.body);
@@ -258,7 +259,13 @@ router.put('/add/user', function(req, res) {
 	});
 });
 
-/* Deletes a user from group onto the database.
+/* /group/delete/user
+ * METHOD: PUT
+ *
+ * Deletes a user from group.
+ * Returns 406 if error, 403 or 404 if unable to access, otherwise 201.
+ *
+ * params: username AND groupname AND pass AND deluser
  */
 router.put('/delete/user', function(req, res) {
 	req.body = quoteFixer(req.body);
@@ -304,6 +311,10 @@ router.put('/delete/user', function(req, res) {
  * METHOD: PUT
  *
  * Allows an admin member to edit the properties of the group.
+ * Returns 406 if error, 404 or 403 if unable to access, otherwise 201.
+ *
+ * params: username AND groupname AND pass
+ *	optional: new[privacy], new[groupname] (requires one)
  */
 router.put('/edit', function(req, res) {
 	// Nothing new to change
