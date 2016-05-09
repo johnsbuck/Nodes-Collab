@@ -1,3 +1,17 @@
+/*  group.js
+    Defines the NodeJS Database API
+		Logs are kept in this file as they are displayed in the back-end, not to the client
+
+		Webcodes used in this script are defined as:
+		201 - Created - Request made and resulted with creating a new resource
+		202 - Accepted - Request is OK for processing, but did not actually process
+		204 ERROR - No Content - This method requires specific parts of the body which was not provided by the input
+		206 ERROR - Partial Content - Fulfilled parital request; however, there is missing information in the input
+		403 ERROR - Forbidden - The request/input is acceptable, but will not be fulfilled due to an authorization issue.
+		404 ERROR - Not Found - Server did not find anything amtching the request URI
+		406 ERROR - Not Acceptable - Bad input was provided.
+*/
+
 var express = require('express');
 var router = express.Router();
 var passHash = require('password-hash');
