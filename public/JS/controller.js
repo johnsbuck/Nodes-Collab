@@ -282,6 +282,10 @@ app.controller('profileGen', function($scope, $http) {
     $scope.sub();
 });
 
+/* Controller for the messaging system of the projectcollab page (groupposting page).
+    Holds functionallity to initialize the page, update it actively on a window set interval,
+    retrive the needed posts, and add new posts.
+*/
 app.controller('groupPostCtrl', function($scope, $http) {
     $scope.txt = "";
 
@@ -294,6 +298,8 @@ app.controller('groupPostCtrl', function($scope, $http) {
     $scope.formData = {'username': sessionStorage.getItem('username'),
                         'groupname': sessionStorage.getItem('currentgroup'),
                         'pass': sessionStorage.getItem('pass')};
+                        
+    //Sends a call to the backend to get the group-posts and then calls a script to generate html and appends it.
     $scope.init = function() {
       $http.put('/group-post/get', $scope.formData)
         .success(function(data) {
@@ -318,6 +324,7 @@ app.controller('groupPostCtrl', function($scope, $http) {
         });
     }
 
+    //Sends a call to the backend to retrieve posts that have been added since the intialize page and appends them.
     $scope.update = function() {
       $http.put('/group-post/get', $scope.formData).
         success(function(data) {
@@ -341,6 +348,7 @@ app.controller('groupPostCtrl', function($scope, $http) {
         });
     }
 
+    //Sends a call to the backend to add a group-post to the database with the current timestamp.
     $scope.post = function() {
       if($scope.formData != undefined) {
       $scope.formData.username = sessionStorage.getItem('username');
@@ -363,6 +371,8 @@ app.controller('groupPostCtrl', function($scope, $http) {
         //No input data
       }
     }
+    
+    //Used to initalize page on load and update at the specified interval.
     $scope.init();
     window.setInterval(function() {
       $scope.update();
@@ -902,6 +912,10 @@ app.controller('blockedCtrl', function($scope, $http) {
   }
 });
 
+/* Controller for projectcollab settings page.
+    Used to call methods that will create,delete, and switch groups.
+    As well as add and remove members.
+*/
 app.controller('collabSettingsCtrl', function($scope, $http) {
    if(sessionStorage.getItem('currentgroup') == "null")
       $scope.groupname = "(No Group)";
@@ -910,7 +924,8 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
 
   $scope.formData = {'username': sessionStorage.getItem('username'),
                       'pass': sessionStorage.getItem('pass')};
-
+    
+    //Sends a call to the backend to create a group. 
     $scope.createGroup = function() {
       $scope.formData.groupname = $scope.formData.groupnameNew;
       $http.put('/group/create', $scope.formData).
@@ -924,6 +939,7 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
       });
     }
 
+    //Sends a call to the back end to delete a group.
     $scope.deleteGroup = function() {
       $scope.formData.groupname = $scope.formData.groupnameDelete;
       console.log($scope.formData);
@@ -994,6 +1010,7 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
       });
     }
 
+    //Used to add a member to the current group the user adding the member is in.
     $scope.addMember = function() {
       console.log("Add Members");
       console.log($scope.formData);
@@ -1007,6 +1024,7 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
       });
     }
 
+    //Used to remove a member from the current group the user is in. (This member can be the user themselves)
     $scope.removeMember = function() {
       console.log("Remove Members");
       console.log($scope.formData);
@@ -1020,11 +1038,7 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
       });
     }
 
-  /*  $scope.switchGroup = function() {
-      sessionStorage.groupname = $scope.formData.groupnameSwitch;
-      document.getElementById('groupSwitchForm').value="";
-    }*/
-
+    //Sends a call to the backend to edit information about the group.
     $scope.editGroup = function() {
       console.log("Edit group");
       console.log($scope.formData);
@@ -1043,6 +1057,7 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
        });
     }
 
+    //Sends a call to the backend to retreive the information on the group the user wishes to switch to.
     $scope.switchGroup= function(){
       $http.put('/group/get/groups', $scope.formData).
       success(function(data) {
