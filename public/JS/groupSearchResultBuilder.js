@@ -1,12 +1,16 @@
+/*  groupSearchResultBuilder.js
+    The purpose of this script is to generate a format for a given set of data
+    singleGroup takes in a set of "group" data and generates it into nicely formatted HTML
 
+    param : JSON file to parse into a post.
+    return : HTML code representing the post data
+*/
 
 //Hand a JSON with a single object containing { "group" : [ { "groupname":"ex_name", "privacy" : "ex_public" } ] }
-function singlePost(singleData)
+function singleGroup(singleData)
 {
   var obj = JSON.parse(singleData);
-  console.log(obj);
   var groupname = obj.group[0].groupname;
-  console.log(groupname);
   //well just set the post type as a tag
   var privacy = obj.group[0].privacy;
 
@@ -36,10 +40,10 @@ function singlePost(singleData)
 
 }
 
-
+//Stores the group name in the session when you view the post so the controller knows which group to show to the viewer
+//Id stored as: currentgroup
 function storeSearchedGroup(groupname)
 {
-  console.log("Session Stored SearchedGroup "+ groupname);
   sessionStorage.setItem('currentgroup', groupname);
 }
 //See the note @ function above

@@ -1,11 +1,15 @@
+/*  profileSearchResultBuilder.js
+    The purpose of this script is to generate a format for a given set of data
+    singleUser takes in a set of "user" data and generates it into nicely formatted HTML
 
+    param : JSON file to parse into a post.
+    return : HTML code representing the post data
+*/
 
 //Hand a JSON with a single object containing { "user" : [ { "username":"ex_author", "email" : "ex_timestamp" } ] }
-function singlePost(singleData)
+function singleUser(singleData)
 {
-  //document.getElementById("tableGen").innerHTML= singleData;
   var obj = JSON.parse(singleData);
-  console.log(obj);
   var username = obj.user[0].username;
   //well just set the post type as a tag
   var email = obj.user[0].email;
@@ -33,11 +37,9 @@ function singlePost(singleData)
 
 }
 
-
+//Stores the username to the session when you view the post so the controller knows which Profile to show to the viewer
+//Id stored as: viewuser
 function storeOtherUsername(username)
 {
-  console.log("Session Stored OtherUserName "+ username);
   sessionStorage.setItem('viewuser', username);
 }
-//See the note @ function above
-//generate();

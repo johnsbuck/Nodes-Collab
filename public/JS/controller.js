@@ -298,7 +298,7 @@ app.controller('groupPostCtrl', function($scope, $http) {
     $scope.formData = {'username': sessionStorage.getItem('username'),
                         'groupname': sessionStorage.getItem('currentgroup'),
                         'pass': sessionStorage.getItem('pass')};
-                        
+
     //Sends a call to the backend to get the group-posts and then calls a script to generate html and appends it.
     $scope.init = function() {
       $http.put('/group-post/get', $scope.formData)
@@ -371,7 +371,7 @@ app.controller('groupPostCtrl', function($scope, $http) {
         //No input data
       }
     }
-    
+
     //Used to initalize page on load and update at the specified interval.
     $scope.init();
     window.setInterval(function() {
@@ -924,8 +924,8 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
 
   $scope.formData = {'username': sessionStorage.getItem('username'),
                       'pass': sessionStorage.getItem('pass')};
-    
-    //Sends a call to the backend to create a group. 
+
+    //Sends a call to the backend to create a group.
     $scope.createGroup = function() {
       $scope.formData.groupname = $scope.formData.groupnameNew;
       $http.put('/group/create', $scope.formData).
@@ -1061,29 +1061,32 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
     $scope.switchGroup= function(){
       $http.put('/group/get/groups', $scope.formData).
       success(function(data) {
-        console.log("groups found");
-        console.log(data);
         if(Object.keys(data).length != 0)
         {
             data.forEach(function(dataElement)  {
               if(dataElement.groupname == $scope.formData.new.currentgroup) {
-                console.log("Found this group");
-                console.log(dataElement);
                 $scope.editGroup($scope.formData.new.currentgroup);
               }
             });
           }
       }).error(function(data) {
-        console.log('ERROR: Not sent to server.');
       });
     }
   });
 
+  /*  searchWebsiteCtrl
+      Uses: JS/profileSearchResultBuilder.js JS/groupSearchResultBuilder.js JS/tableGen.js Routes/search.js
+      Used By: SearchEx.html
+      Used To: Search the Website and Display Results
+      This function will take a search string and a search method type and call the
+      appropriate quering method in Routes with the search string and post type if the
+      search is for a post.
+      The returning information is then written to the controlling element in SearchEx.html.
+  */
   app.controller('searchWebsiteCtrl', function($scope, $http) {
       $scope.txt = "";
       $scope.sub = function(formData) {
-        console.log(formData);
-        console.log("infunction");
+        //used in switch, determines search
         var searchMethod = '';
         if (formData.searchType == 0 || formData.searchType == 1)//posts search
         {
@@ -1102,32 +1105,25 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
           searchMethod = 'userSearch';
         }
         var searchCall = '/search/'+searchMethod;
-        console.log(searchCall);
         $http.put(searchCall, formData).
           success(function(data) {
-              console.log('Sent to sever successfully');
-              console.log(data);
-              document.getElementById("searchResults").innerHTML = "";
-
+              document.getElementById("searchResults").innerHTML = "";//reset html in controlling element
               if(Object.keys(data).length != 0)
               {
-                switch (searchMethod)
+                switch (searchMethod)//Call the appropriate query and html results generator
                 {
                   case 'forumSearch':
                     angular.forEach(data, function(value, key) {
-                      console.log("Key: " + key + ", Value: " + value.username + ", " + value.title + ", " + value.text);
                       $.getScript("JS/tableGen.js", function(){
                         param = '{ "post" : [' +
                         '{ "username": "' + value.username + '", "timestamp":"' + value.timestamp + '", "post_title":"' + value.title + '", "post_tags":"' + "notag" +
                         '", "type":"' + value.type + '", "id":"' + value.id + '" }]}';
-                        console.log(param);
                         document.getElementById("searchResults").innerHTML += singlePost(param);
                       });
                     });
                     break;
                   case 'forumSearchByTags':
                     angular.forEach(data, function(value, key) {
-                      console.log("Key: " + key + ", Value: " + value.username + ", " + value.title + ", " + value.type + ", " + value.tag);
                       if(value.type == formData.searchType - 4)
                       {
                         formData.title = value.title;
@@ -1138,21 +1134,17 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
                               param = '{ "post" : [' +
                               '{ "username": "' + post.username + '", "timestamp":"' + post.timestamp + '", "post_title":"' + post.title + '", "post_tags":"' + value.tag +
                               '", "type":"' + post.type + '", "id":"' + post.id + '" }]}';
-                              console.log(param);
                               document.getElementById("searchResults").innerHTML += singlePost(param);
                             });
                         }).error(function(data){
                             $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
-                            console.log('ERROR: Not sent to server.');
                         });
                      }
                     });
                     break;
                   case 'groupSearch':
                     var privacy = "";
-                    console.log(data);
                     angular.forEach(data, function(value, key) {
-                      console.log("key: " + key + " value: " + value);
                         if(value.privacy == 0)
                         {
                           privacy = "public";
@@ -1163,26 +1155,22 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
                         $.getScript("JS/groupSearchResultBuilder.js", function(){
                           param = '{ "group" : [' +
                           '{ "groupname": "' + value.groupname + '", "privacy":"' + privacy + '" }]}';
-                          console.log(param);
-                          document.getElementById("searchResults").innerHTML += singlePost(param);
+                          document.getElementById("searchResults").innerHTML += singleGroup(param);
                         });
 
                     });
                     break;
                   case 'userSearch':
                     angular.forEach(data, function(value, key) {
-                      console.log("key: " + key + " value: " + value);
-
                       $.getScript("JS/profileSearchResultBuilder.js", function(){
                       param = '{ "user" : [' +
                       '{ "username": "' + value.username + '", "email":"' + value.email + '" }]}';
-                      console.log(param);
-                      document.getElementById("searchResults").innerHTML += singlePost(param);
+                      document.getElementById("searchResults").innerHTML += singleUser(param);
                       });
                     });
                     break;
                   default:
-                    //we should never get here
+                    //we will never get here
                     break;
                 }
               }
@@ -1191,7 +1179,6 @@ app.controller('collabSettingsCtrl', function($scope, $http) {
               }
           }).error(function(data){
               $scope.txt = "Oops! There was a database error. Are you sure you are connected or the query is correct?";
-              console.log('ERROR: Not sent to server.');
           });
       }
   });
